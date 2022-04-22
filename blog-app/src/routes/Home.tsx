@@ -1,9 +1,10 @@
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { Span } from "../CommonStyles";
 
 const Box = styled.div`
-    width: 500px;
+    width: 370px;
     height: 250px;
     margin: auto;
     position: absolute;
@@ -14,7 +15,7 @@ const Box = styled.div`
 `;
 
 const HomeTitle = styled.div`
-    font-size: 67px;
+    font-size: 29px;
     text-align: center;
     margin-bottom: 30px;
 `;
@@ -34,18 +35,13 @@ const Form = styled.form`
     }
 `;
 
-const Span = styled.span`
-    display: flex;
-    justify-content: right;
-    margin-top: 60px;
-    margin-right: 70px;
-    button {
-        background-color: transparent;
-        color: ${props => props.theme.fontColor};
-        cursor: pointer;
-        &:hover {
-            color: ${props => props.theme.accentColor};
-        }
+const P = styled.p`
+    text-align: right;
+    margin-top: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    &:hover {
+        color: ${props => props.theme.accentColor};
     }
 `;
 
@@ -67,6 +63,7 @@ function Home() {
     const signin = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         console.log(idRef.current?.value + ", " + pwRef.current?.value);
+        
     };
 
     return (
@@ -75,7 +72,9 @@ function Home() {
             <Form>
                 <label>
                     <h5>ID</h5>
-                    <input ref={idRef}/>
+                    <input 
+                    ref={idRef}
+                    />
                 </label>
                 &emsp;
                 <label>
@@ -94,6 +93,7 @@ function Home() {
                     <button onClick={toSignupPage}>sign up</button>
                 </Span>
             </Form>
+            <P>No Thanks. I'll use it without login.</P>
         </Box>
     )
 };
