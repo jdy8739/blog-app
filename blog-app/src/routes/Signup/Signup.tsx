@@ -56,7 +56,10 @@ function Signup() {
             setError('passwordCheck', 
             { message: 'password and check are not identical.' },
             { shouldFocus: true })
-        } else console.log('Signup completed.')
+        } else {
+            alert('Signup completed.');
+            nav('/');
+        }
     };
 
     const nav = useNavigate();

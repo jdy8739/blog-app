@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Provider, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
@@ -10,9 +11,13 @@ import Signup from './routes/Signup/Signup';
 import { darkTheme, lightTheme } from './theme';
 
 function App() {
+
+  const isDarkMode = 
+    useSelector((state: { value: boolean }) => state.value);
+
   return (
     <div className="App">
-      <ThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={isDarkMode ? lightTheme : darkTheme}>
         <GlobalStyle />
         <NavigationBar />
         <BrowserRouter>
