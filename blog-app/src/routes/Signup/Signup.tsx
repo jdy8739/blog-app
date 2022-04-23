@@ -1,7 +1,9 @@
+import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Span } from "../../CommonStyles";
+import BASE_URL from "../../URLS";
 
 const Input = styled.input<{ isFocused?: boolean }>`
     width: 175px;
@@ -57,14 +59,18 @@ function Signup() {
         watch,
         setError } = useForm<ISignupData>();
 
-    const onValid = (data: ISignupData) => {
+    const signup = (data: ISignupData) => {
         if(data.password !== data.passwordCheck) {
             setError('passwordCheck', 
             { message: 'password and check are not identical.' },
             { shouldFocus: true })
         } else {
-            alert('Signup completed.');
-            nav('/');
+            axios.post(`${BASE_URL}/member/signup`, { ...data })
+                .then(() => {
+                    alert('Your data has been registered.');
+                    nav('/');
+                })
+                .catch(err => console.log(err));
         }
     };
 
@@ -72,7 +78,7 @@ function Signup() {
 
     return (
         <>
-            <SignupForm onSubmit={handleSubmit(onValid)}>
+            <SignupForm onSubmit={handleSubmit(signup)}>
                 <p 
                 style={{ 
                     fontSize: '19px',

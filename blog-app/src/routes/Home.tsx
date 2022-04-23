@@ -64,24 +64,29 @@ function Home() {
     };
 
     const signin = 
-        (e: React.MouseEvent<HTMLButtonElement>) => {
+        (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         axios.post(`${BASE_URL}/member/signin`, { 
             id: idRef.current?.value, 
             password: pwRef.current?.value
         })
-            .then(() => alert('Signin accessed.'))
+            .then((res) => {
+                if(res.data) {
+                    nav('/posts');
+                } else alert('Unvalid id or password!');
+            })
             .catch((err) => console.log(err));
     };
 
     return (
         <Box>
             <HomeTitle>Hello BLOG</HomeTitle>
-            <Form>
+            <Form onSubmit={signin}>
                 <label>
                     <h5>ID</h5>
                     <input 
                     ref={idRef}
+                    required
                     />
                 </label>
                 &emsp;
@@ -90,18 +95,18 @@ function Home() {
                     <input 
                     type="password" 
                     ref={pwRef}
+                    required
                     />
                 </label>
                 <Span>
                     <button 
                     type="submit"
-                    onClick={signin}
                     >sign in</button>
                     &emsp;
                     <button onClick={toSignupPage}>sign up</button>
                 </Span>
             </Form>
-            <P>No Thanks. I'll use it without login.</P>
+            <P onClick={() => nav('/posts')}>No Thanks. I'll use it without login.</P>
         </Box>
     )
 };

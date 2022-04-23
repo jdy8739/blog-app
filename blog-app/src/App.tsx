@@ -7,6 +7,7 @@ import NavigationBar from './components/NavigationBar';
 import { GlobalStyle } from './GlobalStyle';
 import Exception from './routes/Exception';
 import Home from './routes/Home';
+import Posts from './routes/Posts/Posts';
 import Signup from './routes/Signup/Signup';
 import { darkTheme, lightTheme } from './theme';
 
@@ -22,6 +23,7 @@ function App() {
         <NavigationBar />
         <BrowserRouter>
           <Routes>
+            <Route path="/posts" element={<Posts />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<Home />} />
             <Route path="/*" element={<Exception />} />
