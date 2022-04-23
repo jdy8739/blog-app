@@ -47,6 +47,19 @@ const P = styled.p`
     }
 `;
 
+const myAxios = axios.create();
+
+myAxios.interceptors.request.use(
+    async config => {
+        console.log(config)
+        return config;
+    }
+);
+
+myAxios.interceptors.response.use(
+    async res => res.data
+);
+
 function Home() {
 
     const nav = useNavigate();
@@ -66,16 +79,17 @@ function Home() {
     const signin = 
         (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        axios.post(`${BASE_URL}/member/signin`, { 
+        myAxios.post(`${BASE_URL}/member/signin`, { 
             id: idRef.current?.value, 
             password: pwRef.current?.value
         })
-            .then((res) => {
-                if(res.data) {
+            .then(res => {
+                if(res) {
+                    console.log(res);
                     nav('/posts');
                 } else alert('Unvalid id or password!');
             })
-            .catch((err) => console.log(err));
+            .catch(err => console.log(err));
     };
 
     return (
