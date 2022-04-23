@@ -42,6 +42,12 @@ interface ISignupData {
     passwordCheck: string;
 };
 
+const emailRegex = 
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+const passwordRegex = 
+    /^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹])/;
+
 function Signup() {
 
     const { 
@@ -74,11 +80,12 @@ function Signup() {
                 }}
                 >SIGNUP FORM</p>
                 <Input
-                {...register("email", 
+                {
+                    ...register("email", 
                     { 
                         required: 'Please input your email.',
                         pattern: {
-                            value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                            value: emailRegex,
                             message: 'Please input correct email form.'
                         }
                     })
@@ -117,7 +124,7 @@ function Signup() {
                         },
                         validate: {
                             regex: value => 
-                                (/^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹])/).test(value) ? true : 
+                                (passwordRegex).test(value) ? true : 
                                     'Password should include at least one special symbol.'
                         }
                     })

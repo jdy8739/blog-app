@@ -1,7 +1,9 @@
+import axios from "axios";
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Span } from "../CommonStyles";
+import BASE_URL from "../URLS";
 
 const Box = styled.div`
     width: 370px;
@@ -55,15 +57,21 @@ function Home() {
     const pwRef = 
         useRef<HTMLInputElement>(null);
 
-    const toSignupPage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const toSignupPage = 
+        (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         nav('/signup');
     };
 
-    const signin = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const signin = 
+        (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        console.log(idRef.current?.value + ", " + pwRef.current?.value);
-        
+        axios.post(`${BASE_URL}/member/signin`, { 
+            id: idRef.current?.value, 
+            password: pwRef.current?.value
+        })
+            .then(() => alert('Signin accessed.'))
+            .catch((err) => console.log(err));
     };
 
     return (
