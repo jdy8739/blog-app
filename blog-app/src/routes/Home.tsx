@@ -49,17 +49,6 @@ const P = styled.p`
 
 const myAxios = axios.create();
 
-myAxios.interceptors.request.use(
-    async config => {
-        console.log(config)
-        return config;
-    }
-);
-
-myAxios.interceptors.response.use(
-    async res => res.data
-);
-
 function Home() {
 
     const nav = useNavigate();
@@ -76,6 +65,18 @@ function Home() {
         nav('/signup');
     };
 
+    myAxios.interceptors.request.use(
+        async config => {
+            if(config.headers)
+                config.headers['token'] = idRef.current?.value || ''
+            return config;
+        }
+    );
+    
+    myAxios.interceptors.response.use(
+        async res => res.data
+    );
+
     const signin = 
         (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -91,6 +92,7 @@ function Home() {
             })
             .catch(err => console.log(err));
     };
+    
 
     return (
         <Box>
