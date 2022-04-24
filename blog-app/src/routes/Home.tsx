@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { configAxios } from "../axiosConfig";
 import { Span } from "../CommonStyles";
 import BASE_URL from "../URLS";
 
@@ -47,8 +48,6 @@ const P = styled.p`
     }
 `;
 
-const myAxios = axios.create();
-
 function Home() {
 
     const nav = useNavigate();
@@ -65,34 +64,49 @@ function Home() {
         nav('/signup');
     };
 
-    myAxios.interceptors.request.use(
+    configAxios.interceptors.request.use(
         async config => {
             if(config.headers)
-                config.headers['token'] = idRef.current?.value || ''
-            return config;
+                if(idRef.current) {
+                    config.headers['token'] = idRef.current?.value || '';
+                    console.log(config);
+                }
+            return config
         }
     );
     
-    myAxios.interceptors.response.use(
-        async res => res.data
+    configAxios.interceptors.response.use(
+        async res => {
+            console.log(res);
+            return res;
+        },
+        ({ config, request, response, ...err }) => {
+            const errMsg = 'Error Message';
+            const isAxiosError = err.isAxiosError;
+            const { status } = response;
+            return Promise.reject({
+                config,
+                message: errMsg,
+                response,
+                isAxiosError
+            });
+        }
     );
 
     const signin = 
         (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        myAxios.post(`${BASE_URL}/member/signin`, { 
+        configAxios.post(`${BASE_URL}/member/signin`, { 
             id: idRef.current?.value, 
             password: pwRef.current?.value
         })
             .then(res => {
                 if(res) {
-                    console.log(res);
                     nav('/posts');
                 } else alert('Unvalid id or password!');
             })
             .catch(err => console.log(err));
     };
-    
 
     return (
         <Box>

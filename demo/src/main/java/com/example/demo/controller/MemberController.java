@@ -28,6 +28,9 @@ public class MemberController {
             @Validated @RequestBody MemberDTO memberDTO) {
         log.info((String) requestHeader.get("token"));
         log.info("signin: " + memberDTO.toString());
+
+        if(!memberService.login(memberDTO))
+            return new ResponseEntity<Void>(HttpStatus.resolve(401));
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
