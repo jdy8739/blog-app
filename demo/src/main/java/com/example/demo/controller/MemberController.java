@@ -4,13 +4,12 @@ import com.example.demo.DTO.MemberDTO;
 import com.example.demo.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.Cookie;
 import java.util.Map;
 
 @Slf4j
@@ -26,12 +25,19 @@ public class MemberController {
     public ResponseEntity<Void> signin(
             @RequestHeader Map<String, Object> requestHeader,
             @Validated @RequestBody MemberDTO memberDTO) {
-        log.info((String) requestHeader.get("token"));
+        String auth = (String) requestHeader.get("auth");
+        log.info(auth);
         log.info("signin: " + memberDTO.toString());
 
         if(!memberService.login(memberDTO))
             return new ResponseEntity<Void>(HttpStatus.resolve(401));
-        return new ResponseEntity<Void>(HttpStatus.OK);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("token", auth);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(null);
     }
 
     @PostMapping("/signup")

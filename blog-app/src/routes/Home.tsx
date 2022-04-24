@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { configAxios } from "../axiosConfig";
 import { Span } from "../CommonStyles";
 import BASE_URL from "../URLS";
+import { setCookie } from "../util/cookie";
 
 const Box = styled.div`
     width: 370px;
@@ -68,17 +69,34 @@ function Home() {
         async config => {
             if(config.headers)
                 if(idRef.current) {
-                    config.headers['token'] = idRef.current?.value || '';
-                    console.log(config);
+                    config.headers['auth'] = idRef.current?.value || '';
                 }
-            return config
+            console.log(config);
+            return config;
         }
     );
     
     configAxios.interceptors.response.use(
-        async res => {
-            console.log(res);
-            return res;
+        async config => {
+            console.log(config);
+            let token = '';
+            if(config.headers) {
+                const tmpToken = 
+                    config.headers['token'];
+                if(typeof tmpToken === 'string') {
+                    token = tmpToken;
+                }
+            };
+            setCookie(
+                'my-blog-userInfo',
+                token,
+                { 
+                    path: "/", 
+                    expires: new Date('December 17, 2022 03:24:00'),
+                    secure: true
+                }
+            );   
+            return config;
         },
         ({ config, request, response, ...err }) => {
             const errMsg = 'Error Message';
