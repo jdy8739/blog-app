@@ -79,20 +79,21 @@ function Home() {
     configAxios.interceptors.response.use(
         async config => {
             console.log(config);
-            let token = '';
+            let auth = '';
             if(config.headers) {
-                const tmpToken = 
-                    config.headers['token'];
-                if(typeof tmpToken === 'string') {
-                    token = tmpToken;
+                const tmpAuth = 
+                    config.headers['authorization'];
+                if(typeof tmpAuth === 'string') {
+                    auth = tmpAuth;
                 }
             };
+            const now = new Date();
             setCookie(
                 'my-blog-userInfo',
-                token,
+                auth,
                 { 
                     path: "/", 
-                    expires: new Date('December 17, 2022 03:24:00'),
+                    expires: new Date(now.setDate(now.getDate() + 1)),
                     secure: true
                 }
             );   

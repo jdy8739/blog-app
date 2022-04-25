@@ -60,30 +60,23 @@ function Signup() {
         watch,
         setError } = useForm<ISignupData>();
 
-    configAxios.interceptors.request.use(
-       async config => {
-           console.log(config);
-           return config;
-       }
-    );
-
-    configAxios.interceptors.response.use(
-        async config => {
-            console.log(config);
-            return config;
-        }
-    );
-
     const signup = (data: ISignupData) => {
         if(data.password !== data.passwordCheck) {
             setError('passwordCheck', 
             { message: 'password and check are not identical.' },
             { shouldFocus: true })
         } else {
-            configAxios.post(`${BASE_URL}/member/signup`, { ...data })
-                .then(() => {
-                    alert('Your data has been registered.');
-                    nav('/');
+            axios.post(`${BASE_URL}/member/signup`, { ...data })
+                .then(res => {
+                    const isMemberSaved = res.headers['isMemberSaved'];
+                    if(!isMemberSaved) {
+                        setError('id', 
+                            { message: 'This id is duplicate' },
+                            { shouldFocus: true })
+                    } else {
+                        alert('Your data has been registered.');
+                        nav('/');
+                    }
                 })
                 .catch(err => console.log(err));
         }
