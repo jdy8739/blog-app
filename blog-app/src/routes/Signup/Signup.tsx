@@ -2,6 +2,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { configAxios } from "../../axiosConfig";
 import { Span } from "../../CommonStyles";
 import BASE_URL from "../../URLS";
 
@@ -59,13 +60,27 @@ function Signup() {
         watch,
         setError } = useForm<ISignupData>();
 
+    configAxios.interceptors.request.use(
+       async config => {
+           console.log(config);
+           return config;
+       }
+    );
+
+    configAxios.interceptors.response.use(
+        async config => {
+            console.log(config);
+            return config;
+        }
+    );
+
     const signup = (data: ISignupData) => {
         if(data.password !== data.passwordCheck) {
             setError('passwordCheck', 
             { message: 'password and check are not identical.' },
             { shouldFocus: true })
         } else {
-            axios.post(`${BASE_URL}/member/signup`, { ...data })
+            configAxios.post(`${BASE_URL}/member/signup`, { ...data })
                 .then(() => {
                     alert('Your data has been registered.');
                     nav('/');
