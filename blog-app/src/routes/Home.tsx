@@ -69,7 +69,7 @@ function Home() {
         async config => {
             if(config.headers)
                 if(idRef.current) {
-                    config.headers['auth'] = idRef.current?.value || '';
+                    config.headers['authorization'] = idRef.current?.value || '';
                 }
             console.log(config);
             return config;
@@ -94,7 +94,8 @@ function Home() {
                 { 
                     path: "/", 
                     expires: new Date(now.setDate(now.getDate() + 1)),
-                    secure: true
+                    secure: true,
+                    httpOnly: false
                 }
             );   
             return config;

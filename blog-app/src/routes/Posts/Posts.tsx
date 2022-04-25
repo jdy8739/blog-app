@@ -1,9 +1,16 @@
+import axios from "axios";
+import BASE_URL from "../../URLS";
 
 
 function Posts() {
+
+    const needSession = () => {
+        axios.post(`${BASE_URL}/member/needSession`)
+    };
+
     return (
         <>
-            posts
+            <p onClick={needSession}>posts</p>
         </>
     )
 };
