@@ -34,11 +34,11 @@ public class MemberController {
         log.info(auth);
         log.info("signin: " + memberDTO.toString());
 
-        if(!memberService.login(memberDTO))
+        if (!memberService.login(memberDTO))
             return new ResponseEntity<Void>(HttpStatus.resolve(401));
 
         session = req.getSession();
-        session.setAttribute("user", auth);
+        session.setAttribute("user", memberDTO);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", auth);
@@ -62,16 +62,15 @@ public class MemberController {
         return new ResponseEntity<String>(null, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/needSession")
-    public ResponseEntity<Boolean> postNeedSession(HttpServletRequest request) {
-
-        Object obj = session.getAttribute("user");
+    @GetMapping("/needSession")
+    public ResponseEntity<Boolean> needSession() {
+        MemberDTO obj = (MemberDTO) session.getAttribute("user");
         Boolean isLogin = false;
 
         if(obj != null) {
-            log.info("Session Info: " + session.getAttribute("user"));
-
-            return new ResponseEntity<Boolean>(isLogin, HttpStatus.OK);
+            log.info("Session Info: " + obj.toString());
+            log.info("id: " + session.getId());
+            isLogin = true;
         }
         return new ResponseEntity<Boolean>(isLogin, HttpStatus.OK);
     }
