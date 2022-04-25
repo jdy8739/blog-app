@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Slf4j
@@ -21,19 +24,25 @@ public class MemberController {
     @Autowired
     MemberService memberService;
 
+    private HttpSession session;
+
     @PostMapping("/signin")
     public ResponseEntity<Void> signin(
-            @RequestHeader Map<String, Object> requestHeader,
-            @Validated @RequestBody MemberDTO memberDTO) {
-        String auth = (String) requestHeader.get("auth");
+            @Validated @RequestBody MemberDTO memberDTO,
+            HttpServletRequest req) {
+        String auth = req.getHeader("authorization");
         log.info(auth);
         log.info("signin: " + memberDTO.toString());
 
         if(!memberService.login(memberDTO))
             return new ResponseEntity<Void>(HttpStatus.resolve(401));
 
+        session = req.getSession();
+        session.setAttribute("user", auth);
+
         HttpHeaders headers = new HttpHeaders();
-        headers.set("token", auth);
+        headers.set("Authorization", auth);
+        headers.set("Access-Control-Expose-Headers", "*, Authorization, Set-Cookie");
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -41,9 +50,29 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@Validated @RequestBody MemberDTO memberDTO) {
+    public ResponseEntity<String> signup(@Validated @RequestBody MemberDTO memberDTO) {
         log.info("signup: " + memberDTO.toString());
-        memberService.saveMember(memberDTO);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+
+        boolean isMemberSaved = memberService.saveMember(memberDTO);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Access-Control-Expose-Headers", "*");
+        headers.set("isMemberSaved", String.valueOf(isMemberSaved));
+
+        return new ResponseEntity<String>(null, headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/needSession")
+    public ResponseEntity<Boolean> postNeedSession(HttpServletRequest request) {
+
+        Object obj = session.getAttribute("user");
+        Boolean isLogin = false;
+
+        if(obj != null) {
+            log.info("Session Info: " + session.getAttribute("user"));
+
+            return new ResponseEntity<Boolean>(isLogin, HttpStatus.OK);
+        }
+        return new ResponseEntity<Boolean>(isLogin, HttpStatus.OK);
     }
 }

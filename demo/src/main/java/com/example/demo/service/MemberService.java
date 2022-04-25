@@ -10,8 +10,8 @@ public class MemberService implements MemberServiceImpl{
     MemberRepository memberRepository = new MemberRepository();
 
     @Override
-    public void saveMember(MemberDTO memberDTO) {
-        memberRepository.saveMember(memberDTO);
+    public boolean saveMember(MemberDTO memberDTO) {
+        return memberRepository.saveMember(memberDTO);
     }
 
     @Override

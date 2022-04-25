@@ -1,10 +1,12 @@
 package com.example.demo.repository;
 
 import com.example.demo.DTO.MemberDTO;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class MemberRepository {
     public Map<String, MemberDTO> memberMap;
     private String[] defaultIdArr = { "jdy8739", "hoon1234", "slack9999" };
@@ -19,8 +21,15 @@ public class MemberRepository {
         }
     }
 
-    public void saveMember(MemberDTO memberDTO) {
-        memberMap.put(memberDTO.getId(), memberDTO);
+    public boolean saveMember(MemberDTO memberDTO) {
+        MemberDTO loggedinMember = memberMap.get(memberDTO.getId());
+        if(loggedinMember == null) {
+            memberMap.put(memberDTO.getId(), memberDTO);
+            return true;
+        } else {
+            log.info("This id is duplicate!");
+            return false;
+        }
     }
 
     public boolean login(MemberDTO memberDTO) {
