@@ -5,7 +5,7 @@ import BASE_URL from "../../URLS";
 function Posts() {
 
     const needSession = () => {
-        axios.post(`${BASE_URL}/member/needSession`)
+        axios.get(`${BASE_URL}/member/needSession`)
     };
 
     return (
