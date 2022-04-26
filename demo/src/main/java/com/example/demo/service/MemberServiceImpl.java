@@ -6,5 +6,5 @@ public interface MemberServiceImpl {
 
     public boolean saveMember(MemberDTO memberDTO);
 
-    public boolean login(MemberDTO memberDTO);
+    public MemberDTO login(MemberDTO memberDTO);
 }

@@ -36,13 +36,13 @@ public class MemberRepository {
         }
     }
 
-    public boolean login(MemberDTO memberDTO) {
+    public MemberDTO login(MemberDTO memberDTO) {
         MemberDTO loggedinMember = memberMap.get(memberDTO.getId());
-        if(loggedinMember == null) return false;
+        if(loggedinMember == null) return null;
         else {
             if(loggedinMember.getPassword().equals(memberDTO.getPassword())) {
-                return true;
-            } else return false;
+                return loggedinMember;
+            } else return null;
         }
     }
 }

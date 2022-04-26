@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.DTO.MemberDTO;
 import com.example.demo.service.MemberService;
+import com.example.demo.session.SessionMember;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -34,11 +35,13 @@ public class MemberController {
         log.info(auth);
         log.info("signin: " + memberDTO.toString());
 
-        if (!memberService.login(memberDTO))
+        MemberDTO loggedInMember = memberService.login(memberDTO);
+        if(loggedInMember == null)
             return new ResponseEntity<Void>(HttpStatus.resolve(401));
 
         session = req.getSession();
-        session.setAttribute("user", memberDTO);
+        session.setAttribute(
+                "user", new SessionMember(loggedInMember.getId(), loggedInMember.getAuth()));
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", auth);
@@ -64,11 +67,11 @@ public class MemberController {
 
     @GetMapping("/needSession")
     public ResponseEntity<Boolean> needSession() {
-        MemberDTO obj = (MemberDTO) session.getAttribute("user");
+        SessionMember sessionObj = (SessionMember) session.getAttribute("user");
         Boolean isLogin = false;
 
-        if(obj != null) {
-            log.info("Session Info: " + obj.toString());
+        if(sessionObj != null) {
+            log.info("Session Info: " + sessionObj.toString());
             log.info("id: " + session.getId());
             isLogin = true;
         }

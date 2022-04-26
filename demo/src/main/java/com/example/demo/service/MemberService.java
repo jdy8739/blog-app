@@ -15,8 +15,7 @@ public class MemberService implements MemberServiceImpl{
     }
 
     @Override
-    public boolean login(MemberDTO memberDTO) {
-        boolean doesMemberExist = memberRepository.login(memberDTO);
-        return doesMemberExist;
+    public MemberDTO login(MemberDTO memberDTO) {
+        return memberRepository.login(memberDTO);
     }
 }
