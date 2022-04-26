@@ -10,14 +10,18 @@ import java.util.Map;
 public class MemberRepository {
     public Map<String, MemberDTO> memberMap;
     private String[] defaultIdArr = { "jdy8739", "hoon1234", "slack9999" };
+    private String[] defaultAuthArr = { "manager", "normal", "normal" };
 
     public MemberRepository() {
         memberMap = new HashMap<String, MemberDTO>();
 
         //테스트용 디폴트 멤버 객체
+        int i = 0;
         for(String id : defaultIdArr) {
-            MemberDTO defaultMember = new MemberDTO(id, "qwer1234!", null);
-            memberMap.put(id, defaultMember);
+            MemberDTO memberDTO = new MemberDTO(
+                    id, "qwer1234!@", null, defaultAuthArr[i]);
+            memberMap.put(id, memberDTO);
+            i ++;
         }
     }
 

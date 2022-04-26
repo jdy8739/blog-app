@@ -66,10 +66,10 @@ function Signup() {
             { message: 'password and check are not identical.' },
             { shouldFocus: true })
         } else {
-            axios.post(`${BASE_URL}/member/signup`, { ...data })
+            axios.post(`${BASE_URL}/member/signup`, { ...data, auth: 'normal' })
                 .then(res => {
-                    const isMemberSaved = res.headers['isMemberSaved'];
-                    if(!isMemberSaved) {
+                    const isMemberSaved = res.headers['ismembersaved'];
+                    if(!JSON.parse(isMemberSaved)) {
                         setError('id', 
                             { message: 'This id is duplicate' },
                             { shouldFocus: true })
