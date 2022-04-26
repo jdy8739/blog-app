@@ -23,7 +23,7 @@ function App() {
         <NavigationBar />
         <BrowserRouter>
           <Routes>
-            <Route path="/posts" element={<Posts />} />
+            <Route path="/posts/*" element={<Posts />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<Home />} />
             <Route path="/*" element={<Exception />} />

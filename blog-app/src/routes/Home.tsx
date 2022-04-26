@@ -122,7 +122,7 @@ function Home() {
         })
             .then(res => {
                 if(res) {
-                    nav('/posts');
+                    nav('/posts/all');
                 } else alert('Unvalid id or password!');
             })
             .catch(err => console.log(err));

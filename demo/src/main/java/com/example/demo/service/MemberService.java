@@ -5,7 +5,7 @@ import com.example.demo.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MemberService implements MemberServiceImpl{
+public class MemberService implements MemberServiceImpl {
 
     MemberRepository memberRepository = new MemberRepository();
 

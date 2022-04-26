@@ -10,12 +10,11 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class BoardService {
+public class BoardService implements BoardServiceImpl {
 
-    @Autowired
-    BoardRepository boardRepository;
+    BoardRepository boardRepository = new BoardRepository();
 
-    public BoardWrapperDTO getAll() {
-        return boardRepository.getAll();
+    public BoardWrapperDTO getPosts() {
+        return boardRepository.getPosts();
     }
 }
