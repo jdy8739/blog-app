@@ -22,7 +22,7 @@ public class BoardRepository {
 
         for(int i=0; i<defaultContents.length; i++) {
             BoardDTO boardDTO =
-                    new BoardDTO(Long.valueOf(i), defaultTitles[i], defaultContents[i], null);
+                    new BoardDTO(Long.valueOf(i), defaultTitles[i], defaultContents[i], null, 0);
             boardMap.put(i, boardDTO);
         }
         total = boardMap.size();

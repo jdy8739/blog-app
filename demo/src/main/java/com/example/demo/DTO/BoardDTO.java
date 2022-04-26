@@ -8,4 +8,9 @@ public class BoardDTO {
     private String writer;
     private String content;
     private String[] hashtag;
+    private int numberOfLikes;
+
+    public BoardDTO() {
+        this.numberOfLikes = 0;
+    }
 }
