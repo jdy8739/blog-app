@@ -1,9 +1,11 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import Post from "../../components/Post";
 import { Container, PostCard, PostContentPreview, PostTitle, PostWriter, PostLikes, Button } from "../../Styles/style";
 import BASE_URL from "../../URLS";
 
-interface IPostElement {
+export interface IPostElement {
     boardNo: number;
     writer: String; 
     title: string;
@@ -24,6 +26,10 @@ interface IPost {
     boards: IBoard
 };
 
+const DEFAULT_OFFSET = 0;
+
+const DEFAULT_LIMIT = 5;
+
 function Posts() {
 
     const needSession = () => axios.get(`${BASE_URL}/member/needSession`);
@@ -34,8 +40,18 @@ function Posts() {
 
     const [indexArr, setIndexArr] = useState<number[]>();
 
+    const nav = useNavigate();
+
+    const location = useLocation();
+
+    const paramsSearcher = new URLSearchParams(location.search);
+
+    const limit = paramsSearcher.get('limit') || DEFAULT_LIMIT;
+
+    const offset = paramsSearcher.get('offset') || DEFAULT_OFFSET;
+
     const fetchPosts = () => {
-        axios.get(`${BASE_URL}/posts/all`)
+        axios.get(`${BASE_URL}/posts/get?offset=${offset}&limit=${limit}`)
             .then(res => {
                 setPosts(res.data);
                 setIsLoading(false);
@@ -55,9 +71,18 @@ function Posts() {
         setIndexArr([...tmpIndexArr]);
     };
 
+    const handleOnLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const limit = e.currentTarget.value;
+        nav(`/posts/get?offset=0&limit=${limit}`);
+    };
+
+    const setOffset = (e: React.MouseEvent<HTMLButtonElement>) => {
+        nav(`/posts/get?offset=${+e.currentTarget.innerText - 1}&limit=${limit}`);
+    };
+
     useEffect(() => {
         fetchPosts();
-    }, []);
+    }, [limit, offset]);
 
     useEffect(() => {
         makeIndex();
@@ -74,29 +99,25 @@ function Posts() {
                         <Container>
                             <div style={{ 
                                 textAlign: 'right',
-                            }}>
+                            }}
+                            >
                                 <span>contents in a page</span>
                                 &ensp;
-                                <select>
+                                <select 
+                                onChange={handleOnLimitChange} 
+                                value={limit || 5}
+                                >
                                     <option>5</option>
                                     <option>15</option>
                                     <option>30</option>
                                 </select>
                             </div>
-                            { Object.keys(posts.boards).map(postNo => {
+                            {Object.keys(posts.boards).map(postNo => {
                                 return (
-                                    <PostCard key={postNo}>
-                                        <PostTitle>{ posts.boards[postNo].title }</PostTitle>
-                                        <PostContentPreview>
-                                            { 
-                                                posts.boards[postNo].content.length > 60 ? 
-                                                posts.boards[postNo].content.slice(0, 60) + "..." : 
-                                                posts.boards[postNo].content 
-                                            }
-                                        </PostContentPreview>
-                                        <PostLikes>👍{ posts.boards[postNo].numberOfLikes}</PostLikes>
-                                        <PostWriter>{ posts.boards[postNo].regDate + " - writer: " + posts.boards[postNo].writer }</PostWriter>
-                                    </PostCard>
+                                    <Post
+                                    key={postNo}
+                                    post={posts.boards[postNo]}
+                                    />
                                 )
                             })}
                             { 
@@ -105,7 +126,12 @@ function Posts() {
                                     textAlign: 'center',
                                     margin: '50px'
                                 }}
-                                >{ indexArr.map(idx => <Button key={idx}>{ idx + 1 }</Button>) }</div> : null
+                                >{ indexArr.map(idx => 
+                                <Button
+                                key={idx}
+                                onClick={setOffset}
+                                clicked={offset ? +offset === idx : false}
+                                >{ idx + 1 }</Button>) }</div> : null
                             }
                         </Container> : null 
                     }
