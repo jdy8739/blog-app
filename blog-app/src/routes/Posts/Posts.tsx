@@ -114,10 +114,14 @@ function Posts() {
                             </div>
                             {Object.keys(posts.boards).map(postNo => {
                                 return (
-                                    <Post
+                                    <div 
                                     key={postNo}
-                                    post={posts.boards[postNo]}
-                                    />
+                                    onClick={() => nav(`/posts/detail/${+postNo}`)}
+                                    >
+                                        <Post
+                                        post={posts.boards[postNo]}
+                                        />
+                                    </div>
                                 )
                             })}
                             { 

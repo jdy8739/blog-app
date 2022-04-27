@@ -1,11 +1,20 @@
 import React from 'react';
+import styled from 'styled-components';
 import { IPostElement } from "../routes/Posts/Posts";
-import { PostCard, PostContentPreview, PostLikes, PostTitle, PostWriter } from "../Styles/style";
+import { PostCard, PostContentPreview, PostLikes, PostTitle, PostWriter, Tag } from "../Styles/style";
+
+const TagSection = styled.div`
+    position: absolute;
+    top: 0;
+    right: 0;
+`;
 
 function Post({ post }: { post: IPostElement }) {
+
     return (
         <>
-            <PostCard>
+            <PostCard
+            >
                 <PostTitle>{ post.title }</PostTitle>
                 <PostContentPreview>
                     { 
@@ -16,6 +25,9 @@ function Post({ post }: { post: IPostElement }) {
                 </PostContentPreview>
                 <PostLikes>👍{ post.numberOfLikes}</PostLikes>
                 <PostWriter>{ post.regDate + " - writer: " + post.writer }</PostWriter>
+                <TagSection>
+                    { post?.hashtag.map(tag => <Tag key={tag}>{ '# ' + tag }</Tag>) }
+                </TagSection>
             </PostCard>
         </>
     )

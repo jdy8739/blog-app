@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardWrapperDTO;
 import com.example.demo.repository.BoardRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,11 @@ public class BoardService implements BoardServiceImpl {
 
     BoardRepository boardRepository = new BoardRepository();
 
-    public BoardWrapperDTO getPosts() {
-        return boardRepository.getPosts();
+    public BoardWrapperDTO getPosts(Integer offset, Integer limit) {
+        return boardRepository.getPosts(offset, limit);
+    }
+
+    public BoardDTO getPost(Integer postNo) {
+        return boardRepository.getPost(postNo);
     }
 }

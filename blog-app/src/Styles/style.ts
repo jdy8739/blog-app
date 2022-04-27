@@ -48,7 +48,7 @@ export const PostWriter = styled.span`
     font-size: 12px;
 `;
 
-export const Button = styled.button<{ clicked: boolean }>`
+export const Button = styled.button<{ clicked?: boolean }>`
     background-color: 
         ${props => props.clicked ? props.theme.accentColor : props.theme.backgroundColor};
     color: ${props => props.theme.fontColor};
@@ -57,5 +57,16 @@ export const Button = styled.button<{ clicked: boolean }>`
     font-weight: bold;
     border-radius: 7px;
     cursor: pointer;
+`;
+
+export const Tag = styled.p`
+display: inline-block;
+margin: 5px;
+border: 1px solid ${props => props.theme.accentColor};
+border-radius: 12px;
+font-size: 11px;
+color: ${props => props.theme.fontColor};
+padding: 8px;
+box-sizing: border-box;
 `;
 
