@@ -1,4 +1,6 @@
+import React, { useRef } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { changeThemeMode, store } from "../store/themeStore";
 
@@ -28,9 +30,34 @@ export default function NavigationBar() {
         store.dispatch(changeThemeMode());
     };
 
+    const selectRef = useRef<HTMLSelectElement>(null);
+
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        nav(`/posts/${selectRef.current?.value}/${inputRef.current?.value}`);
+    };
+
+    const nav = useNavigate();
+
     return (
         <Nav>
             <div style={{ flexGrow: '1' }}></div>
+            <form onSubmit={handleOnSubmit}>
+                <select 
+                ref={selectRef}
+                >
+                    <option>title</option>
+                    <option>writer</option>
+                    <option>hashtag</option>
+                </select>
+                &ensp;
+                <button>search</button>
+                &ensp;
+                <input ref={inputRef} required/>
+            </form>
+            &emsp;
             <ModeButton 
             onClick={changeTheme}>{ 'mode' }</ModeButton>
         </Nav>

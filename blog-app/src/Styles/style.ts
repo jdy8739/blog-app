@@ -13,7 +13,6 @@ export const PostContentPreview = styled.div`
 export const PostCard = styled.div`
     width: 100%;
     height: 165px;
-    border-bottom: 1px solid ${props => props.theme.accentColor};
     padding: 12px;
     box-sizing: border-box;
     margin-top: 25px;

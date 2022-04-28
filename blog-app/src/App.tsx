@@ -25,8 +25,8 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={isDarkMode ? lightTheme : darkTheme}>
           <GlobalStyle />
-          <NavigationBar />
           <BrowserRouter>
+            <NavigationBar />
             <Routes>
               <Route path="/posts/detail/:id" element={<PostDetail />} />
               <Route path="/posts/*" element={<Posts />} />

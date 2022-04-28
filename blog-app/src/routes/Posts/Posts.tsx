@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import Post from "../../components/Post";
 import { Container, PostCard, PostContentPreview, PostTitle, PostWriter, PostLikes, Button } from "../../Styles/style";
 import BASE_URL from "../../URLS";
@@ -11,7 +12,7 @@ export interface IPostElement {
     title: string;
     content: string;
     numberOfLikes: number;
-    hashtag: string[];
+    hashtags: string[];
     regDate: string;
 };
 
@@ -25,6 +26,10 @@ interface IPost {
     total: number;
     boards: IBoard
 };
+
+const Frame = styled.div`
+    border-bottom: 1px solid ${props => props.theme.accentColor};
+`
 
 const DEFAULT_OFFSET = 0;
 
@@ -44,6 +49,21 @@ function Posts() {
 
     const location = useLocation();
 
+    let target = location.pathname.split('/')[2];
+
+    let subject = '';
+
+    let keyword = '';
+
+    const catchSubjectAndKeywordName = () => {
+        if(target === 'title' || target === 'writer' || target === 'hashtag') {
+            subject = target;
+            keyword = location.pathname.split('/')[3];
+        };
+    };
+
+    catchSubjectAndKeywordName();
+
     const paramsSearcher = new URLSearchParams(location.search);
 
     const limit = paramsSearcher.get('limit') || DEFAULT_LIMIT;
@@ -51,7 +71,10 @@ function Posts() {
     const offset = paramsSearcher.get('offset') || DEFAULT_OFFSET;
 
     const fetchPosts = () => {
-        axios.get(`${BASE_URL}/posts/get?offset=${offset}&limit=${limit}`)
+        axios.get<IPost>(
+            `${BASE_URL}/posts${subject ? '/' + subject : ''}${
+            keyword ? '/' + keyword : ''}/get?offset=${offset}&limit=${limit}`
+            )
             .then(res => {
                 setPosts(res.data);
                 setIsLoading(false);
@@ -73,16 +96,18 @@ function Posts() {
 
     const handleOnLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const limit = e.currentTarget.value;
-        nav(`/posts/get?offset=0&limit=${limit}`);
+        nav(`/posts${subject ? '/' + subject : ''}${
+            keyword ? '/' + keyword : ''}/get?offset=0&limit=${limit}`);
     };
 
     const setOffset = (e: React.MouseEvent<HTMLButtonElement>) => {
-        nav(`/posts/get?offset=${+e.currentTarget.innerText - 1}&limit=${limit}`);
+        nav(`/posts${subject ? '/' + subject : ''}${
+            keyword ? '/' + keyword : ''}/get?offset=${+e.currentTarget.innerText - 1}&limit=${limit}`);
     };
 
     useEffect(() => {
         fetchPosts();
-    }, [limit, offset]);
+    }, [limit, offset, subject, keyword]);
 
     useEffect(() => {
         makeIndex();
@@ -114,14 +139,14 @@ function Posts() {
                             </div>
                             {Object.keys(posts.boards).map(postNo => {
                                 return (
-                                    <div 
+                                    <Frame
                                     key={postNo}
                                     onClick={() => nav(`/posts/detail/${+postNo}`)}
                                     >
                                         <Post
                                         post={posts.boards[postNo]}
                                         />
-                                    </div>
+                                    </Frame>
                                 )
                             })}
                             { 

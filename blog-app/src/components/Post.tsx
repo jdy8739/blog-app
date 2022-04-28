@@ -26,7 +26,7 @@ function Post({ post }: { post: IPostElement }) {
                 <PostLikes>👍{ post.numberOfLikes}</PostLikes>
                 <PostWriter>{ post.regDate + " - writer: " + post.writer }</PostWriter>
                 <TagSection>
-                    { post?.hashtag.map(tag => <Tag key={tag}>{ '# ' + tag }</Tag>) }
+                    { post?.hashtags.map(tag => <Tag key={tag}>{ '# ' + tag }</Tag>) }
                 </TagSection>
             </PostCard>
         </>

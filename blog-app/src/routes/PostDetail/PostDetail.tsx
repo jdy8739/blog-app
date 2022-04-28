@@ -49,7 +49,7 @@ function PostDetail() {
             <div style={{ height: '300px' }}></div>
             <div style={{ textAlign: 'right' }}>
                 {
-                    post?.hashtag.map(tag => <Tag key={tag}>{ '# ' + tag }</Tag>)
+                    post?.hashtags.map(tag => <Tag key={tag}>{ '# ' + tag }</Tag>)
                 }
             </div>
             <div style={{
