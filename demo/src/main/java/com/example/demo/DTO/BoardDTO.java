@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,7 +16,7 @@ public class BoardDTO {
     private String writer;
     private String title;
     private String content;
-    private String[] hashtag;
+    private List<String> hashtags;
     private int numberOfLikes;
     private String regDate;
 

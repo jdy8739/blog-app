@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const PostTitle = styled.h1`
-    font-size: 57px;
+    font-size: 47px;
 `;
 
 export const PostContentPreview = styled.div`
@@ -59,13 +59,22 @@ export const Button = styled.button<{ clicked?: boolean }>`
 `;
 
 export const Tag = styled.p`
-display: inline-block;
-margin: 5px;
-border: 1px solid ${props => props.theme.accentColor};
-border-radius: 12px;
-font-size: 11px;
-color: ${props => props.theme.fontColor};
-padding: 8px;
-box-sizing: border-box;
+    display: inline-block;
+    margin: 5px;
+    border: 1px solid ${props => props.theme.accentColor};
+    border-radius: 12px;
+    font-size: 11px;
+    color: ${props => props.theme.fontColor};
+    padding: 8px;
+    box-sizing: border-box;
+    &:hover {
+        background-color: 
+            ${props => props.theme.accentColor};
+    }
+`;
+
+export const Highlight = styled.div`
+    color: ${props => props.theme.accentColor};
+    display: inline-block;
 `;
 

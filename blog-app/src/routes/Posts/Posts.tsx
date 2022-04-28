@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Post from "../../components/Post";
-import { Container, PostCard, PostContentPreview, PostTitle, PostWriter, PostLikes, Button } from "../../Styles/style";
+import { Container, Highlight, Button } from "../../Styles/style";
 import BASE_URL from "../../URLS";
 
 export interface IPostElement {
@@ -120,50 +120,68 @@ function Posts() {
                 isLoading ? <p>Loading... Please wait.</p> :
                 <>
                     {
-                        posts ? 
-                        <Container>
-                            <div style={{ 
-                                textAlign: 'right',
-                            }}
-                            >
-                                <span>contents in a page</span>
-                                &ensp;
-                                <select 
-                                onChange={handleOnLimitChange} 
-                                value={limit || 5}
-                                >
-                                    <option>5</option>
-                                    <option>15</option>
-                                    <option>30</option>
-                                </select>
-                            </div>
-                            {Object.keys(posts.boards).map(postNo => {
-                                return (
-                                    <Frame
-                                    key={postNo}
-                                    onClick={() => nav(`/posts/detail/${+postNo}`)}
+                        posts?.total === 0 ? <p style={{ textAlign: 'center' }}>Sorry. No Match Data. :(</p> :
+                        <>
+                            {
+                                posts ? 
+                                <Container>
+                                    <div style={{
+                                        textAlign: 'center',
+                                    }}>
+                                        { 
+                                            subject ? 
+                                            <>
+                                                { "search for " + subject } 
+                                                &ensp;
+                                                <Highlight>{ window.decodeURI(keyword) }</Highlight>
+                                            </> : null 
+                                        }
+                                    </div>
+                                    <div style={{ 
+                                        textAlign: 'right',
+                                        marginBottom: '100px'
+                                    }}
                                     >
-                                        <Post
-                                        post={posts.boards[postNo]}
-                                        />
-                                    </Frame>
-                                )
-                            })}
-                            { 
-                                indexArr ? 
-                                <div style={{
-                                    textAlign: 'center',
-                                    margin: '50px'
-                                }}
-                                >{ indexArr.map(idx => 
-                                <Button
-                                key={idx}
-                                onClick={setOffset}
-                                clicked={offset ? +offset === idx : false}
-                                >{ idx + 1 }</Button>) }</div> : null
+                                        <span>contents in a page</span>
+                                        &ensp;
+                                        <select 
+                                        onChange={handleOnLimitChange} 
+                                        value={limit || 5}
+                                        >
+                                            <option>5</option>
+                                            <option>15</option>
+                                            <option>30</option>
+                                        </select>
+                                    </div>
+                                    {Object.keys(posts.boards).map(postNo => {
+                                        return (
+                                            <Frame
+                                            key={postNo}
+                                            onClick={() => nav(`/posts/detail/${+postNo}`)}
+                                            >
+                                                <Post
+                                                post={posts.boards[postNo]}
+                                                />
+                                            </Frame>
+                                        )
+                                    })}
+                                    { 
+                                        indexArr ? 
+                                        <div style={{
+                                            textAlign: 'center',
+                                            margin: '50px'
+                                        }}
+                                        >{ indexArr.map(idx => 
+                                        <Button
+                                        key={idx}
+                                        onClick={setOffset}
+                                        clicked={offset ? +offset === idx : false}
+                                        >{ idx + 1 }</Button>) }</div> : null
+                                    }
+                                </Container> : null 
                             }
-                        </Container> : null 
-                    }
+                        </>
+                    }   
                 </>
             }
         </>

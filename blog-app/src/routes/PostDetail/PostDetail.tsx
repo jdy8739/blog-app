@@ -39,6 +39,13 @@ function PostDetail() {
 
     const nav = useNavigate();
 
+    const searchPostsByTag = (e: React.MouseEvent<HTMLParagraphElement>) => {
+        e.stopPropagation();
+        const tagText = 
+            e.currentTarget.textContent?.split('# ')[1];
+        nav(`/posts/hashtag/${tagText}/get?offset=0&limit=5`);
+    };
+
     return (
         <Container>
             <Title>{ post?.title }</Title>
@@ -49,7 +56,11 @@ function PostDetail() {
             <div style={{ height: '300px' }}></div>
             <div style={{ textAlign: 'right' }}>
                 {
-                    post?.hashtags.map(tag => <Tag key={tag}>{ '# ' + tag }</Tag>)
+                    post?.hashtags.map(tag => 
+                        <Tag 
+                        key={tag}
+                        onClick={searchPostsByTag}
+                        >{ '# ' + tag }</Tag>)
                 }
             </div>
             <div style={{

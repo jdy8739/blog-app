@@ -22,4 +22,13 @@ public class BoardService implements BoardServiceImpl {
     public BoardDTO getPost(Integer postNo) {
         return boardRepository.getPost(postNo);
     }
+
+    public BoardWrapperDTO getPostsByKeyword(
+            String subject,
+            String keyword,
+            Integer offset,
+            Integer limit) {
+        return boardRepository.getPostsByKeyword(subject, keyword, offset, limit);
+    }
+
 }

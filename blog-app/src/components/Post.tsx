@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { IPostElement } from "../routes/Posts/Posts";
 import { PostCard, PostContentPreview, PostLikes, PostTitle, PostWriter, Tag } from "../Styles/style";
@@ -10,6 +11,15 @@ const TagSection = styled.div`
 `;
 
 function Post({ post }: { post: IPostElement }) {
+
+    const nav = useNavigate();
+
+    const searchPostsByTag = (e: React.MouseEvent<HTMLParagraphElement>) => {
+        e.stopPropagation();
+        const tagText = 
+            e.currentTarget.textContent?.split('# ')[1];
+        nav(`/posts/hashtag/${tagText}/get?offset=0&limit=5`);
+    };
 
     return (
         <>
@@ -26,7 +36,12 @@ function Post({ post }: { post: IPostElement }) {
                 <PostLikes>👍{ post.numberOfLikes}</PostLikes>
                 <PostWriter>{ post.regDate + " - writer: " + post.writer }</PostWriter>
                 <TagSection>
-                    { post?.hashtags.map(tag => <Tag key={tag}>{ '# ' + tag }</Tag>) }
+                    { 
+                        post?.hashtags.map(tag => <Tag 
+                            key={tag}
+                            onClick={searchPostsByTag}
+                            >{ '# ' + tag }</Tag>) 
+                    }
                 </TagSection>
             </PostCard>
         </>

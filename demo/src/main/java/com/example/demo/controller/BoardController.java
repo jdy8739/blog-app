@@ -29,6 +29,19 @@ public class BoardController {
                 boardService.getPosts(offset, limit), HttpStatus.OK);
     }
 
+    @GetMapping("/{subject}/{keyword}/get")
+    public ResponseEntity<BoardWrapperDTO> getPostsByKeyword(
+            @PathVariable String subject,
+            @PathVariable String keyword,
+            @RequestParam Integer offset,
+            @RequestParam Integer limit) {
+            log.info("subject: " + subject + ", keyword: " + keyword);
+            log.info("getPosts(): " + offset + ", " + limit);
+        return ResponseEntity.ok()
+                .body(boardService.getPostsByKeyword(
+                        subject, keyword, offset, limit));
+    }
+
     @GetMapping("/get_detail/{postNo}")
     public ResponseEntity<BoardDTO> getPost(@PathVariable int postNo) {
         log.info("getPost(): " + postNo);
