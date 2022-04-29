@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Post from "../../components/Post";
 import { Container, Highlight, Button } from "../../Styles/style";
 import BASE_URL from "../../URLS";
+import { getCookie } from "../../util/cookie";
 
 export interface IPostElement {
     boardNo: number;
@@ -37,7 +38,20 @@ const DEFAULT_LIMIT = 5;
 
 function Posts() {
 
-    const needSession = () => axios.get(`${BASE_URL}/member/needSession`);
+    const myAxios = axios.create();
+
+    myAxios.interceptors.request.use(
+        async config => {
+            if(config.headers)
+                config.headers['Authorization'] = 
+                    `Bearer ${getCookie('my-blog-userInfo')}`;
+            return config;
+        }
+    );
+
+    const needSession = () => {
+        myAxios.get(`${BASE_URL}/member/doFilterInternal`);
+    }
 
     const [posts, setPosts] = useState<IPost>();
 

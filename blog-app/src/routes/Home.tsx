@@ -79,18 +79,11 @@ function Home() {
     configAxios.interceptors.response.use(
         async config => {
             console.log(config);
-            let auth = '';
-            if(config.headers) {
-                const tmpAuth = 
-                    config.headers['authorization'];
-                if(typeof tmpAuth === 'string') {
-                    auth = tmpAuth;
-                }
-            };
+            const token = config.data;
             const now = new Date();
             setCookie(
                 'my-blog-userInfo',
-                auth,
+                token,
                 { 
                     path: "/", 
                     expires: new Date(now.setDate(now.getDate() + 1)),
