@@ -1,8 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.DTO.MemberDTO;
+import com.example.demo.JWT.JWTUtils;
 import com.example.demo.service.MemberService;
-import com.example.demo.session.SessionMember;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -12,9 +16,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Date;
 
 @Slf4j
 @Controller
@@ -25,23 +33,22 @@ public class MemberController {
     @Autowired
     MemberService memberService;
 
-    private HttpSession session;
+    JWTUtils jwtUtils = new JWTUtils();
 
     @PostMapping("/signin")
-    public ResponseEntity<Void> signin(
+    public ResponseEntity<String> signin(
             @Validated @RequestBody MemberDTO memberDTO,
             HttpServletRequest req) {
+
         String auth = req.getHeader("authorization");
         log.info(auth);
         log.info("signin: " + memberDTO.toString());
 
         MemberDTO loggedInMember = memberService.login(memberDTO);
         if(loggedInMember == null)
-            return new ResponseEntity<Void>(HttpStatus.resolve(401));
+            return new ResponseEntity<String>(HttpStatus.resolve(401));
 
-        session = req.getSession();
-        session.setAttribute(
-                "user", new SessionMember(loggedInMember.getId(), loggedInMember.getAuth()));
+        String jwt = makeJwt();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", auth);
@@ -49,7 +56,7 @@ public class MemberController {
 
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(null);
+                .body(jwt);
     }
 
     @PostMapping("/signup")
@@ -65,16 +72,30 @@ public class MemberController {
         return new ResponseEntity<String>(null, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/needSession")
-    public ResponseEntity<Boolean> needSession() {
-        SessionMember sessionObj = (SessionMember) session.getAttribute("user");
-        Boolean isLogin = false;
+    private String makeJwt() {
+        Date now = new Date();
+        String jwt = Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuer("fresh")
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + Duration.ofMinutes(30).toMillis()))
+                .claim("id", "아이디")
+                .claim("email", "ajufresh@gmail.com")
+                .signWith(SignatureAlgorithm.HS256, "secret")
+                .compact();
+        return jwt;
+    }
 
-        if(sessionObj != null) {
-            log.info("Session Info: " + sessionObj.toString());
-            log.info("id: " + session.getId());
-            isLogin = true;
-        }
-        return new ResponseEntity<Boolean>(isLogin, HttpStatus.OK);
+    @GetMapping("/doFilterInternal")
+    public void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response
+            //FilterChain filterChain
+            ) throws IOException, ServletException {
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        System.out.println(authorizationHeader);
+        Claims claims = jwtUtils.parseJwtToken(authorizationHeader);
+        System.out.println(claims);
+        //filterChain.doFilter(request, response);
     }
 }
