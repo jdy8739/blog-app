@@ -40,18 +40,15 @@ public class MemberController {
             @Validated @RequestBody MemberDTO memberDTO,
             HttpServletRequest req) {
 
-        String auth = req.getHeader("authorization");
-        log.info(auth);
-        log.info("signin: " + memberDTO.toString());
-
         MemberDTO loggedInMember = memberService.login(memberDTO);
         if(loggedInMember == null)
             return new ResponseEntity<String>(HttpStatus.resolve(401));
 
-        String jwt = makeJwt();
+        String jwt = makeJWT(
+                loggedInMember.getId(), loggedInMember.getAuth());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", auth);
+        //headers.set("Authorization", auth);
         headers.set("Access-Control-Expose-Headers", "*, Authorization, Set-Cookie");
 
         return ResponseEntity.ok()
@@ -72,15 +69,15 @@ public class MemberController {
         return new ResponseEntity<String>(null, headers, HttpStatus.OK);
     }
 
-    private String makeJwt() {
+    private String makeJWT(String id, String auth) {
         Date now = new Date();
         String jwt = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setIssuer("fresh")
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + Duration.ofMinutes(30).toMillis()))
-                .claim("id", "아이디")
-                .claim("email", "ajufresh@gmail.com")
+                .claim("id", id)
+                .claim("auth", auth)
                 .signWith(SignatureAlgorithm.HS256, "secret")
                 .compact();
         return jwt;
@@ -93,7 +90,7 @@ public class MemberController {
             //FilterChain filterChain
             ) throws IOException, ServletException {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        System.out.println(authorizationHeader);
+        //System.out.println(authorizationHeader);
         Claims claims = jwtUtils.parseJwtToken(authorizationHeader);
         System.out.println(claims);
         //filterChain.doFilter(request, response);
