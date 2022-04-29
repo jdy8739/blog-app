@@ -15,6 +15,15 @@ const Nav = styled.nav`
     box-sizing: border-box;
 `;
 
+const NavElem = styled.p`
+    padding: 12px;
+    font-size: 13px;
+    cursor: pointer;
+    &:hover {
+        color: ${props => props.theme.backgroundColor};
+    }
+`;
+
 const ModeButton = styled.button`
     background-color: transparent;
     cursor: pointer;
@@ -43,6 +52,10 @@ export default function NavigationBar() {
 
     return (
         <Nav>
+            <NavElem>LOGOUT</NavElem>
+            <NavElem onClick={() => nav('/posts')}>POSTS</NavElem>
+            <NavElem onClick={() => nav('/write')}>WRITE</NavElem>
+            <NavElem>LIKED</NavElem>
             <div style={{ flexGrow: '1' }}></div>
             <form onSubmit={handleOnSubmit}>
                 <select 
@@ -55,7 +68,10 @@ export default function NavigationBar() {
                 &ensp;
                 <button>search</button>
                 &ensp;
-                <input ref={inputRef} required/>
+                <input
+                ref={inputRef} 
+                required
+                />
             </form>
             &emsp;
             <ModeButton 

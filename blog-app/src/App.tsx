@@ -11,6 +11,7 @@ import Home from './routes/Home';
 import PostDetail from './routes/PostDetail/PostDetail';
 import Posts from './routes/Posts/Posts';
 import Signup from './routes/Signup/Signup';
+import WritePost from './routes/WritePost/WritePost';
 import { darkTheme, lightTheme } from './theme';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <BrowserRouter>
             <NavigationBar />
             <Routes>
+              <Route path="/write/*" element={<WritePost />} />
               <Route path="/posts/detail/:id" element={<PostDetail />} />
               <Route path="/posts/*" element={<Posts />} />
               <Route path="/signup" element={<Signup />} />

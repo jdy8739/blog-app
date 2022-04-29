@@ -78,3 +78,28 @@ export const Highlight = styled.div`
     display: inline-block;
 `;
 
+export const TitleInput = styled.input`
+    border: 1px solid ${props => props.theme.accentColor};
+    padding: 9px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: ${props => props.theme.inputColor};
+    color: ${props => props.theme.fontColor};
+`;
+
+export const TagInput = styled(TitleInput)`
+    width: 230px;
+    margin: 16px 0;
+`;
+
+export const ContentInput = styled.textarea`
+    width: 100%;
+    height: 350px;
+    border: 1px solid ${props => props.theme.accentColor};
+    padding: 9px;
+    box-sizing: border-box;
+    resize: none;
+    background-color: ${props => props.theme.inputColor};
+    color: ${props => props.theme.fontColor};
+`;
+
