@@ -44,7 +44,7 @@ function Posts() {
         async config => {
             if(config.headers)
                 config.headers['Authorization'] = 
-                    `Bearer ${getCookie('my-blog-userInfo')}`;
+                    `Bearer ${getCookie('my_blog_userInfo')}`;
             return config;
         }
     );
@@ -129,7 +129,6 @@ function Posts() {
 
     return (
         <>
-            <p onClick={needSession}>posts</p>
             {
                 isLoading ? <p>Loading... Please wait.</p> :
                 <>

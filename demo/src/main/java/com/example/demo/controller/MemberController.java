@@ -44,7 +44,7 @@ public class MemberController {
         if(loggedInMember == null)
             return new ResponseEntity<String>(HttpStatus.resolve(401));
 
-        String jwt = makeJWT(
+        String jwt = jwtUtils.makeJWT(
                 loggedInMember.getId(), loggedInMember.getAuth());
 
         HttpHeaders headers = new HttpHeaders();
@@ -67,32 +67,5 @@ public class MemberController {
         headers.set("isMemberSaved", String.valueOf(isMemberSaved));
 
         return new ResponseEntity<String>(null, headers, HttpStatus.OK);
-    }
-
-    private String makeJWT(String id, String auth) {
-        Date now = new Date();
-        String jwt = Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-                .setIssuer("fresh")
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + Duration.ofMinutes(30).toMillis()))
-                .claim("id", id)
-                .claim("auth", auth)
-                .signWith(SignatureAlgorithm.HS256, "secret")
-                .compact();
-        return jwt;
-    }
-
-    @GetMapping("/doFilterInternal")
-    public void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response
-            //FilterChain filterChain
-            ) throws IOException, ServletException {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        //System.out.println(authorizationHeader);
-        Claims claims = jwtUtils.parseJwtToken(authorizationHeader);
-        System.out.println(claims);
-        //filterChain.doFilter(request, response);
     }
 }

@@ -1,16 +1,24 @@
 package com.example.demo.JWT;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Duration;
+import java.util.Date;
 
 public class JWTUtils {
+
+    private final String SECRET_KEY = "secret_key";
+
+    private final String BEARER = "Bearer ";
 
     public Claims parseJwtToken(String authorizationHeader) {
 
@@ -18,18 +26,44 @@ public class JWTUtils {
         String token = extractToken(authorizationHeader);
 
         return Jwts.parser()
-                .setSigningKey("secret")
+                .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
     }
 
     private void validateAuthorizationHeader(String header) {
-        if (header == null || !header.startsWith("Bearer ")) {
+        if (header == null || !header.startsWith(BEARER)) {
             throw new IllegalArgumentException();
         }
     }
 
     private String extractToken(String authorizationHeader) {
-        return authorizationHeader.substring("Bearer ".length());
+        return authorizationHeader.substring(BEARER.length());
+    }
+
+    public String makeJWT(String id, String auth) {
+        Date now = new Date();
+        String jwt = Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuer("fresh")
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + Duration.ofMinutes(180).toMillis()))
+                .claim("id", id)
+                .claim("auth", auth)
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+        return jwt;
+    }
+
+    public void filterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response
+            //FilterChain filterChain
+    ) throws IOException, ServletException {
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        //System.out.println(authorizationHeader);
+        Claims claims = parseJwtToken(authorizationHeader);
+        System.out.println(claims);
+        //filterChain.doFilter(request, response);
     }
 }

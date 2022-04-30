@@ -4,10 +4,10 @@ const cookies = new Cookies();
 
 interface ICookieOpt {
     path: string;
-    expires: Date;
+    expires?: Date;
     secure?: boolean;
     httpOnly?: boolean;
-}
+};
 
 export const setCookie = (name: string, value: string, options: ICookieOpt)=>{
 	return cookies.set(name, value, options);
@@ -15,4 +15,8 @@ export const setCookie = (name: string, value: string, options: ICookieOpt)=>{
 
 export const getCookie = (name: string) => {
 	return cookies.get(name);
+};
+
+export const removeCookie = (name: string, options: ICookieOpt) => {
+    return cookies.remove(name, options);
 };

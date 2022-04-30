@@ -82,11 +82,11 @@ function Home() {
             const token = config.data;
             const now = new Date();
             setCookie(
-                'my-blog-userInfo',
-                token,
+                'my_blog_userInfo',
+                JSON.stringify([idRef.current?.value, token]),
                 { 
                     path: "/", 
-                    expires: new Date(now.setDate(now.getDate() + 1)),
+                    expires: new Date(now.setMinutes(now.getMinutes() + 180)),
                     secure: true,
                     httpOnly: false
                 }
