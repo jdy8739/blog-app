@@ -5,6 +5,8 @@ import com.example.demo.DTO.BoardWrapperDTO;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -147,9 +149,20 @@ public class BoardRepository {
     }
 
     public void save(BoardDTO boardDTO) {
-        int count = 0;
-        for (Object elem : boardMap.entrySet()) count++;
-        boardMap.put(count, boardDTO);
+        Iterator<BoardDTO> iterator = boardMap.values().iterator();
+        BoardDTO board = null;
+        while(iterator.hasNext()) {
+            board = iterator.next();
+        }
+        Integer newPostNo = board.getBoardNo().intValue() + 1;
+        boardDTO.setBoardNo(newPostNo.longValue());
+
+        LocalDateTime now = LocalDateTime.now();
+        String formatedNow =
+                now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        boardDTO.setRegDate(formatedNow);
+
+        boardMap.put(newPostNo, boardDTO);
     }
 }
 

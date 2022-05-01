@@ -20,3 +20,5 @@ export const getCookie = (name: string) => {
 export const removeCookie = (name: string, options: ICookieOpt) => {
     return cookies.remove(name, options);
 };
+
+export const MY_BLOG_COOKIE_NAME = 'my_blog_userInfo';

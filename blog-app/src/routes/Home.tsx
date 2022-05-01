@@ -64,17 +64,6 @@ function Home() {
         e.preventDefault();
         nav('/signup');
     };
-
-    configAxios.interceptors.request.use(
-        async config => {
-            if(config.headers)
-                if(idRef.current) {
-                    config.headers['authorization'] = idRef.current?.value || '';
-                }
-            console.log(config);
-            return config;
-        }
-    );
     
     configAxios.interceptors.response.use(
         async config => {

@@ -73,6 +73,7 @@ public class BoardController {
                 headers.set("isIdAndTokenMatch", "false");
             } else {
                 boardService.savePost(boardDTO);
+                log.info("Post has saved.");
             }
         } catch (Exception e) {
             log.info("This token is invalid!");
@@ -82,5 +83,15 @@ public class BoardController {
                     .headers(headers)
                     .body(null);
         }
+    }
+
+    @DeleteMapping("/delete_post/{postNo}")
+    public ResponseEntity<Void> deletePost(
+            @PathVariable("postNo") int postNo,
+            HttpServletRequest req) {
+        HttpHeaders headers = new HttpHeaders();
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

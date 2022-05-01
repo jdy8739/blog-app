@@ -2,10 +2,9 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { configAxios } from "../../axiosConfig";
 import { Button, Container, TitleInput, ContentInput, Tag, TagInput } from "../../Styles/style";
 import BASE_URL from "../../URLS";
-import { getCookie } from "../../util/cookie";
+import { getCookie, MY_BLOG_COOKIE_NAME } from "../../util/cookie";
 
 const Header = styled.header`
     text-align: center;
@@ -21,21 +20,23 @@ function WritePost() {
         config => {
             if(config?.headers) 
                 config.headers['Authorization'] = 
-                    `Bearer ${getCookie('my_blog_userInfo')[1]}`;
+                    `Bearer ${getCookie(MY_BLOG_COOKIE_NAME)[1]}`;
             return config;
         }
     );
 
-    const handleOnPostSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const handleOnPostSubmit = () => {
         const title = titleRef?.current?.value || '';
         const content = contentRef?.current?.value || '';
-        const writer = getCookie('my_blog_userInfo')[0];
+        const writer = getCookie(MY_BLOG_COOKIE_NAME)[0];
 
         boardAxios.post(`${BASE_URL}/posts/add_post`, 
             { title, content, hashtags: tagList, writer })
-            
+            .then(() => {
+                alert('New Post has registered.');
+                nav('/posts');
+            })
+            .catch(err => console.log(err));
     };
 
     const nav = useNavigate();
@@ -85,72 +86,71 @@ function WritePost() {
     };
 
     useEffect(() => {
-        if(!getCookie('my_blog_userInfo')) {
+        if(!getCookie(MY_BLOG_COOKIE_NAME)) {
             alert('Post writing requires login!');
             nav(-1);
-        }
+        };
     }, []);
 
     return (
         <Container>
             <Header>Let's write a post and share your story!</Header>
-            <form onSubmit={handleOnPostSubmit}>
-                <div>
-                    <p>TITLE:</p>
-                    &ensp;
-                    <TitleInput
-                    required
-                    ref={titleRef}
-                    />
-                </div>
-                <div 
-                style={{ marginTop: '30px' }}
-                >
-                    <div>CONTENT:</div>
-                    &ensp;
-                    <ContentInput
-                    required
-                    ref={contentRef}
-                    />
-                </div>
-                <div
-                style={{ marginTop: '30px' }}
-                >
-                    <div>TAGS:</div>
-                    <TagInput
-                    ref={inputTagRef}
-                    onKeyDown={callAddHashTag}
-                    />
-                    &nbsp;
-                    <Button 
-                    clicked
-                    onClick={addHashTag}
-                    >add</Button>
-                    {
-                        !tagList ? null :
-                        <div>
-                            { tagList.map((tag, i) => 
-                            <Tag 
-                            key={i}
-                            onClick={() => removeTag(i)}
-                            >{ "# " + tag }</Tag>) }
-                        </div>
-                    }
-                </div>
-                <hr></hr>
-                <br></br>
-                <div 
-                style={{ textAlign: 'right' }}
-                >
-                    <Button 
-                    clicked
-                    >submit</Button>
-                    <Button 
-                    clicked
-                    onClick={quitWriting}
-                    >back</Button>
-                </div>
-            </form>
+            <div>
+                <p>TITLE:</p>
+                &ensp;
+                <TitleInput
+                required
+                ref={titleRef}
+                />
+            </div>
+            <div 
+            style={{ marginTop: '30px' }}
+            >
+                <div>CONTENT:</div>
+                &ensp;
+                <ContentInput
+                required
+                ref={contentRef}
+                />
+            </div>
+            <div
+            style={{ marginTop: '30px' }}
+            >
+                <div>TAGS:</div>
+                <TagInput
+                ref={inputTagRef}
+                onKeyDown={callAddHashTag}
+                />
+                &nbsp;
+                <Button 
+                clicked
+                onClick={addHashTag}
+                >add</Button>
+                {
+                    !tagList ? null :
+                    <div>
+                        { tagList.map((tag, i) => 
+                        <Tag 
+                        key={i}
+                        onClick={() => removeTag(i)}
+                        >{ "# " + tag }</Tag>) }
+                    </div>
+                }
+            </div>
+            <hr></hr>
+            <br></br>
+            <div 
+            style={{ textAlign: 'right' }}
+            >
+                <Button 
+                clicked
+                onClick={handleOnPostSubmit}
+                >submit</Button>
+                <Button 
+                clicked
+                onClick={quitWriting}
+                >back</Button>
+            </div>
         </Container>
     )
 };
