@@ -37,22 +37,7 @@ const DEFAULT_OFFSET = 0;
 const DEFAULT_LIMIT = 5;
 
 function Posts() {
-
-    const myAxios = axios.create();
-
-    myAxios.interceptors.request.use(
-        async config => {
-            if(config.headers)
-                config.headers['Authorization'] = 
-                    `Bearer ${getCookie('my_blog_userInfo')}`;
-            return config;
-        }
-    );
-
-    const needSession = () => {
-        myAxios.get(`${BASE_URL}/member/doFilterInternal`);
-    }
-
+    
     const [posts, setPosts] = useState<IPost>();
 
     const [isLoading, setIsLoading] = useState(true);
@@ -80,9 +65,11 @@ function Posts() {
 
     const paramsSearcher = new URLSearchParams(location.search);
 
-    const limit = paramsSearcher.get('limit') || DEFAULT_LIMIT;
+    const limit = 
+        paramsSearcher.get('limit') || DEFAULT_LIMIT;
 
-    const offset = paramsSearcher.get('offset') || DEFAULT_OFFSET;
+    const offset = 
+        paramsSearcher.get('offset') || DEFAULT_OFFSET;
 
     const fetchPosts = () => {
         axios.get<IPost>(

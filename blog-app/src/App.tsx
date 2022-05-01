@@ -27,7 +27,7 @@ function App() {
         <ThemeProvider theme={isDarkMode ? lightTheme : darkTheme}>
           <GlobalStyle />
           <BrowserRouter>
-            <NavigationBar />
+            <NavigationBar isDarkMode={isDarkMode}/>
             <Routes>
               <Route path="/write/*" element={<WritePost />} />
               <Route path="/posts/detail/:id" element={<PostDetail />} />

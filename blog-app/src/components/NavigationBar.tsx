@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useRef, useState } from "react";
 import { Cookies, useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +15,9 @@ const Nav = styled.nav`
     align-items: center;
     padding: 12px 42px;
     box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    z-index: 99;
 `;
 
 const NavElem = styled.p`
@@ -25,16 +29,63 @@ const NavElem = styled.p`
     }
 `;
 
-const ModeButton = styled.button`
+const ModeButton = styled.div`
     background-color: transparent;
     cursor: pointer;
     color: ${props => props.theme.fontColor};
     border: 1px solid ${props => props.theme.fontColor};
-    padding: 8px;
+    padding: 3px;
     border-radius: 8px;
+    width: 30px;
+    height: 12px;
+    position: relative;
 `;
 
-export default function NavigationBar() {
+const ModeBallDark = styled(motion.div)`
+    width: 12px;
+    height: 12px;
+    background-color: ${props => props.theme.fontColor};
+    border-radius: 50%;
+    position: absolute;
+`;
+
+const ModeBallLight = styled(motion.div)`
+    width: 12px;
+    height: 12px;
+    background-color: ${props => props.theme.fontColor};
+    border-radius: 50%;
+    position: absolute;
+    right: 3px;
+`;
+
+const SubMenu = styled(motion.div)`
+    width: 85px;
+    height: 110px;
+    background-color: ${props => props.theme.accentColor};
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+`;
+
+const subMenuVariant = {
+    initial: {
+        opacity: 0,
+        y: -100
+    },
+    animate: {
+        opacity: 1,
+        y: 0
+    },
+    exit: {
+        opacity: 0,
+        y: -100
+    }
+};
+
+export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 
     const changeTheme = () => {
         store.dispatch(changeThemeMode());
@@ -62,13 +113,48 @@ export default function NavigationBar() {
     };
     
     const logout = () => {
-        removeCookie('my_blog_userInfo', { path: '/' });
-        setUserId('');
+        const logoutConfirm = window.confirm('Are you sure to logout?');
+        if(logoutConfirm) {
+            removeCookie('my_blog_userInfo', { path: '/' });
+            setUserId('');
+            setIsSubMenuShown(false);
+            nav('/posts');
+        };
     };
+
+    const [isSubMenuShown, setIsSubMenuShown] = useState(false);
+
+    const toggleSubMenu = 
+        () => setIsSubMenuShown(isSubMenuShown => !isSubMenuShown);
+
+    const toWritePage = () => {
+        if(getCookie('my_blog_userInfo'))
+            nav('/write');
+        else alert('Post Writing requires login!');
+    }
 
     return (
         <Nav>
-            <NavElem>{ userId }</NavElem>
+            <NavElem 
+            style={{ position: 'relative' }}
+            onClick={toggleSubMenu}
+            >
+                { userId }
+                <AnimatePresence>
+                    { isSubMenuShown ? 
+                    <SubMenu 
+                    variants={subMenuVariant}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    >
+                        <br></br>
+                        <NavElem>MY POSTS</NavElem>
+                        <NavElem>LIKED</NavElem>
+                    </SubMenu>
+                    : null }
+                </AnimatePresence>
+            </NavElem>
             {
                 userId ? <NavElem onClick={logout}>LOGOUT</NavElem> : null
             }
@@ -76,8 +162,7 @@ export default function NavigationBar() {
                 !userId ? <NavElem onClick={() => nav('/')}>LOGIN</NavElem> : null
             }
             <NavElem onClick={() => nav('/posts')}>POSTS</NavElem>
-            <NavElem onClick={() => nav('/write')}>WRITE</NavElem>
-            <NavElem>LIKED</NavElem>
+            <NavElem onClick={toWritePage}>WRITE</NavElem>
             <div style={{ flexGrow: '1' }}></div>
             <form onSubmit={handleOnSubmit}>
                 <select 
@@ -97,7 +182,17 @@ export default function NavigationBar() {
             </form>
             &emsp;
             <ModeButton 
-            onClick={changeTheme}>{ 'mode' }</ModeButton>
+            onClick={changeTheme}>
+                {
+                    isDarkMode ? 
+                    <ModeBallDark
+                    layoutId={"ball"}
+                    /> :
+                    <ModeBallLight
+                    layoutId={"ball"}
+                    />
+                }
+            </ModeButton>
         </Nav>
     )
 };

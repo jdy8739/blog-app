@@ -1,7 +1,11 @@
-import React, { useRef, useState } from "react";
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { configAxios } from "../../axiosConfig";
 import { Button, Container, TitleInput, ContentInput, Tag, TagInput } from "../../Styles/style";
+import BASE_URL from "../../URLS";
+import { getCookie } from "../../util/cookie";
 
 const Header = styled.header`
     text-align: center;
@@ -9,10 +13,29 @@ const Header = styled.header`
     margin: 48px;
 `;
 
+const boardAxios = axios.create();
+
 function WritePost() {
+
+    boardAxios.interceptors.request.use(
+        config => {
+            if(config?.headers) 
+                config.headers['Authorization'] = 
+                    `Bearer ${getCookie('my_blog_userInfo')[1]}`;
+            return config;
+        }
+    );
 
     const handleOnPostSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        const title = titleRef?.current?.value || '';
+        const content = contentRef?.current?.value || '';
+        const writer = getCookie('my_blog_userInfo')[0];
+
+        boardAxios.post(`${BASE_URL}/posts/add_post`, 
+            { title, content, hashtags: tagList, writer })
+            
     };
 
     const nav = useNavigate();
@@ -22,6 +45,10 @@ function WritePost() {
             window.confirm('Are you sure to quit writing this post?');
         if(confirm) nav(-1);
     };
+
+    const titleRef = useRef<HTMLInputElement>(null);
+
+    const contentRef = useRef<HTMLTextAreaElement>(null);
 
     const inputTagRef = useRef<HTMLInputElement>(null);
 
@@ -37,8 +64,8 @@ function WritePost() {
         };
     };
 
-    const callAddHashTag = (e1?: React.KeyboardEvent<HTMLInputElement>) => {
-        if(e1?.keyCode === 13) addHashTag();
+    const callAddHashTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if(e.keyCode === 13) addHashTag();
     };
 
     const checkTagDuplicate = (newTag: string) => {
@@ -57,6 +84,13 @@ function WritePost() {
         });
     };
 
+    useEffect(() => {
+        if(!getCookie('my_blog_userInfo')) {
+            alert('Post writing requires login!');
+            nav(-1);
+        }
+    }, []);
+
     return (
         <Container>
             <Header>Let's write a post and share your story!</Header>
@@ -64,14 +98,20 @@ function WritePost() {
                 <div>
                     <p>TITLE:</p>
                     &ensp;
-                    <TitleInput />
+                    <TitleInput
+                    required
+                    ref={titleRef}
+                    />
                 </div>
                 <div 
                 style={{ marginTop: '30px' }}
                 >
                     <div>CONTENT:</div>
                     &ensp;
-                    <ContentInput />
+                    <ContentInput
+                    required
+                    ref={contentRef}
+                    />
                 </div>
                 <div
                 style={{ marginTop: '30px' }}
