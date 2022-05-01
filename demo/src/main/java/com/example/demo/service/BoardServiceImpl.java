@@ -9,4 +9,6 @@ public interface BoardServiceImpl {
     public BoardWrapperDTO getPosts(Integer offset, Integer limit);
 
     public BoardDTO getPost(Integer postNo);
+
+    public void savePost(BoardDTO boardDTO);
 }

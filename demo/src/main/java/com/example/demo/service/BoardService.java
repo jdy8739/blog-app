@@ -31,4 +31,7 @@ public class BoardService implements BoardServiceImpl {
         return boardRepository.getPostsByKeyword(subject, keyword, offset, limit);
     }
 
+    public void savePost(BoardDTO boardDTO) {
+        boardRepository.save(boardDTO);
+    }
 }

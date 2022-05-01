@@ -37,8 +37,7 @@ public class MemberController {
 
     @PostMapping("/signin")
     public ResponseEntity<String> signin(
-            @Validated @RequestBody MemberDTO memberDTO,
-            HttpServletRequest req) {
+            @Validated @RequestBody MemberDTO memberDTO) {
 
         MemberDTO loggedInMember = memberService.login(memberDTO);
         if(loggedInMember == null)

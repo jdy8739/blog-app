@@ -55,15 +55,12 @@ public class JWTUtils {
         return jwt;
     }
 
-    public void filterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response
+    public Claims filterInternal(String token
             //FilterChain filterChain
     ) throws IOException, ServletException {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        //System.out.println(authorizationHeader);
-        Claims claims = parseJwtToken(authorizationHeader);
+        Claims claims = parseJwtToken(token);
         System.out.println(claims);
+        return claims;
         //filterChain.doFilter(request, response);
     }
 }

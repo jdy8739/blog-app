@@ -2,11 +2,13 @@ package com.example.demo.repository;
 
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardWrapperDTO;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 public class BoardRepository {
 
     static private Map boardMap;
@@ -142,6 +144,12 @@ public class BoardRepository {
             }
         }
         return tmpMap;
+    }
+
+    public void save(BoardDTO boardDTO) {
+        int count = 0;
+        for (Object elem : boardMap.entrySet()) count++;
+        boardMap.put(count, boardDTO);
     }
 }
 
