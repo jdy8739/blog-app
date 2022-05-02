@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardWrapperDTO;
+import com.example.demo.DTO.ReplyDTO;
 import com.example.demo.repository.BoardRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,5 +43,9 @@ public class BoardService implements BoardServiceImpl {
 
     public void modifyPost(BoardDTO boardDTO) {
         boardRepository.modifyPost(boardDTO);
+    }
+
+    public void saveReply(ReplyDTO replyDTO) {
+        boardRepository.saveReply(replyDTO);
     }
 }

@@ -1,10 +1,11 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { configAxios } from "../../axiosConfig";
-import { Button, Container, Tag } from "../../Styles/style";
+import Reply from "../../components/Reply";
+import { Button, Container, Tag, TitleInput } from "../../Styles/style";
 import BASE_URL from "../../URLS";
 import { getCookie, MY_BLOG_COOKIE_NAME } from "../../util/cookie";
 import { IPostElement } from "../Posts/Posts";
@@ -23,6 +24,27 @@ const Info = styled.h5`
 const Content = styled.div`
     margin-top: 25px;
 `;
+
+const ReplyInput = styled(TitleInput)`
+`;
+
+type DateFormatType = Date | string | number;
+
+const formatDate = (date: Date) => {
+    let month: DateFormatType = date.getMonth() + 1;
+    let day: DateFormatType = date.getDate();
+    let hour: DateFormatType = date.getHours();
+    let minute: DateFormatType = date.getMinutes();
+    let second: DateFormatType = date.getSeconds();
+
+    month = month >= 10 ? month : '0' + month;
+    day = day >= 10 ? day : '0' + day;
+    hour = hour >= 10 ? hour : '0' + hour;
+    minute = minute >= 10 ? minute : '0' + minute;
+    second = second >= 10 ? second : '0' + second;
+
+    return date.getFullYear() + '-' + month + '-' + day + ' ' + hour + ':' + minute;
+};
 
 function PostDetail() {
 
@@ -56,7 +78,7 @@ function PostDetail() {
                 configAxios.delete(`${BASE_URL}/posts/delete_post/${postNo}`)
                     .then((res) => {
                         if(res) nav(-1);
-                        else alert('This is an unvalid Order.');
+                        else alert('This is an unvalid order.');
                     })
                     .catch(err => console.log(err));
             };
@@ -69,6 +91,32 @@ function PostDetail() {
             return cookie[0] === post?.writer;
         return false;
     };
+
+    const replyInputRef = useRef<HTMLInputElement>(null);
+
+    const handleOnReplySubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if(getCookie(MY_BLOG_COOKIE_NAME)) {
+            const newReply = {
+                boardNo: post?.boardNo,
+                replier: getCookie(MY_BLOG_COOKIE_NAME)[0],
+                reply: replyInputRef?.current?.value || '',
+                regDate: formatDate(new Date())
+            };
+            configAxios.post(`${BASE_URL}/posts/add_reply`, newReply)
+                .then(() => {
+                    post?.replyList.push(newReply);
+                    if(replyInputRef?.current) 
+                        replyInputRef.current.value = '';
+                    setIsAdded(isAdded => !isAdded);
+                })
+                .catch(err => console.log(err));
+        } else {
+            alert('To add a reply, you must login.');
+        };
+    };
+
+    const [isAdded, setIsAdded] = useState(false);
 
     return (
         <Container>
@@ -116,6 +164,23 @@ function PostDetail() {
                             </> : null
                         } 
                     </div>
+                    <br></br>
+                    <br></br>
+                    <div>
+                        <form onSubmit={handleOnReplySubmit}>
+                            <span>REPLY:</span>
+                            <Button clicked>add</Button>
+                            &ensp;
+                            <ReplyInput 
+                            required
+                            ref={replyInputRef}
+                            />
+                        </form>
+                    </div>
+                    <br></br>
+                    {
+                        post?.replyList.map((reply, i) => <Reply key={i} reply={reply}/>)
+                    }
                 </>
             }
         </Container>

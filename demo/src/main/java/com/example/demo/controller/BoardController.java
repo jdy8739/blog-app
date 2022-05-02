@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardWrapperDTO;
+import com.example.demo.DTO.ReplyDTO;
 import com.example.demo.JWT.JWTUtils;
 import com.example.demo.service.BoardService;
 
@@ -57,7 +58,7 @@ public class BoardController {
     public ResponseEntity<BoardDTO> getPost(
             @PathVariable int postNo,
             HttpServletRequest req) {
-
+        log.info("getPost(): " + postNo);
         String requestPurpose = req.getHeader("request");
 
         if(requestPurpose != null && requestPurpose.equals("modify")) {
@@ -146,6 +147,29 @@ public class BoardController {
             } else {
                 boardService.modifyPost(boardDTO);
                 log.info("Post has modified.");
+            }
+        } catch (Exception e) {
+            log.info("This token is invalid!");
+            headers.set("isValidToken", "false");
+        } finally {
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(null);
+        }
+    }
+
+    @PostMapping("add_reply")
+    public ResponseEntity<Void> addReply(
+            @Validated @RequestBody ReplyDTO replyDTO,
+            HttpServletRequest req) {
+        HttpHeaders headers = new HttpHeaders();
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        try {
+            Claims claims = jwtUtils.filterInternal(authorizationHeader);
+            if(claims.get("id").equals(replyDTO.getReplier())) {
+                boardService.saveReply(replyDTO);
+            } else {
+                throw new Exception();
             }
         } catch (Exception e) {
             log.info("This token is invalid!");

@@ -2,6 +2,7 @@ package com.example.demo.repository;
 
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardWrapperDTO;
+import com.example.demo.DTO.ReplyDTO;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -58,7 +59,8 @@ public class BoardRepository {
                     defaultContents[i],
                     tmpHashtagList,
                     0,
-                    "2022-04-22 05:11");
+                    "2022-04-22 05:11",
+                    new ArrayList<ReplyDTO>());
 
             boardMap.put(i, boardDTO);
         }
@@ -171,6 +173,19 @@ public class BoardRepository {
 
     public void modifyPost(BoardDTO boardDTO) {
         boardMap.put(boardDTO.getBoardNo().intValue(), boardDTO);
+    }
+
+    public void saveReply(ReplyDTO replyDTO) {
+        BoardDTO targetBoard = (BoardDTO) boardMap.get(replyDTO.getBoardNo().intValue());
+        List<ReplyDTO> replyList = targetBoard.getReplyList();
+        if(replyList.size() == 0) {
+            Integer zero = 0;
+            replyDTO.setReplyNo(zero.longValue());
+        } else {
+            Long lastReplyNo = replyList.get(replyList.size() - 1).getReplyNo();
+            replyDTO.setReplyNo(lastReplyNo + 1);
+        }
+        replyList.add(replyDTO);
     }
 }
 

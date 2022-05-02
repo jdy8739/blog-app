@@ -15,6 +15,15 @@ export interface IPostElement {
     numberOfLikes: number;
     hashtags: string[];
     regDate: string;
+    replyList: IReply[];
+};
+
+export interface IReply {
+    replyNo?: number;
+    boardNo?: number;
+    replier: string;
+    reply: string;
+    regDate: string;
 };
 
 interface IBoard {

@@ -19,6 +19,7 @@ public class BoardDTO {
     private List<String> hashtags;
     private int numberOfLikes;
     private String regDate;
+    private List<ReplyDTO> replyList;
 
     public BoardDTO() {
         this.numberOfLikes = 0;
