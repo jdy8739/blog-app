@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { configAxios } from "../axiosConfig";
 import { IReply } from "../routes/Posts/Posts";
 import { Button } from "../Styles/style";
+import BASE_URL from "../URLS";
 
 const ReplyStyle = styled.div`
     border-bottom: 1px solid ${props => props.theme.accentColor};
@@ -25,7 +27,12 @@ const SmallText = styled.p`
 function Reply({ reply }: { reply: IReply }) {
 
     const deleteReply = () => {
-        
+        configAxios.delete(
+            `${BASE_URL}/posts/delete_reply/${reply.boardNo}/${reply.replyNo}`)
+            .then(() => {
+                alert('?')
+            })
+            .catch(err => console.log(err));
     };
 
     return (

@@ -7,6 +7,8 @@ import com.example.demo.repository.BoardRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class BoardService implements BoardServiceImpl {
@@ -47,5 +49,9 @@ public class BoardService implements BoardServiceImpl {
 
     public void saveReply(ReplyDTO replyDTO) {
         boardRepository.saveReply(replyDTO);
+    }
+
+    public void deleteReply(Integer postNo, Integer replyNo, String id) throws Exception {
+        boardRepository.deleteReply(postNo, replyNo, id);
     }
 }

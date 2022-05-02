@@ -18,4 +18,6 @@ public interface BoardServiceImpl {
     public void modifyPost(BoardDTO boardDTO);
 
     public void saveReply(ReplyDTO replyDTO);
+
+    public void deleteReply(Integer postNo, Integer replyNo, String id) throws Exception;
 }

@@ -180,4 +180,26 @@ public class BoardController {
                     .body(null);
         }
     }
+
+    @DeleteMapping("delete_reply/{postNo}/{replyNo}")
+    public ResponseEntity<Void> deleteReply(
+            @PathVariable("postNo") String postNo,
+            @PathVariable("replyNo") String replyNo,
+            HttpServletRequest req) {
+        HttpHeaders headers = new HttpHeaders();
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        try {
+            Claims claims = jwtUtils.filterInternal(authorizationHeader);
+            String id = (String) claims.get("id");
+            boardService.deleteReply(
+                    Integer.parseInt(postNo), Integer.parseInt(replyNo), id);
+        } catch (Exception e) {
+            log.info("This token is invalid!");
+            headers.set("isValidToken", "false");
+        } finally {
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(null);
+        }
+    }
 }

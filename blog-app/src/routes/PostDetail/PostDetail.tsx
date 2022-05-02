@@ -8,7 +8,7 @@ import Reply from "../../components/Reply";
 import { Button, Container, Tag, TitleInput } from "../../Styles/style";
 import BASE_URL from "../../URLS";
 import { getCookie, MY_BLOG_COOKIE_NAME } from "../../util/cookie";
-import { IPostElement } from "../Posts/Posts";
+import { IPostElement, IReply } from "../Posts/Posts";
 
 const Title = styled.h1`
     font-size: 31px;
@@ -103,9 +103,10 @@ function PostDetail() {
                 reply: replyInputRef?.current?.value || '',
                 regDate: formatDate(new Date())
             };
-            configAxios.post(`${BASE_URL}/posts/add_reply`, newReply)
-                .then(() => {
-                    post?.replyList.push(newReply);
+            configAxios.post<IReply[]>(`${BASE_URL}/posts/add_reply`, newReply)
+                .then((res) => {
+                    if(post)
+                        post.replyList = res.data;
                     if(replyInputRef?.current) 
                         replyInputRef.current.value = '';
                     setIsAdded(isAdded => !isAdded);

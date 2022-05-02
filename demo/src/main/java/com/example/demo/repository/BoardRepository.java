@@ -187,5 +187,17 @@ public class BoardRepository {
         }
         replyList.add(replyDTO);
     }
+
+    public void deleteReply(Integer postNo, Integer replyNo, String id) throws Exception {
+        //log.info(postNo + ", " + replyNo + ", " + id);
+        BoardDTO targetBaord = (BoardDTO) boardMap.get(postNo);
+        List<ReplyDTO> targetReplyList = targetBaord.getReplyList();
+        if(targetReplyList.get(postNo).getReplier().equals(id)) {
+            targetReplyList.remove(replyNo.intValue());
+            log.info("removed.");
+        } else {
+            throw new Exception();
+        }
+    }
 }
 
