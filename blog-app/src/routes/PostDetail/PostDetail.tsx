@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { boardAxios } from "../../axiosConfig";
+import { configAxios } from "../../axiosConfig";
 import { Button, Container, Tag } from "../../Styles/style";
 import BASE_URL from "../../URLS";
 import { getCookie, MY_BLOG_COOKIE_NAME } from "../../util/cookie";
@@ -49,12 +49,25 @@ function PostDetail() {
     };
 
     const deletePost = (postNo?: number) => {
-        alert(postNo)
-        if(postNo) {
-            boardAxios.delete(`${BASE_URL}/posts/delete_post/${postNo}`)
-                .then(() => alert('o'))
-                .catch(err => console.log(err));
-        }
+        if(postNo == 0 || postNo) {
+            const deleteConfirm = 
+                window.confirm('Are you sure to delete this post?');
+            if(deleteConfirm) {
+                configAxios.delete(`${BASE_URL}/posts/delete_post/${postNo}`)
+                    .then((res) => {
+                        if(res) nav(-1);
+                        else alert('This is an unvalid Order.');
+                    })
+                    .catch(err => console.log(err));
+            };
+        };
+    };
+
+    const isMyPost = () :boolean => {
+        const cookie = getCookie(MY_BLOG_COOKIE_NAME);
+        if(cookie)
+            return cookie[0] === post?.writer;
+        return false;
     };
 
     return (
@@ -90,10 +103,11 @@ function PostDetail() {
                         onClick={() => nav(-1)}
                         >back</Button>
                         {
-                            getCookie(MY_BLOG_COOKIE_NAME)[0] === post?.writer ?
+                            isMyPost() ?
                             <>
                                 <Button
                                 clicked
+                                onClick={() => nav('/modify/' + post?.boardNo)}
                                 >modify</Button>
                                 <Button
                                 clicked

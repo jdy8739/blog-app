@@ -164,5 +164,13 @@ public class BoardRepository {
 
         boardMap.put(newPostNo, boardDTO);
     }
+
+    public void deletePost(Integer postNo) {
+        boardMap.remove(postNo);
+    }
+
+    public void modifyPost(BoardDTO boardDTO) {
+        boardMap.put(boardDTO.getBoardNo().intValue(), boardDTO);
+    }
 }
 

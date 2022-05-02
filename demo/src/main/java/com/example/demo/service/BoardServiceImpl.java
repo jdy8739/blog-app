@@ -11,4 +11,8 @@ public interface BoardServiceImpl {
     public BoardDTO getPost(Integer postNo);
 
     public void savePost(BoardDTO boardDTO);
+
+    public boolean deletePost(Integer postNo, String id);
+
+    public void modifyPost(BoardDTO boardDTO);
 }

@@ -49,6 +49,8 @@ const P = styled.p`
     }
 `;
 
+const loginAxios = axios.create();
+
 function Home() {
 
     const nav = useNavigate();
@@ -65,9 +67,8 @@ function Home() {
         nav('/signup');
     };
     
-    configAxios.interceptors.response.use(
+    loginAxios.interceptors.response.use(
         async config => {
-            console.log(config);
             const token = config.data;
             const now = new Date();
             setCookie(
@@ -90,7 +91,8 @@ function Home() {
                 config,
                 message: errMsg,
                 response,
-                isAxiosError
+                isAxiosError,
+                status
             });
         }
     );
@@ -98,7 +100,7 @@ function Home() {
     const signin = 
         (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        configAxios.post(`${BASE_URL}/member/signin`, { 
+        loginAxios.post(`${BASE_URL}/member/signin`, { 
             id: idRef.current?.value, 
             password: pwRef.current?.value
         })

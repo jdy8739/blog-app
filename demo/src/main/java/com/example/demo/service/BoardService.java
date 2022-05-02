@@ -31,4 +31,16 @@ public class BoardService implements BoardServiceImpl {
     public void savePost(BoardDTO boardDTO) {
         boardRepository.save(boardDTO);
     }
+
+    public boolean deletePost(Integer postNo, String id) {
+        BoardDTO boardDTO = boardRepository.getPost(postNo);
+        if(boardDTO.getWriter().equals(id)) {
+            boardRepository.deletePost(postNo);
+            return true;
+        } else return false;
+    }
+
+    public void modifyPost(BoardDTO boardDTO) {
+        boardRepository.modifyPost(boardDTO);
+    }
 }

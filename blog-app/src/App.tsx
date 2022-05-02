@@ -30,6 +30,7 @@ function App() {
             <NavigationBar isDarkMode={isDarkMode}/>
             <Routes>
               <Route path="/write/*" element={<WritePost />} />
+              <Route path="/modify/*" element={<WritePost />} />
               <Route path="/posts/detail/:id" element={<PostDetail />} />
               <Route path="/posts/*" element={<Posts />} />
               <Route path="/signup" element={<Signup />} />

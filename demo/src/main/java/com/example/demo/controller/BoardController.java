@@ -54,17 +54,40 @@ public class BoardController {
     }
 
     @GetMapping("/get_detail/{postNo}")
-    public ResponseEntity<BoardDTO> getPost(@PathVariable int postNo) {
-        log.info("getPost(): " + postNo);
-        return ResponseEntity.ok()
-                .body(boardService.getPost(postNo));
+    public ResponseEntity<BoardDTO> getPost(
+            @PathVariable int postNo,
+            HttpServletRequest req) {
+
+        String requestPurpose = req.getHeader("request");
+
+        if(requestPurpose != null && requestPurpose.equals("modify")) {
+            HttpHeaders headers = new HttpHeaders();
+            String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+            try {
+                Claims claims = jwtUtils.filterInternal(authorizationHeader);
+                String id = (String) claims.get("id");
+                BoardDTO boardDTO = boardService.getPost(postNo);
+                if(id.equals(boardDTO.getWriter())) {
+                    return ResponseEntity.ok()
+                            .body(boardService.getPost(postNo));
+                } else throw new Exception();
+            } catch (Exception e) {
+                log.info("This token is invalid!");
+                headers.set("isValidToken", "false");
+                return ResponseEntity.status(401)
+                        .headers(headers)
+                        .body(null);
+            }
+        } else {
+            return ResponseEntity.ok()
+                    .body(boardService.getPost(postNo));
+        }
     }
 
     @PostMapping("/add_post")
     public ResponseEntity<Void> addPost(
             @Validated @RequestBody BoardDTO boardDTO,
             HttpServletRequest req) {
-
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         try {
@@ -86,12 +109,51 @@ public class BoardController {
     }
 
     @DeleteMapping("/delete_post/{postNo}")
-    public ResponseEntity<Void> deletePost(
+    public ResponseEntity<Boolean> deletePost(
             @PathVariable("postNo") int postNo,
+            HttpServletRequest req) {
+        log.info("" + postNo);
+        HttpHeaders headers = new HttpHeaders();
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        boolean isDeleted = false;
+        try {
+            Claims claims = jwtUtils.filterInternal(authorizationHeader);
+            String id = (String) claims.get("id");
+            isDeleted = boardService.deletePost(postNo, id);
+        } catch (Exception e) {
+            log.info("This token is invalid!");
+            headers.set("isValidToken", "false");
+            return ResponseEntity.status(401)
+                    .headers(headers)
+                    .body(isDeleted);
+        } finally {
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(isDeleted);
+        }
+    }
+
+    @PutMapping("/modify_post")
+    ResponseEntity<Void> modifyPost(
+            @Validated @RequestBody BoardDTO boardDTO,
             HttpServletRequest req) {
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        try {
+            Claims claims = jwtUtils.filterInternal(authorizationHeader);
+            if(!claims.get("id").equals(boardDTO.getWriter())) {
+                headers.set("isIdAndTokenMatch", "false");
+            } else {
+                boardService.modifyPost(boardDTO);
+                log.info("Post has modified.");
+            }
+        } catch (Exception e) {
+            log.info("This token is invalid!");
+            headers.set("isValidToken", "false");
+        } finally {
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(null);
+        }
     }
 }

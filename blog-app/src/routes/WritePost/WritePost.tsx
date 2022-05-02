@@ -1,10 +1,13 @@
 import axios from "axios";
+import { title } from "process";
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { configAxios, configModifyAxios } from "../../axiosConfig";
 import { Button, Container, TitleInput, ContentInput, Tag, TagInput } from "../../Styles/style";
 import BASE_URL from "../../URLS";
 import { getCookie, MY_BLOG_COOKIE_NAME } from "../../util/cookie";
+import { IPostElement } from "../Posts/Posts";
 
 const Header = styled.header`
     text-align: center;
@@ -12,31 +15,41 @@ const Header = styled.header`
     margin: 48px;
 `;
 
-const boardAxios = axios.create();
-
 function WritePost() {
 
-    boardAxios.interceptors.request.use(
-        config => {
-            if(config?.headers) 
-                config.headers['Authorization'] = 
-                    `Bearer ${getCookie(MY_BLOG_COOKIE_NAME)[1]}`;
-            return config;
-        }
-    );
+    const writeMatch = useMatch('/write');
+
+    const modifyMatch = useMatch('/modify/:postNo');
 
     const handleOnPostSubmit = () => {
         const title = titleRef?.current?.value || '';
         const content = contentRef?.current?.value || '';
         const writer = getCookie(MY_BLOG_COOKIE_NAME)[0];
 
-        boardAxios.post(`${BASE_URL}/posts/add_post`, 
+        if(writeMatch && !modifyMatch) {
+            configAxios.post(`${BASE_URL}/posts/add_post`, 
             { title, content, hashtags: tagList, writer })
             .then(() => {
                 alert('New Post has registered.');
                 nav('/posts');
             })
             .catch(err => console.log(err));
+        } else {
+            configAxios.put(`${BASE_URL}/posts/modify_post`, 
+            { 
+                boardNo: post?.boardNo,
+                title, 
+                content, 
+                hashtags: tagList, 
+                writer, 
+                regDate: post?.regDate
+            })
+            .then(() => {
+                alert('Post has modified.');
+                nav('/posts/detail/' + modifyMatch?.params.postNo);
+            })
+            .catch(err => console.log(err));
+        }
     };
 
     const nav = useNavigate();
@@ -85,16 +98,51 @@ function WritePost() {
         });
     };
 
+    const [post, setPost] = useState<IPostElement>();
+
+    const getPostAndCheckValidation = () => {
+        configModifyAxios.get<IPostElement>(
+            `${BASE_URL}/posts/get_detail/${modifyMatch?.params.postNo}`)
+            .then(res => setPost(res.data))
+            .catch(err => {
+                if(err.response.status === 401) {
+                    alert('You cannot access this post for modification!');
+                    nav(-1);
+                };
+            });
+    };
+
     useEffect(() => {
         if(!getCookie(MY_BLOG_COOKIE_NAME)) {
             alert('Post writing requires login!');
             nav(-1);
+        }
+        if(modifyMatch) {
+            getPostAndCheckValidation();
         };
     }, []);
 
+    useEffect(() => {
+        if(titleRef.current) {
+            titleRef.current.value = post?.title || '';
+        };
+        if(contentRef.current) {
+            contentRef.current.value = post?.content || '';
+        };
+        setTagList(() => {
+            return [...post?.hashtags || []];
+        });
+    }, [post]);
+
     return (
         <Container>
-            <Header>Let's write a post and share your story!</Header>
+            <Header>
+                {
+                    writeMatch && !modifyMatch ? 
+                    "Let's write a post and share your story!" :
+                    "Make a modify your post. You may show it more specific. :)"
+                }
+            </Header>
             <div>
                 <p>TITLE:</p>
                 &ensp;
