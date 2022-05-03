@@ -77,7 +77,7 @@ function PostDetail() {
             if(deleteConfirm) {
                 configAxios.delete(`${BASE_URL}/posts/delete_post/${postNo}`)
                     .then((res) => {
-                        if(res) nav(-1);
+                        if(res) nav('/posts');
                         else alert('This is an unvalid order.');
                     })
                     .catch(err => console.log(err));
@@ -97,7 +97,7 @@ function PostDetail() {
     const handleOnReplySubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(getCookie(MY_BLOG_COOKIE_NAME)) {
-            const newReply = {
+            const newReply: IReply = {
                 boardNo: post?.boardNo,
                 replier: getCookie(MY_BLOG_COOKIE_NAME)[0],
                 reply: replyInputRef?.current?.value || '',
@@ -189,7 +189,7 @@ function PostDetail() {
                     </div>
                     <br></br>
                     {
-                        post?.replyList.map((reply, i) => 
+                        post?.replyList?.map((reply, i) => 
                         <Reply 
                         key={i} 
                         reply={reply}

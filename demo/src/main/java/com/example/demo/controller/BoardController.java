@@ -204,7 +204,7 @@ public class BoardController {
                 headers.set("isValidToken", "false");
             }
         } finally {
-            headers.set("Access-Control-Expose-Headers", "*, Authorization, Set-Cookie");
+            headers.set("Access-Control-Expose-Headers", "*");
             return ResponseEntity.ok()
                     .headers(headers)
                     .body(targetReply);

@@ -172,6 +172,9 @@ public class BoardRepository {
     }
 
     public void modifyPost(BoardDTO boardDTO) {
+        log.info("" + boardDTO.getContent());
+        BoardDTO oldBoard = (BoardDTO) boardMap.get(boardDTO.getBoardNo().intValue());
+        boardDTO.setReplyList(oldBoard.getReplyList());
         boardMap.put(boardDTO.getBoardNo().intValue(), boardDTO);
     }
 
