@@ -28,6 +28,17 @@ const Content = styled.div`
 const ReplyInput = styled(TitleInput)`
 `;
 
+const NumberOfLikes = styled.div`
+    background-color: ${props => props.theme.accentColor};
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    margin: auto;
+`;
+
 type DateFormatType = Date | string | number;
 
 const formatDate = (date: Date) => {
@@ -150,14 +161,17 @@ function PostDetail() {
                                 >{ '# ' + tag }</Tag>)
                         }
                     </div>
+                    <div style={{ marginTop: '28px' }}>
+                        <NumberOfLikes>{ post?.numberOfLikes }</NumberOfLikes>
+                    </div>
                     <div style={{
                         textAlign: 'center',
-                        marginTop: '48px'
+                        marginTop: '28px'
                     }}
                     >
                         <Button 
                         clicked
-                        >like</Button>
+                        >like 👍</Button>
                         <Button 
                         clicked
                         onClick={() => nav(-1)}

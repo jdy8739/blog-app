@@ -21,6 +21,11 @@ function Post({ post }: { post: IPostElement }) {
         nav(`/posts/hashtag/${tagText}/get?offset=0&limit=5`);
     };
 
+    const handleLikesClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        
+    };
+
     return (
         <>
             <PostCard
@@ -33,7 +38,9 @@ function Post({ post }: { post: IPostElement }) {
                         post.content 
                     }
                 </PostContentPreview>
-                <PostLikes>👍{ post.numberOfLikes}</PostLikes>
+                <PostLikes
+                onClick={handleLikesClick}
+                >{ "👍 " + post.numberOfLikes}</PostLikes>
                 <PostWriter>{ post.regDate + " - writer: " + post.writer }</PostWriter>
                 <TagSection>
                     { 
