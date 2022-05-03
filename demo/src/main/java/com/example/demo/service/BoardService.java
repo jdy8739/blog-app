@@ -47,11 +47,12 @@ public class BoardService implements BoardServiceImpl {
         boardRepository.modifyPost(boardDTO);
     }
 
-    public void saveReply(ReplyDTO replyDTO) {
-        boardRepository.saveReply(replyDTO);
+    public List<ReplyDTO> saveReply(ReplyDTO replyDTO) {
+        return boardRepository.saveReply(replyDTO);
     }
 
-    public void deleteReply(Integer postNo, Integer replyNo, String id) throws Exception {
-        boardRepository.deleteReply(postNo, replyNo, id);
+    public List<ReplyDTO> deleteReply(
+            Integer postNo, Integer replyNo, String id) throws Exception {
+        return boardRepository.deleteReply(postNo, replyNo, id);
     }
 }

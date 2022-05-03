@@ -175,7 +175,7 @@ public class BoardRepository {
         boardMap.put(boardDTO.getBoardNo().intValue(), boardDTO);
     }
 
-    public void saveReply(ReplyDTO replyDTO) {
+    public List<ReplyDTO> saveReply(ReplyDTO replyDTO) {
         BoardDTO targetBoard = (BoardDTO) boardMap.get(replyDTO.getBoardNo().intValue());
         List<ReplyDTO> replyList = targetBoard.getReplyList();
         if(replyList.size() == 0) {
@@ -186,18 +186,28 @@ public class BoardRepository {
             replyDTO.setReplyNo(lastReplyNo + 1);
         }
         replyList.add(replyDTO);
+        return replyList;
     }
 
-    public void deleteReply(Integer postNo, Integer replyNo, String id) throws Exception {
+    public List<ReplyDTO> deleteReply(
+            Integer postNo, Integer replyNo, String id) throws Exception {
         //log.info(postNo + ", " + replyNo + ", " + id);
-        BoardDTO targetBaord = (BoardDTO) boardMap.get(postNo);
-        List<ReplyDTO> targetReplyList = targetBaord.getReplyList();
-        if(targetReplyList.get(postNo).getReplier().equals(id)) {
-            targetReplyList.remove(replyNo.intValue());
-            log.info("removed.");
-        } else {
-            throw new Exception();
+        BoardDTO targetBoard = (BoardDTO) boardMap.get(postNo);
+        List<ReplyDTO> targetReplyList = targetBoard.getReplyList();
+        Integer targetNum = null;
+        int cnt = 0;
+        for (ReplyDTO replyDTO : targetReplyList) {
+            if (replyDTO.getReplyNo().intValue() == replyNo) {
+                targetNum = cnt;
+                break;
+            }
+            cnt ++;
         }
+        //log.info("cnt: " + cnt);
+        if (targetReplyList.get(cnt).getReplier().equals(id)) {
+            targetReplyList.remove(cnt);
+        } else throw new Exception("AccessDeniedException");
+        return targetReplyList;
     }
 }
 

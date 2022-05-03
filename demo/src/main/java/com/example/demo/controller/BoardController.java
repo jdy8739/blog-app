@@ -20,6 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -159,15 +160,16 @@ public class BoardController {
     }
 
     @PostMapping("add_reply")
-    public ResponseEntity<Void> addReply(
+    public ResponseEntity<List<ReplyDTO>> addReply(
             @Validated @RequestBody ReplyDTO replyDTO,
             HttpServletRequest req) {
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        List<ReplyDTO> targetReply = null;
         try {
             Claims claims = jwtUtils.filterInternal(authorizationHeader);
             if(claims.get("id").equals(replyDTO.getReplier())) {
-                boardService.saveReply(replyDTO);
+                targetReply = boardService.saveReply(replyDTO);
             } else {
                 throw new Exception();
             }
@@ -177,29 +179,35 @@ public class BoardController {
         } finally {
             return ResponseEntity.ok()
                     .headers(headers)
-                    .body(null);
+                    .body(targetReply);
         }
     }
 
     @DeleteMapping("delete_reply/{postNo}/{replyNo}")
-    public ResponseEntity<Void> deleteReply(
+    public ResponseEntity<List<ReplyDTO>> deleteReply(
             @PathVariable("postNo") String postNo,
             @PathVariable("replyNo") String replyNo,
-            HttpServletRequest req) {
+            HttpServletRequest req) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        List<ReplyDTO> targetReply = null;
         try {
             Claims claims = jwtUtils.filterInternal(authorizationHeader);
             String id = (String) claims.get("id");
-            boardService.deleteReply(
+            targetReply = boardService.deleteReply(
                     Integer.parseInt(postNo), Integer.parseInt(replyNo), id);
         } catch (Exception e) {
-            log.info("This token is invalid!");
-            headers.set("isValidToken", "false");
+            if(e.getMessage().equals("AccessDeniedException")) {
+                headers.set("isAccessValid", "false");
+            } else {
+                log.info("This token is invalid!");
+                headers.set("isValidToken", "false");
+            }
         } finally {
+            headers.set("Access-Control-Expose-Headers", "*, Authorization, Set-Cookie");
             return ResponseEntity.ok()
                     .headers(headers)
-                    .body(null);
+                    .body(targetReply);
         }
     }
 }

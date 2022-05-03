@@ -4,6 +4,8 @@ import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardWrapperDTO;
 import com.example.demo.DTO.ReplyDTO;
 
+import java.util.List;
+
 
 public interface BoardServiceImpl {
 
@@ -17,7 +19,8 @@ public interface BoardServiceImpl {
 
     public void modifyPost(BoardDTO boardDTO);
 
-    public void saveReply(ReplyDTO replyDTO);
+    public List<ReplyDTO> saveReply(ReplyDTO replyDTO);
 
-    public void deleteReply(Integer postNo, Integer replyNo, String id) throws Exception;
+    public List<ReplyDTO> deleteReply(
+            Integer postNo, Integer replyNo, String id) throws Exception;
 }

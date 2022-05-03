@@ -105,8 +105,10 @@ function PostDetail() {
             };
             configAxios.post<IReply[]>(`${BASE_URL}/posts/add_reply`, newReply)
                 .then((res) => {
-                    if(post)
+                    if(post) {
+                        //console.log(res.data ? res.data : 'x');
                         post.replyList = res.data;
+                    };
                     if(replyInputRef?.current) 
                         replyInputRef.current.value = '';
                     setIsAdded(isAdded => !isAdded);
@@ -118,6 +120,13 @@ function PostDetail() {
     };
 
     const [isAdded, setIsAdded] = useState(false);
+
+    const setReply = (updatedReplies: IReply[]) => {
+        if(post) {
+            post.replyList = updatedReplies;
+            setIsAdded(isAdded => !isAdded);
+        };
+    };
 
     return (
         <Container>
@@ -180,7 +189,12 @@ function PostDetail() {
                     </div>
                     <br></br>
                     {
-                        post?.replyList.map((reply, i) => <Reply key={i} reply={reply}/>)
+                        post?.replyList.map((reply, i) => 
+                        <Reply 
+                        key={i} 
+                        reply={reply}
+                        setReply={setReply}
+                        />)
                     }
                 </>
             }

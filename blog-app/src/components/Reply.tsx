@@ -24,13 +24,22 @@ const SmallText = styled.p`
     margin: 4px;
 `;
 
-function Reply({ reply }: { reply: IReply }) {
+type ISetReply = (updatedReplies: IReply[]) => void;
+
+function Reply({ reply, setReply }: { reply: IReply, setReply: ISetReply }) {
 
     const deleteReply = () => {
         configAxios.delete(
             `${BASE_URL}/posts/delete_reply/${reply.boardNo}/${reply.replyNo}`)
-            .then(() => {
-                alert('?')
+            .then(res => {
+                const isAccessValid = res.headers['isaccessvalid'];
+                if(isAccessValid) {
+                    if(!JSON.parse(isAccessValid)) {
+                        alert('You cannot delete this reply, since you did not reply this comment!');
+                    };
+                } else {
+                    setReply(res.data);
+                };
             })
             .catch(err => console.log(err));
     };
