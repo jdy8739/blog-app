@@ -23,4 +23,6 @@ public interface BoardServiceImpl {
 
     public List<ReplyDTO> deleteReply(
             Integer postNo, Integer replyNo, String id) throws Exception;
+
+    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) throws Exception;
 }

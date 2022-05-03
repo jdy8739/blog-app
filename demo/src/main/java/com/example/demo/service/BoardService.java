@@ -55,4 +55,8 @@ public class BoardService implements BoardServiceImpl {
             Integer postNo, Integer replyNo, String id) throws Exception {
         return boardRepository.deleteReply(postNo, replyNo, id);
     }
+
+    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) throws Exception {
+        return boardRepository.modifyReply(replyDTO, id);
+    }
 }

@@ -163,6 +163,7 @@ public class BoardRepository {
         String formatedNow =
                 now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         boardDTO.setRegDate(formatedNow);
+        boardDTO.setReplyList(new ArrayList<ReplyDTO>());
 
         boardMap.put(newPostNo, boardDTO);
     }
@@ -209,6 +210,26 @@ public class BoardRepository {
         //log.info("cnt: " + cnt);
         if (targetReplyList.get(cnt).getReplier().equals(id)) {
             targetReplyList.remove(cnt);
+        } else throw new Exception("AccessDeniedException");
+        return targetReplyList;
+    }
+
+    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) throws Exception {
+        BoardDTO boardDTO = (BoardDTO) boardMap.get(replyDTO.getBoardNo().intValue());
+        List<ReplyDTO> targetReplyList = boardDTO.getReplyList();
+        Integer replyNo = replyDTO.getReplyNo().intValue();
+        Integer targetNum = null;
+        int cnt = 0;
+        for (ReplyDTO reply : targetReplyList) {
+            if (reply.getReplyNo().intValue() == replyNo) {
+                targetNum = cnt;
+                break;
+            }
+            cnt ++;
+        }
+        //log.info("cnt: " + cnt);
+        if (targetReplyList.get(cnt).getReplier().equals(id)) {
+            targetReplyList.get(cnt).setReply(replyDTO.getReply());
         } else throw new Exception("AccessDeniedException");
         return targetReplyList;
     }

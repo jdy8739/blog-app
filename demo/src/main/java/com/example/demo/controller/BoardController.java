@@ -159,7 +159,7 @@ public class BoardController {
         }
     }
 
-    @PostMapping("add_reply")
+    @PostMapping("/add_reply")
     public ResponseEntity<List<ReplyDTO>> addReply(
             @Validated @RequestBody ReplyDTO replyDTO,
             HttpServletRequest req) {
@@ -183,7 +183,7 @@ public class BoardController {
         }
     }
 
-    @DeleteMapping("delete_reply/{postNo}/{replyNo}")
+    @DeleteMapping("/delete_reply/{postNo}/{replyNo}")
     public ResponseEntity<List<ReplyDTO>> deleteReply(
             @PathVariable("postNo") String postNo,
             @PathVariable("replyNo") String replyNo,
@@ -203,6 +203,28 @@ public class BoardController {
                 log.info("This token is invalid!");
                 headers.set("isValidToken", "false");
             }
+        } finally {
+            headers.set("Access-Control-Expose-Headers", "*");
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(targetReply);
+        }
+    }
+
+    @PutMapping("/modify_reply")
+    public ResponseEntity<List<ReplyDTO>> modifyReply(
+            @Validated @RequestBody ReplyDTO replyDTO,
+            HttpServletRequest req) {
+        HttpHeaders headers = new HttpHeaders();
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        List<ReplyDTO> targetReply = null;
+        try {
+            Claims claims = jwtUtils.filterInternal(authorizationHeader);
+            String id = (String) claims.get("id");
+            targetReply = boardService.modifyReply(replyDTO, id);
+        } catch (Exception e) {
+            log.info("This token is invalid!");
+            headers.set("isValidToken", "false");
         } finally {
             headers.set("Access-Control-Expose-Headers", "*");
             return ResponseEntity.ok()

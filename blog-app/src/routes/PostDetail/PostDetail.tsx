@@ -121,6 +121,8 @@ function PostDetail() {
 
     const [isAdded, setIsAdded] = useState(false);
 
+    const [isModified, setIsModified] = useState(-1);
+
     const setReply = (updatedReplies: IReply[]) => {
         if(post) {
             post.replyList = updatedReplies;
@@ -194,6 +196,9 @@ function PostDetail() {
                         key={i} 
                         reply={reply}
                         setReply={setReply}
+                        isModified={isModified}
+                        setIsModified={setIsModified}
+                        index={i}
                         />)
                     }
                 </>
