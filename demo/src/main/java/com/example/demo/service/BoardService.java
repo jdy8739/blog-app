@@ -2,11 +2,15 @@ package com.example.demo.service;
 
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardWrapperDTO;
+import com.example.demo.DTO.MemberDTO;
 import com.example.demo.DTO.ReplyDTO;
 import com.example.demo.repository.BoardRepository;
+import com.example.demo.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Slf4j
@@ -15,8 +19,27 @@ public class BoardService implements BoardServiceImpl {
 
     BoardRepository boardRepository = new BoardRepository();
 
-    public BoardWrapperDTO getPosts(Integer offset, Integer limit) {
-        return boardRepository.getPosts(offset, limit);
+    MemberRepository memberRepository = new MemberRepository();
+
+    public BoardWrapperDTO getPosts(Integer offset, Integer limit, String id) {
+        BoardWrapperDTO boardWrapperDTO = boardRepository.getPosts(offset, limit);
+        if(id != null) {
+            List<Integer> likesList = memberRepository.getLikedList(id);
+            log.info("" + likesList.toString());
+            LinkedHashMap<Integer, BoardDTO> boardMap =
+                    (LinkedHashMap) boardWrapperDTO.getBoards();
+            for(Iterator<BoardDTO> map = boardMap.values().iterator(); map.hasNext();) {
+                BoardDTO boardDTO = map.next();
+                int targetNum = boardDTO.getBoardNo().intValue();
+                for(int i=0; i<likesList.size(); i++) {
+                    if(targetNum == likesList.get(i)) {
+                        boardDTO.setLiked(true);
+                        break;
+                    }
+                }
+            }
+        }
+        return boardWrapperDTO;
     }
 
     public BoardDTO getPost(Integer postNo) {

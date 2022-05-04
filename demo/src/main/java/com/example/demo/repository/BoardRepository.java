@@ -60,13 +60,17 @@ public class BoardRepository {
                     tmpHashtagList,
                     0,
                     "2022-04-22 05:11",
-                    new ArrayList<ReplyDTO>());
+                    new ArrayList<ReplyDTO>(),
+                    false);
 
             boardMap.put(i, boardDTO);
         }
     }
 
-    private BoardWrapperDTO filterByOffsetAndLimit(Integer offset, Integer limit, LinkedHashMap map) {
+    private BoardWrapperDTO filterByOffsetAndLimit(
+            Integer offset,
+            Integer limit,
+            LinkedHashMap map) {
         HashMap<Integer, BoardDTO> boardMapForClient = new LinkedHashMap<>();
 
         int from = offset * limit;

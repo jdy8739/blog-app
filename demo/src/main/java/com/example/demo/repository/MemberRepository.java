@@ -3,7 +3,9 @@ package com.example.demo.repository;
 import com.example.demo.DTO.MemberDTO;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -19,7 +21,11 @@ public class MemberRepository {
         int i = 0;
         for(String id : defaultIdArr) {
             MemberDTO memberDTO = new MemberDTO(
-                    id, "qwer1234!@", null, defaultAuthArr[i]);
+                    id,
+                    "qwer1234!@",
+                    null,
+                    defaultAuthArr[i],
+                    new ArrayList<Integer>());
             memberMap.put(id, memberDTO);
             i ++;
         }
@@ -44,5 +50,22 @@ public class MemberRepository {
                 return loggedinMember;
             } else return null;
         }
+    }
+
+    public void addLike(String id, Integer postNo) throws Exception {
+        MemberDTO memberDTO = memberMap.get(id);
+        if(memberDTO == null) {
+            throw new Exception("IdNotFoundException");
+        } else {
+            memberDTO.getLikedPostList().add(postNo);
+            log.info("" + memberDTO.getLikedPostList().toString());
+        }
+    }
+
+    public List<Integer> getLikedList(String id) {
+        MemberDTO memberDTO = memberMap.get(id);
+        List<Integer> targetList = memberDTO.getLikedPostList();
+        log.info("" + targetList.toString());
+        return targetList;
     }
 }

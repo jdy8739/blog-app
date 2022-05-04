@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface BoardServiceImpl {
 
-    public BoardWrapperDTO getPosts(Integer offset, Integer limit);
+    public BoardWrapperDTO getPosts(Integer offset, Integer limit, String id);
 
     public BoardDTO getPost(Integer postNo);
 

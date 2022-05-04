@@ -20,6 +20,7 @@ public class BoardDTO {
     private int numberOfLikes;
     private String regDate;
     private List<ReplyDTO> replyList;
+    private boolean isLiked;
 
     public BoardDTO() {
         this.numberOfLikes = 0;

@@ -18,4 +18,9 @@ public class MemberService implements MemberServiceImpl {
     public MemberDTO login(MemberDTO memberDTO) {
         return memberRepository.login(memberDTO);
     }
+
+    @Override
+    public void addLike(String id, Integer postNo) throws Exception {
+        memberRepository.addLike(id, postNo);
+    }
 }

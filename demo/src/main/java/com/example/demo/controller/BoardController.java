@@ -36,10 +36,20 @@ public class BoardController {
     @GetMapping("/get")
     public ResponseEntity<BoardWrapperDTO> getPosts(
             @RequestParam Integer offset,
-            @RequestParam Integer limit) {
-        log.info("getPosts(): " + offset + ", " + limit);
+            @RequestParam Integer limit,
+            HttpServletRequest req) throws ServletException, IOException {
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        String id = null;
+        if(authorizationHeader != null) {
+            try {
+                Claims claims = jwtUtils.filterInternal(authorizationHeader);
+                id = (String) claims.get("id");
+            } catch (Exception e) {
+
+            }
+        }
         return new ResponseEntity<BoardWrapperDTO>(
-                boardService.getPosts(offset, limit), HttpStatus.OK);
+                boardService.getPosts(offset, limit, id), HttpStatus.OK);
     }
 
     @GetMapping("/{subject}/{keyword}/get")
@@ -47,9 +57,12 @@ public class BoardController {
             @PathVariable String subject,
             @PathVariable String keyword,
             @RequestParam Integer offset,
-            @RequestParam Integer limit) {
+            @RequestParam Integer limit,
+            HttpServletRequest req) {
             log.info("subject: " + subject + ", keyword: " + keyword);
             log.info("getPosts(): " + offset + ", " + limit);
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+
         return ResponseEntity.ok()
                 .body(boardService.getPostsByKeyword(
                         subject, keyword, offset, limit));

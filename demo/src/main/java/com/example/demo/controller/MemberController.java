@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.DTO.MemberDTO;
+import com.example.demo.DTO.ReplyDTO;
 import com.example.demo.JWT.JWTUtils;
 import com.example.demo.service.MemberService;
 import io.jsonwebtoken.Claims;
@@ -21,8 +22,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -66,5 +69,29 @@ public class MemberController {
         headers.set("isMemberSaved", String.valueOf(isMemberSaved));
 
         return new ResponseEntity<String>(null, headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/like/{id}/{postNo}")
+    public ResponseEntity<Void> likePost(
+            @PathVariable("id") String id,
+            @PathVariable("postNo") Integer postNo,
+            HttpServletRequest req) {
+        HttpHeaders headers = new HttpHeaders();
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        try {
+            Claims claims = jwtUtils.filterInternal(authorizationHeader);
+            if(claims.get("id").equals(id)) {
+                memberService.addLike(id, postNo);
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            log.info("This token is invalid!");
+            headers.set("isValidToken", "false");
+        } finally {
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(null);
+        }
     }
 }

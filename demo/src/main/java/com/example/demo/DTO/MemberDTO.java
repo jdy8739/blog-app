@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,6 +15,7 @@ public class MemberDTO {
     private String password;
     private String email;
     private String auth;
+    private List<Integer> likedPostList;
 
     @Override
     public String toString() {

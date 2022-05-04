@@ -5,9 +5,12 @@ export const configAxios = axios.create();
 
 configAxios.interceptors.request.use(
     config => {
-        if(config?.headers) 
-            config.headers['Authorization'] = 
-                `Bearer ${getCookie(MY_BLOG_COOKIE_NAME)[1]}`;
+        if(config?.headers) {
+            const cookie = getCookie(MY_BLOG_COOKIE_NAME);
+            if(cookie) {
+                config.headers['Authorization'] = `Bearer ${cookie[1]}`;
+            };
+        };
         return config;
     }
 );

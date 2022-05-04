@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { configAxios } from "../../axiosConfig";
 import Post from "../../components/Post";
 import { Container, Highlight, Button } from "../../Styles/style";
 import BASE_URL from "../../URLS";
@@ -16,6 +17,7 @@ export interface IPostElement {
     hashtags: string[];
     regDate: string;
     replyList: IReply[];
+    liked: boolean;
 };
 
 export interface IReply {
@@ -81,11 +83,12 @@ function Posts() {
         paramsSearcher.get('offset') || DEFAULT_OFFSET;
 
     const fetchPosts = () => {
-        axios.get<IPost>(
+        configAxios.get<IPost>(
             `${BASE_URL}/posts${subject ? '/' + subject : ''}${
             keyword ? '/' + keyword : ''}/get?offset=${offset}&limit=${limit}`
             )
             .then(res => {
+                console.log(res.data);
                 setPosts(res.data);
                 setIsLoading(false);
             })

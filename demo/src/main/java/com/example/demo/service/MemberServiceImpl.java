@@ -7,4 +7,6 @@ public interface MemberServiceImpl {
     public boolean saveMember(MemberDTO memberDTO);
 
     public MemberDTO login(MemberDTO memberDTO);
+
+    public void addLike(String id, Integer postNo) throws Exception;
 }
