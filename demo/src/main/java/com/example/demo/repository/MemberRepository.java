@@ -2,6 +2,7 @@ package com.example.demo.repository;
 
 import com.example.demo.DTO.MemberDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Repository
 public class MemberRepository {
     public Map<String, MemberDTO> memberMap;
     private String[] defaultIdArr = { "jdy8739", "hoon1234", "slack9999" };
@@ -58,14 +60,20 @@ public class MemberRepository {
             throw new Exception("IdNotFoundException");
         } else {
             memberDTO.getLikedPostList().add(postNo);
-            log.info("" + memberDTO.getLikedPostList().toString());
         }
     }
 
     public List<Integer> getLikedList(String id) {
         MemberDTO memberDTO = memberMap.get(id);
-        List<Integer> targetList = memberDTO.getLikedPostList();
-        log.info("" + targetList.toString());
-        return targetList;
+        return memberDTO.getLikedPostList();
+    }
+
+    public void cancelLike(String id, Integer postNo) throws Exception {
+        MemberDTO memberDTO = memberMap.get(id);
+        if(memberDTO == null) {
+            throw new Exception("IdNotFoundException");
+        } else {
+            memberDTO.getLikedPostList().remove(postNo);
+        }
     }
 }

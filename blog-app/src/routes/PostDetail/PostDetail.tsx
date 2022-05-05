@@ -63,8 +63,15 @@ function PostDetail() {
 
     const fetchPost = async () => {
         if(postMatch) {
+            const url = `${BASE_URL}/posts/get_detail/${postMatch.params.id}`;
+            const cookie = getCookie(MY_BLOG_COOKIE_NAME) || ['', ''];
             const post = 
-                await fetch(`${BASE_URL}/posts/get_detail/${postMatch.params.id}`)
+                await fetch(url, { 
+                    headers: {
+                        Authorization: `Bearer ${cookie[1]}`,
+                        "Content-Type": "application/json"
+                    }
+                })
             return await post.json();
         } else return null;
     };
@@ -122,7 +129,7 @@ function PostDetail() {
                     };
                     if(replyInputRef?.current) 
                         replyInputRef.current.value = '';
-                    setIsAdded(isAdded => !isAdded);
+                    setIsUpdated(!isUpdated);
                 })
                 .catch(err => console.log(err));
         } else {
@@ -130,16 +137,52 @@ function PostDetail() {
         };
     };
 
-    const [isAdded, setIsAdded] = useState(false);
-
     const [isModified, setIsModified] = useState(-1);
 
     const setReply = (updatedReplies: IReply[]) => {
         if(post) {
             post.replyList = updatedReplies;
-            setIsAdded(isAdded => !isAdded);
+            setIsUpdated(!isUpdated);
         };
     };
+
+    const handleLikesClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        const cookie = getCookie(MY_BLOG_COOKIE_NAME);
+        if(cookie) {
+            configAxios.post(`${BASE_URL}/member/like/${cookie[0]}/${post?.boardNo}`)
+                .then(() => {
+                    if(post) {
+                        post.numberOfLikes ++;
+                        post.liked = true;
+                    };
+                    setIsUpdated(!isUpdated);
+                })
+                .catch(err => console.log(err));
+        } else {
+            alert('This requires login!');
+        };
+    };
+
+    const handleLikesCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        const cookie = getCookie(MY_BLOG_COOKIE_NAME);
+        if(cookie) {
+            configAxios.post(`${BASE_URL}/member/cancel_like/${cookie[0]}/${post?.boardNo}`)
+                .then(() => {
+                    if(post) {
+                        post.numberOfLikes --;
+                        post.liked = false;
+                    };
+                    setIsUpdated(!isUpdated);
+                })
+                .catch(err => console.log(err));
+        } else {
+            alert('This requires login!');
+        };
+    };
+
+    const [isUpdated, setIsUpdated] = useState(false);
 
     return (
         <Container>
@@ -169,9 +212,16 @@ function PostDetail() {
                         marginTop: '28px'
                     }}
                     >
-                        <Button 
-                        clicked
-                        >like 👍</Button>
+                        {
+                            !post?.liked ? 
+                            <Button
+                            onClick={handleLikesClick}
+                            >like 👍</Button> : 
+                            <Button 
+                            clicked
+                            onClick={handleLikesCancelClick}
+                            >like 👍</Button>
+                        }
                         <Button 
                         clicked
                         onClick={() => nav(-1)}

@@ -88,7 +88,6 @@ function Posts() {
             keyword ? '/' + keyword : ''}/get?offset=${offset}&limit=${limit}`
             )
             .then(res => {
-                console.log(res.data);
                 setPosts(res.data);
                 setIsLoading(false);
             })

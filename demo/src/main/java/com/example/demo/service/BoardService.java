@@ -7,6 +7,7 @@ import com.example.demo.DTO.ReplyDTO;
 import com.example.demo.repository.BoardRepository;
 import com.example.demo.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
@@ -17,22 +18,56 @@ import java.util.List;
 @Service
 public class BoardService implements BoardServiceImpl {
 
-    BoardRepository boardRepository = new BoardRepository();
+    @Autowired
+    BoardRepository boardRepository;
 
-    MemberRepository memberRepository = new MemberRepository();
+    @Autowired
+    MemberRepository memberRepository;
 
     public BoardWrapperDTO getPosts(Integer offset, Integer limit, String id) {
         BoardWrapperDTO boardWrapperDTO = boardRepository.getPosts(offset, limit);
+        return filterLikeTrueOrFalse(id, boardWrapperDTO);
+    }
+
+    public BoardDTO getPost(Integer postNo, String id) {
+        BoardDTO boardDTO = boardRepository.getPost(postNo);
+        boardDTO.setLiked(false);
         if(id != null) {
             List<Integer> likesList = memberRepository.getLikedList(id);
-            log.info("" + likesList.toString());
+            int targetNum = boardDTO.getBoardNo().intValue();
+            for (int i = 0; i < likesList.size(); i++) {
+                if (targetNum == likesList.get(i)) {
+                    boardDTO.setLiked(true);
+                    break;
+                }
+            }
+        }
+        return boardDTO;
+    }
+
+    public BoardWrapperDTO getPostsByKeyword(
+            String subject,
+            String keyword,
+            Integer offset,
+            Integer limit,
+            String id) {
+        BoardWrapperDTO boardWrapperDTO =
+                boardRepository.getPostsByKeyword(subject, keyword, offset, limit);
+        return filterLikeTrueOrFalse(id, boardWrapperDTO);
+    }
+
+    private BoardWrapperDTO filterLikeTrueOrFalse(
+            String id,
+            BoardWrapperDTO boardWrapperDTO) {
+        if (id != null) {
+            List<Integer> likesList = memberRepository.getLikedList(id);
             LinkedHashMap<Integer, BoardDTO> boardMap =
                     (LinkedHashMap) boardWrapperDTO.getBoards();
-            for(Iterator<BoardDTO> map = boardMap.values().iterator(); map.hasNext();) {
+            for (Iterator<BoardDTO> map = boardMap.values().iterator(); map.hasNext(); ) {
                 BoardDTO boardDTO = map.next();
                 int targetNum = boardDTO.getBoardNo().intValue();
-                for(int i=0; i<likesList.size(); i++) {
-                    if(targetNum == likesList.get(i)) {
+                for (int i = 0; i < likesList.size(); i++) {
+                    if (targetNum == likesList.get(i)) {
                         boardDTO.setLiked(true);
                         break;
                     }
@@ -41,19 +76,7 @@ public class BoardService implements BoardServiceImpl {
         }
         return boardWrapperDTO;
     }
-
-    public BoardDTO getPost(Integer postNo) {
-        return boardRepository.getPost(postNo);
-    }
-
-    public BoardWrapperDTO getPostsByKeyword(
-            String subject,
-            String keyword,
-            Integer offset,
-            Integer limit) {
-        return boardRepository.getPostsByKeyword(subject, keyword, offset, limit);
-    }
-
+    
     public void savePost(BoardDTO boardDTO) {
         boardRepository.save(boardDTO);
     }

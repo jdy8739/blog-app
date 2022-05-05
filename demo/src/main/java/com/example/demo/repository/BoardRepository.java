@@ -4,6 +4,7 @@ import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardWrapperDTO;
 import com.example.demo.DTO.ReplyDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 
 import javax.swing.*;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
+@Repository
 public class BoardRepository {
 
     static private Map boardMap;
@@ -80,7 +82,9 @@ public class BoardRepository {
 
         map.forEach((key, value) -> {
             if(i.intValue() < to && i.intValue() >= from) {
-                boardMapForClient.put((Integer) key, (BoardDTO) value);
+                BoardDTO boardDTO = (BoardDTO) value;
+                boardDTO.setLiked(false);
+                boardMapForClient.put((Integer) key, boardDTO);
             }
             i.getAndIncrement();
         });
@@ -236,6 +240,16 @@ public class BoardRepository {
             targetReplyList.get(cnt).setReply(replyDTO.getReply());
         } else throw new Exception("AccessDeniedException");
         return targetReplyList;
+    }
+
+    public void plusLikesCount(Integer postNo) {
+        BoardDTO boardDTO = (BoardDTO) boardMap.get(postNo);
+        boardDTO.setNumberOfLikes(boardDTO.getNumberOfLikes() + 1);
+    }
+
+    public void minusLikesCount(Integer postNo) {
+        BoardDTO boardDTO = (BoardDTO) boardMap.get(postNo);
+        boardDTO.setNumberOfLikes(boardDTO.getNumberOfLikes() - 1);
     }
 }
 

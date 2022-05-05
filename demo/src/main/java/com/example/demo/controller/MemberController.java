@@ -94,4 +94,28 @@ public class MemberController {
                     .body(null);
         }
     }
+
+    @PostMapping("/cancel_like/{id}/{postNo}")
+    public ResponseEntity<Void> cancelLikePost(
+            @PathVariable("id") String id,
+            @PathVariable("postNo") Integer postNo,
+            HttpServletRequest req) {
+        HttpHeaders headers = new HttpHeaders();
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        try {
+            Claims claims = jwtUtils.filterInternal(authorizationHeader);
+            if(claims.get("id").equals(id)) {
+                memberService.cancelLike(id, postNo);
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            log.info("This token is invalid!");
+            headers.set("isValidToken", "false");
+        } finally {
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(null);
+        }
+    }
 }

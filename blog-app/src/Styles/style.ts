@@ -56,6 +56,7 @@ export const Button = styled.button<{ clicked?: boolean }>`
     font-weight: bold;
     border-radius: 7px;
     cursor: pointer;
+    border: 1px solid ${props => props.theme.accentColor};
 `;
 
 export const Tag = styled.p`

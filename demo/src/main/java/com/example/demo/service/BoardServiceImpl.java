@@ -11,7 +11,7 @@ public interface BoardServiceImpl {
 
     public BoardWrapperDTO getPosts(Integer offset, Integer limit, String id);
 
-    public BoardDTO getPost(Integer postNo);
+    public BoardDTO getPost(Integer postNo, String id);
 
     public void savePost(BoardDTO boardDTO);
 

@@ -45,7 +45,7 @@ public class BoardController {
                 Claims claims = jwtUtils.filterInternal(authorizationHeader);
                 id = (String) claims.get("id");
             } catch (Exception e) {
-
+                ;
             }
         }
         return new ResponseEntity<BoardWrapperDTO>(
@@ -62,40 +62,49 @@ public class BoardController {
             log.info("subject: " + subject + ", keyword: " + keyword);
             log.info("getPosts(): " + offset + ", " + limit);
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-
+        String id = null;
+        if(authorizationHeader != null) {
+            try {
+                Claims claims = jwtUtils.filterInternal(authorizationHeader);
+                id = (String) claims.get("id");
+            } catch (Exception e) {
+                ;
+            }
+        }
         return ResponseEntity.ok()
                 .body(boardService.getPostsByKeyword(
-                        subject, keyword, offset, limit));
+                        subject, keyword, offset, limit, id));
     }
 
     @GetMapping("/get_detail/{postNo}")
     public ResponseEntity<BoardDTO> getPost(
             @PathVariable int postNo,
             HttpServletRequest req) {
-        log.info("getPost(): " + postNo);
         String requestPurpose = req.getHeader("request");
-
-        if(requestPurpose != null && requestPurpose.equals("modify")) {
-            HttpHeaders headers = new HttpHeaders();
-            String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-            try {
+        HttpHeaders headers = new HttpHeaders();
+        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        String id = null;
+        BoardDTO boardDTO = null;
+        try {
+            if(!authorizationHeader.equals("Bearer")) {
                 Claims claims = jwtUtils.filterInternal(authorizationHeader);
-                String id = (String) claims.get("id");
-                BoardDTO boardDTO = boardService.getPost(postNo);
-                if(id.equals(boardDTO.getWriter())) {
-                    return ResponseEntity.ok()
-                            .body(boardService.getPost(postNo));
-                } else throw new Exception();
-            } catch (Exception e) {
-                log.info("This token is invalid!");
-                headers.set("isValidToken", "false");
-                return ResponseEntity.status(401)
-                        .headers(headers)
-                        .body(null);
+                id = (String) claims.get("id");
+                if(requestPurpose != null && requestPurpose.equals("modify")) {
+                    if (!id.equals(boardDTO.getWriter())) {
+                        throw new Exception();
+                    }
+                }
             }
-        } else {
+            boardDTO = boardService.getPost(postNo, id);
+        } catch (Exception e) {
+            log.info("This token is invalid!");
+            headers.set("isValidToken", "false");
+            return ResponseEntity.status(401)
+                    .headers(headers)
+                    .body(null);
+        } finally {
             return ResponseEntity.ok()
-                    .body(boardService.getPost(postNo));
+                    .body(boardDTO);
         }
     }
 
@@ -127,7 +136,6 @@ public class BoardController {
     public ResponseEntity<Boolean> deletePost(
             @PathVariable("postNo") int postNo,
             HttpServletRequest req) {
-        log.info("" + postNo);
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         boolean isDeleted = false;
