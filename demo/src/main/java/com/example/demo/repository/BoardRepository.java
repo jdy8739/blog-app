@@ -4,6 +4,7 @@ import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardWrapperDTO;
 import com.example.demo.DTO.ReplyDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.swing.*;
@@ -15,6 +16,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Repository
 public class BoardRepository {
+
+    @Autowired
+    MemberRepository memberRepository;
 
     static private Map boardMap;
 
@@ -118,6 +122,8 @@ public class BoardRepository {
             case "hashtag":
                 tmpMapResults = getPostsByKeywordHashtag(keyword);
                 break;
+            case "favlist" :
+                tmpMapResults = getPostsInFavList(keyword);
         }
         return filterByOffsetAndLimit(offset, limit, (LinkedHashMap) tmpMapResults);
     }
@@ -152,6 +158,22 @@ public class BoardRepository {
             for(int i=0; i<hashTagList.size(); i++) {
                 if(hashTagList.get(i).equals(keyword)) {
                     tmpMap.put(boardDTO.getBoardNo().intValue(), boardDTO);
+                }
+            }
+        }
+        return tmpMap;
+    }
+
+    private LinkedHashMap<Integer, BoardDTO> getPostsInFavList(String id) {
+        LinkedHashMap<Integer, BoardDTO> tmpMap = new LinkedHashMap<>();
+        List<Integer> favList = memberRepository.getLikedList(id);
+        if(favList != null && favList.size() != 0) {
+            for(Iterator<BoardDTO> map = boardMap.values().iterator(); map.hasNext();) {
+                BoardDTO boardDTO = map.next();
+                for(int num : favList) {
+                    if(num == boardDTO.getBoardNo().intValue()) {
+                        tmpMap.put(num, boardDTO);
+                    }
                 }
             }
         }

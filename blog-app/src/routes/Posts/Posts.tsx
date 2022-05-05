@@ -47,6 +47,8 @@ const DEFAULT_OFFSET = 0;
 
 const DEFAULT_LIMIT = 5;
 
+type TKeyword = 'title' | 'writer' | 'hashtag' | 'favlist' | '';
+
 function Posts() {
     
     const [posts, setPosts] = useState<IPost>();
@@ -61,12 +63,16 @@ function Posts() {
 
     let target = location.pathname.split('/')[2];
 
-    let subject = '';
+    let subject: TKeyword = '';
 
     let keyword = '';
 
     const catchSubjectAndKeywordName = () => {
-        if(target === 'title' || target === 'writer' || target === 'hashtag') {
+        if(
+            target === 'title' || 
+            target === 'writer' || 
+            target === 'hashtag' || 
+            target === 'favlist') {
             subject = target;
             keyword = location.pathname.split('/')[3];
         };
@@ -125,74 +131,74 @@ function Posts() {
         makeIndex();
     }, [posts]);
 
+    const isPostsEmpty = (param: IBoard) => 
+        Object.keys(param).length === 0 && param.constructor === Object;
+
     return (
         <>
             {
                 isLoading ? <p>Loading... Please wait.</p> :
                 <>
                     {
-                        posts?.total === 0 ? <p style={{ textAlign: 'center' }}>Sorry. No Match Data. :(</p> :
-                        <>
-                            {
-                                posts ? 
-                                <Container>
-                                    <div style={{
-                                        textAlign: 'center',
-                                    }}>
-                                        { 
-                                            subject ? 
-                                            <>
-                                                { "search for " + subject } 
-                                                &ensp;
-                                                <Highlight>{ window.decodeURI(keyword) }</Highlight>
-                                            </> : null 
-                                        }
-                                    </div>
-                                    <div style={{ 
-                                        textAlign: 'right',
-                                        marginBottom: '100px'
-                                    }}
-                                    >
-                                        <span>contents in a page</span>
+                        posts ? 
+                        <Container>
+                            <div style={{ textAlign: 'center' }}>
+                                { 
+                                    subject ? 
+                                    <>
+                                        { "search for " + subject } 
                                         &ensp;
-                                        <select 
-                                        onChange={handleOnLimitChange} 
-                                        value={limit || 5}
-                                        >
-                                            <option>5</option>
-                                            <option>15</option>
-                                            <option>30</option>
-                                        </select>
-                                    </div>
-                                    {Object.keys(posts.boards).map(postNo => {
-                                        return (
-                                            <Frame
-                                            key={postNo}
-                                            onClick={() => nav(`/posts/detail/${+postNo}`)}
-                                            >
-                                                <Post
-                                                post={posts.boards[postNo]}
-                                                />
-                                            </Frame>
-                                        )
-                                    })}
-                                    { 
-                                        indexArr ? 
-                                        <div style={{
-                                            textAlign: 'center',
-                                            margin: '50px'
-                                        }}
-                                        >{ indexArr.map(idx => 
-                                        <Button
-                                        key={idx}
-                                        onClick={setOffset}
-                                        clicked={offset ? +offset === idx : false}
-                                        >{ idx + 1 }</Button>) }</div> : null
-                                    }
-                                </Container> : null 
+                                        <Highlight>{ window.decodeURI(keyword) }</Highlight>
+                                    </> : null 
+                                }
+                            </div>
+                            <div style={{ 
+                                textAlign: 'right',
+                                marginBottom: '100px'
+                            }}
+                            >
+                                <span>contents in a page</span>
+                                &ensp;
+                                <select 
+                                onChange={handleOnLimitChange} 
+                                value={limit || 5}
+                                >
+                                    <option>5</option>
+                                    <option>15</option>
+                                    <option>30</option>
+                                </select>
+                            </div>
+                            {
+                                isPostsEmpty(posts.boards) ?
+                                <div style={{ textAlign: 'center' }}>Sorry. No data. :(</div> : null
                             }
-                        </>
-                    }   
+                            {Object.keys(posts.boards).map(postNo => {
+                                return (
+                                    <Frame
+                                    key={postNo}
+                                    onClick={() => nav(`/posts/detail/${+postNo}`)}
+                                    >
+                                        <Post
+                                        post={posts.boards[postNo]}
+                                        />
+                                    </Frame>
+                                )
+                            })}
+                            { 
+                                indexArr ? 
+                                <div style={{
+                                    textAlign: 'center',
+                                    margin: '50px'
+                                }}
+                                >{ indexArr.map(idx => 
+                                <Button
+                                key={idx}
+                                onClick={setOffset}
+                                clicked={offset ? +offset === idx : false}
+                                >{ idx + 1 }</Button>) }</div> : null
+                            }
+                        </Container> : null 
+                    }
                 </>
             }
         </>

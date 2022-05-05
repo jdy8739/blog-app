@@ -1,11 +1,11 @@
 import axios from "axios";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { configAxios } from "../axiosConfig";
 import { Span } from "../CommonStyles";
 import BASE_URL from "../URLS";
-import { setCookie } from "../util/cookie";
+import { getCookie, MY_BLOG_COOKIE_NAME, setCookie } from "../util/cookie";
 
 const Box = styled.div`
     width: 370px;
@@ -69,18 +69,20 @@ function Home() {
     
     loginAxios.interceptors.response.use(
         async config => {
-            const token = config.data;
-            const now = new Date();
-            setCookie(
-                'my_blog_userInfo',
-                JSON.stringify([idRef.current?.value, token]),
-                { 
-                    path: "/", 
-                    expires: new Date(now.setMinutes(now.getMinutes() + 180)),
-                    secure: true,
-                    httpOnly: false
-                }
-            );   
+            if(config.data) {
+                const token = config.data;
+                const now = new Date();
+                setCookie(
+                    MY_BLOG_COOKIE_NAME,
+                    JSON.stringify([idRef.current?.value, token]),
+                    { 
+                        path: "/", 
+                        expires: new Date(now.setMinutes(now.getMinutes() + 180)),
+                        secure: true,
+                        httpOnly: false
+                    }
+                );  
+            };
             return config;
         },
         ({ config, request, response, ...err }) => {
@@ -105,12 +107,19 @@ function Home() {
             password: pwRef.current?.value
         })
             .then(res => {
-                if(res) {
+                if(res.data) {
                     nav('/posts/all');
-                } else alert('Unvalid id or password!');
+                } else alert('There are no users that match the id and password.');
             })
             .catch(err => console.log(err));
     };
+
+    useEffect(() => {
+        if(getCookie(MY_BLOG_COOKIE_NAME)) {
+            alert('You are already loggedin.');
+            nav('/posts');
+        };
+    }, []);
 
     return (
         <Box>

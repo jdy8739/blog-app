@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -59,16 +58,26 @@ public class BoardController {
             @RequestParam Integer offset,
             @RequestParam Integer limit,
             HttpServletRequest req) {
-            log.info("subject: " + subject + ", keyword: " + keyword);
-            log.info("getPosts(): " + offset + ", " + limit);
+//            log.info("subject: " + subject + ", keyword: " + keyword);
+//            log.info("getPosts(): " + offset + ", " + limit);
+        HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         String id = null;
         if(authorizationHeader != null) {
             try {
                 Claims claims = jwtUtils.filterInternal(authorizationHeader);
                 id = (String) claims.get("id");
+                if(subject.equals("favlist")) {
+                    if(!id.equals(keyword)) {
+                        throw new Exception();
+                    }
+                }
             } catch (Exception e) {
-                ;
+                log.info("This token is invalid!");
+                headers.set("isValidToken", "false");
+                return ResponseEntity.status(401)
+                        .headers(headers)
+                        .body(null);
             }
         }
         return ResponseEntity.ok()
@@ -89,23 +98,24 @@ public class BoardController {
             if(!authorizationHeader.equals("Bearer")) {
                 Claims claims = jwtUtils.filterInternal(authorizationHeader);
                 id = (String) claims.get("id");
+                boardDTO = boardService.getPost(postNo, id);
                 if(requestPurpose != null && requestPurpose.equals("modify")) {
                     if (!id.equals(boardDTO.getWriter())) {
                         throw new Exception();
                     }
                 }
+            } else {
+                boardDTO = boardService.getPost(postNo, id);
             }
-            boardDTO = boardService.getPost(postNo, id);
         } catch (Exception e) {
             log.info("This token is invalid!");
             headers.set("isValidToken", "false");
             return ResponseEntity.status(401)
                     .headers(headers)
                     .body(null);
-        } finally {
-            return ResponseEntity.ok()
-                    .body(boardDTO);
         }
+        return ResponseEntity.ok()
+                .body(boardDTO);
     }
 
     @PostMapping("/add_post")

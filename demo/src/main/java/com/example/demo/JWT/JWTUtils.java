@@ -59,7 +59,7 @@ public class JWTUtils {
             //FilterChain filterChain
     ) throws IOException, ServletException {
         Claims claims = parseJwtToken(token);
-        System.out.println(claims);
+        //System.out.println(claims);
         return claims;
         //filterChain.doFilter(request, response);
     }

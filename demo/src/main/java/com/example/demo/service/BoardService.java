@@ -76,7 +76,7 @@ public class BoardService implements BoardServiceImpl {
         }
         return boardWrapperDTO;
     }
-    
+
     public void savePost(BoardDTO boardDTO) {
         boardRepository.save(boardDTO);
     }

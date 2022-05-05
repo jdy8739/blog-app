@@ -4,7 +4,7 @@ import { Cookies, useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { changeThemeMode, store } from "../store/themeStore";
-import { getCookie, removeCookie } from "../util/cookie";
+import { getCookie, MY_BLOG_COOKIE_NAME, removeCookie } from "../util/cookie";
 
 const Nav = styled.nav`
     width: 100vw;
@@ -70,6 +70,11 @@ const SubMenu = styled(motion.div)`
     text-align: center;
 `;
 
+const SearchIcon = styled.img`
+    width: 18px;
+    height: 18px;  
+`;
+
 const subMenuVariant = {
     initial: {
         opacity: 0,
@@ -107,15 +112,16 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
     let userInfo = '';
 
     if(!userId) {
-        userInfo = getCookie('my_blog_userInfo');
+        userInfo = getCookie(MY_BLOG_COOKIE_NAME);
         if(userInfo)
             setUserId(userInfo[0]);
     };
     
     const logout = () => {
-        const logoutConfirm = window.confirm('Are you sure to logout?');
+        const logoutConfirm = 
+            window.confirm('Are you sure to logout?');
         if(logoutConfirm) {
-            removeCookie('my_blog_userInfo', { path: '/' });
+            removeCookie(MY_BLOG_COOKIE_NAME, { path: '/' });
             setUserId('');
             setIsSubMenuShown(false);
             nav('/posts');
@@ -125,14 +131,26 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 
     const [isSubMenuShown, setIsSubMenuShown] = useState(false);
 
-    const toggleSubMenu = 
-        () => setIsSubMenuShown(isSubMenuShown => !isSubMenuShown);
+    const toggleSubMenu = () => 
+        setIsSubMenuShown(isSubMenuShown => !isSubMenuShown);
 
     const toWritePage = () => {
-        if(getCookie('my_blog_userInfo'))
+        if(getCookie(MY_BLOG_COOKIE_NAME))
             nav('/write');
         else alert('Post Writing requires login!');
-    }
+    };
+
+    const fetchMyPosts = () => {
+        const cookie = getCookie(MY_BLOG_COOKIE_NAME);
+        if(cookie)
+            nav(`/posts/writer/${cookie[0]}`);
+    };
+
+    const fetchLikedPosts = () => {
+        const cookie = getCookie(MY_BLOG_COOKIE_NAME);
+        if(cookie)
+            nav(`/posts/favlist/${cookie[0]}`);
+    };
 
     return (
         <Nav>
@@ -150,8 +168,12 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
                     exit="exit"
                     >
                         <br></br>
-                        <NavElem>MY POSTS</NavElem>
-                        <NavElem>LIKED</NavElem>
+                        <NavElem
+                        onClick={fetchMyPosts}
+                        >MY POSTS</NavElem>
+                        <NavElem
+                        onClick={fetchLikedPosts}
+                        >LIKED</NavElem>
                     </SubMenu>
                     : null }
                 </AnimatePresence>
@@ -174,7 +196,7 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
                     <option>hashtag</option>
                 </select>
                 &ensp;
-                <button>search</button>
+                <SearchIcon src={require('../search.png')} />
                 &ensp;
                 <input
                 ref={inputRef} 

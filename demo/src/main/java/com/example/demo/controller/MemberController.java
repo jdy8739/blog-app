@@ -17,15 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.time.Duration;
-import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -41,18 +33,14 @@ public class MemberController {
     @PostMapping("/signin")
     public ResponseEntity<String> signin(
             @Validated @RequestBody MemberDTO memberDTO) {
-
+        HttpHeaders headers = new HttpHeaders();
         MemberDTO loggedInMember = memberService.login(memberDTO);
         if(loggedInMember == null)
-            return new ResponseEntity<String>(HttpStatus.resolve(401));
-
+            return new ResponseEntity<String>(HttpStatus.OK);
         String jwt = jwtUtils.makeJWT(
                 loggedInMember.getId(), loggedInMember.getAuth());
-
-        HttpHeaders headers = new HttpHeaders();
         //headers.set("Authorization", auth);
         headers.set("Access-Control-Expose-Headers", "*, Authorization, Set-Cookie");
-
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(jwt);
