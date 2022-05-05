@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { configAxios } from "../axiosConfig";
 import { Span } from "../CommonStyles";
 import BASE_URL from "../URLS";
 import { getCookie, MY_BLOG_COOKIE_NAME, setCookie } from "../util/cookie";

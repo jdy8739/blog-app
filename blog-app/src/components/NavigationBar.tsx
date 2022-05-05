@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useRef, useState } from "react";
-import { Cookies, useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { changeThemeMode, store } from "../store/themeStore";
