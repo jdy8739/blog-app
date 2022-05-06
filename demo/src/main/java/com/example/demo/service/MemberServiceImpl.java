@@ -1,14 +1,39 @@
 package com.example.demo.service;
 
 import com.example.demo.DTO.MemberDTO;
+import com.example.demo.repository.BoardRepository;
+import com.example.demo.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface MemberServiceImpl {
+@Service
+public class MemberServiceImpl implements MemberService {
 
-    public boolean saveMember(MemberDTO memberDTO);
+    @Autowired
+    MemberRepository memberRepository;
 
-    public MemberDTO login(MemberDTO memberDTO);
+    @Autowired
+    BoardRepository boardRepository;
 
-    public void addLike(String id, Integer postNo) throws Exception;
+    @Override
+    public boolean saveMember(MemberDTO memberDTO) {
+        return memberRepository.saveMember(memberDTO);
+    }
 
-    public void cancelLike(String id, Integer postNo) throws Exception;
+    @Override
+    public MemberDTO login(MemberDTO memberDTO) {
+        return memberRepository.login(memberDTO);
+    }
+
+    @Override
+    public void addLike(String id, Integer postNo) throws Exception {
+        memberRepository.addLike(id, postNo);
+        boardRepository.plusLikesCount(postNo);
+    }
+
+    @Override
+    public void cancelLike(String id, Integer postNo) throws Exception {
+        memberRepository.cancelLike(id, postNo);
+        boardRepository.minusLikesCount(postNo);
+    }
 }

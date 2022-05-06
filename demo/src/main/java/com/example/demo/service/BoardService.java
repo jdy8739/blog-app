@@ -14,95 +14,26 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-@Slf4j
-@Service
-public class BoardService implements BoardServiceImpl {
+public interface BoardService {
 
-    @Autowired
-    BoardRepository boardRepository;
-
-    @Autowired
-    MemberRepository memberRepository;
-
-    public BoardWrapperDTO getPosts(Integer offset, Integer limit, String id) {
-        BoardWrapperDTO boardWrapperDTO = boardRepository.getPosts(offset, limit);
-        return filterLikeTrueOrFalse(id, boardWrapperDTO);
-    }
-
-    public BoardDTO getPost(Integer postNo, String id) {
-        BoardDTO boardDTO = boardRepository.getPost(postNo);
-        boardDTO.setLiked(false);
-        if(id != null) {
-            List<Integer> likesList = memberRepository.getLikedList(id);
-            int targetNum = boardDTO.getBoardNo().intValue();
-            for (int i = 0; i < likesList.size(); i++) {
-                if (targetNum == likesList.get(i)) {
-                    boardDTO.setLiked(true);
-                    break;
-                }
-            }
-        }
-        return boardDTO;
-    }
+    public BoardWrapperDTO getPosts(Integer offset, Integer limit, String id);
 
     public BoardWrapperDTO getPostsByKeyword(
-            String subject,
-            String keyword,
-            Integer offset,
-            Integer limit,
-            String id) {
-        BoardWrapperDTO boardWrapperDTO =
-                boardRepository.getPostsByKeyword(subject, keyword, offset, limit);
-        return filterLikeTrueOrFalse(id, boardWrapperDTO);
-    }
+            String subject, String keyword,
+            Integer offset, Integer limit, String id);
 
-    private BoardWrapperDTO filterLikeTrueOrFalse(
-            String id,
-            BoardWrapperDTO boardWrapperDTO) {
-        if (id != null) {
-            List<Integer> likesList = memberRepository.getLikedList(id);
-            LinkedHashMap<Integer, BoardDTO> boardMap =
-                    (LinkedHashMap) boardWrapperDTO.getBoards();
-            for (Iterator<BoardDTO> map = boardMap.values().iterator(); map.hasNext(); ) {
-                BoardDTO boardDTO = map.next();
-                int targetNum = boardDTO.getBoardNo().intValue();
-                for (int i = 0; i < likesList.size(); i++) {
-                    if (targetNum == likesList.get(i)) {
-                        boardDTO.setLiked(true);
-                        break;
-                    }
-                }
-            }
-        }
-        return boardWrapperDTO;
-    }
+    public BoardDTO getPost(Integer postNo, String id);
 
-    public void savePost(BoardDTO boardDTO) {
-        boardRepository.save(boardDTO);
-    }
+    public void savePost(BoardDTO boardDTO);
 
-    public boolean deletePost(Integer postNo, String id) {
-        BoardDTO boardDTO = boardRepository.getPost(postNo);
-        if(boardDTO.getWriter().equals(id)) {
-            boardRepository.deletePost(postNo);
-            return true;
-        } else return false;
-    }
+    public boolean deletePost(Integer postNo, String id);
 
-    public void modifyPost(BoardDTO boardDTO) {
-        boardRepository.modifyPost(boardDTO);
-    }
+    public void modifyPost(BoardDTO boardDTO);
 
-    public List<ReplyDTO> saveReply(ReplyDTO replyDTO) {
-        return boardRepository.saveReply(replyDTO);
-    }
+    public List<ReplyDTO> saveReply(ReplyDTO replyDTO);
 
     public List<ReplyDTO> deleteReply(
-            Integer postNo, Integer replyNo, String id) throws Exception {
-        return boardRepository.deleteReply(postNo, replyNo, id);
-    }
+            Integer postNo, Integer replyNo, String id) throws Exception;
 
-    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) throws Exception {
-        return boardRepository.modifyReply(replyDTO, id);
-    }
+    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) throws Exception;
 }
