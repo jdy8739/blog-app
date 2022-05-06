@@ -225,21 +225,17 @@ public class BoardRepository {
 
     public List<ReplyDTO> deleteReply(
             Integer postNo, Integer replyNo, String id) throws Exception {
-        //log.info(postNo + ", " + replyNo + ", " + id);
         BoardDTO targetBoard = (BoardDTO) boardMap.get(postNo);
         List<ReplyDTO> targetReplyList = targetBoard.getReplyList();
-        Integer targetNum = null;
-        int cnt = 0;
+        int targetCnt = 0;
         for (ReplyDTO replyDTO : targetReplyList) {
             if (replyDTO.getReplyNo().intValue() == replyNo) {
-                targetNum = cnt;
                 break;
             }
-            cnt ++;
+            targetCnt ++;
         }
-        //log.info("cnt: " + cnt);
-        if (targetReplyList.get(cnt).getReplier().equals(id)) {
-            targetReplyList.remove(cnt);
+        if (targetReplyList.get(targetCnt).getReplier().equals(id)) {
+            targetReplyList.remove(targetCnt);
         } else throw new Exception("AccessDeniedException");
         return targetReplyList;
     }
@@ -248,18 +244,15 @@ public class BoardRepository {
         BoardDTO boardDTO = (BoardDTO) boardMap.get(replyDTO.getBoardNo().intValue());
         List<ReplyDTO> targetReplyList = boardDTO.getReplyList();
         Integer replyNo = replyDTO.getReplyNo().intValue();
-        Integer targetNum = null;
-        int cnt = 0;
+        int targetCnt = 0;
         for (ReplyDTO reply : targetReplyList) {
             if (reply.getReplyNo().intValue() == replyNo) {
-                targetNum = cnt;
                 break;
             }
-            cnt ++;
+            targetCnt ++;
         }
-        //log.info("cnt: " + cnt);
-        if (targetReplyList.get(cnt).getReplier().equals(id)) {
-            targetReplyList.get(cnt).setReply(replyDTO.getReply());
+        if (targetReplyList.get(targetCnt).getReplier().equals(id)) {
+            targetReplyList.get(targetCnt).setReply(replyDTO.getReply());
         } else throw new Exception("AccessDeniedException");
         return targetReplyList;
     }
