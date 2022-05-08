@@ -9,7 +9,7 @@ import { getCookie, MY_BLOG_COOKIE_NAME } from '../util/cookie';
 
 const TagSection = styled.div`
     position: absolute;
-    top: 0;
+    bottom: 10px;
     right: 0;
 `;
 
@@ -62,7 +62,13 @@ function Post({ post }: { post: IPostElement }) {
         <>
             <PostCard
             >
-                <PostTitle>{ post.title }</PostTitle>
+                <PostTitle>
+                    { 
+                        post.title.length > 17 ?
+                        post.title.slice(0, 17) + "..." :
+                        post.title
+                    }
+                </PostTitle>
                 <PostContentPreview>
                     { 
                         post.content.length > 60 ? 
@@ -80,7 +86,7 @@ function Post({ post }: { post: IPostElement }) {
                         clicked
                         onClick={handleLikesCancelClick}
                         >
-                            { "👍 " + post.numberOfLikes}
+                            { "👍 " + post.numberOfLikes }
                         </Button>
                     </div>
                 }

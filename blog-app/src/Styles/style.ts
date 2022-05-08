@@ -6,13 +6,13 @@ export const PostTitle = styled.h1`
 
 export const PostContentPreview = styled.div`
     position: absolute;
-    bottom: 35px;
+    bottom: 65px;
     left: 20px;
 `;
 
 export const PostCard = styled.div`
     width: 100%;
-    height: 165px;
+    height: 180px;
     padding: 12px;
     box-sizing: border-box;
     margin-top: 25px;
@@ -36,13 +36,13 @@ export const Container = styled.div`
 
 export const PostLikes = styled.p`
     position: absolute;
-    bottom: 60px;
+    bottom: 95px;
     right: 20px;
 `;
 
 export const PostWriter = styled.span`
     position: absolute;
-    bottom: 35px;
+    bottom: 65px;
     right: 20px;
     font-size: 12px;
 `;

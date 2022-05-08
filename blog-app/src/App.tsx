@@ -17,7 +17,9 @@ import { darkTheme, lightTheme } from './theme';
 function App() {
 
   const isDarkMode = 
-    useSelector((state: { value: boolean }) => state.value);
+    useSelector((state: { value: boolean }) => {
+      return state.value;
+    });
 
   const queryClient = new QueryClient();
 
@@ -27,7 +29,7 @@ function App() {
         <ThemeProvider theme={isDarkMode ? lightTheme : darkTheme}>
           <GlobalStyle />
           <BrowserRouter>
-            <NavigationBar isDarkMode={isDarkMode}/>
+            <NavigationBar isDarkMode={isDarkMode} />
             <Routes>
               <Route path="/write/*" element={<WritePost />} />
               <Route path="/modify/*" element={<WritePost />} />
