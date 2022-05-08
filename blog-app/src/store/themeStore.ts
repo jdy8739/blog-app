@@ -15,14 +15,14 @@ if(!nowTheme)
 const counterSlice = createSlice({
     name: 'themeReducer',
     initialState: {
-        value: nowTheme ? false : true
+        value: nowTheme ? nowTheme === DARK ? false : true : true
     },
     reducers: {
         changeThemeMode: state => {
             if(state.value) {
-                localStorage.setItem(MY_BLOG_THEME, LIGHT);
-            } else {
                 localStorage.setItem(MY_BLOG_THEME, DARK);
+            } else {
+                localStorage.setItem(MY_BLOG_THEME, LIGHT);
             };
             state.value = !state.value;
         }
