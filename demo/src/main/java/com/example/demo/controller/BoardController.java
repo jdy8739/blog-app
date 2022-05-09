@@ -58,8 +58,6 @@ public class BoardController {
             @RequestParam Integer offset,
             @RequestParam Integer limit,
             HttpServletRequest req) {
-//            log.info("subject: " + subject + ", keyword: " + keyword);
-//            log.info("getPosts(): " + offset + ", " + limit);
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         String id = null;

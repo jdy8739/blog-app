@@ -1,5 +1,3 @@
-import axios from "axios";
-import { title } from "process";
 import React, { useEffect, useRef, useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -8,6 +6,7 @@ import { Button, Container, TitleInput, ContentInput, Tag, TagInput } from "../.
 import BASE_URL from "../../URLS";
 import { getCookie, MY_BLOG_COOKIE_NAME } from "../../util/cookie";
 import { IPostElement } from "../Posts/Posts";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Header = styled.header`
     text-align: center;
@@ -135,71 +134,78 @@ function WritePost() {
     }, [post]);
 
     return (
-        <Container>
-            <Header>
-                {
-                    writeMatch && !modifyMatch ? 
-                    "Let's write a post and share your story!" :
-                    "Make a modify your post. You may show it more specific. :)"
-                }
-            </Header>
-            <div>
-                <p>TITLE:</p>
-                &ensp;
-                <TitleInput
-                required
-                ref={titleRef}
-                />
-            </div>
-            <div 
-            style={{ marginTop: '30px' }}
-            >
-                <div>CONTENT:</div>
-                &ensp;
-                <ContentInput
-                required
-                ref={contentRef}
-                />
-            </div>
-            <div
-            style={{ marginTop: '30px' }}
-            >
-                <div>TAGS:</div>
-                <TagInput
-                ref={inputTagRef}
-                onKeyDown={callAddHashTag}
-                />
-                &nbsp;
-                <Button 
-                clicked
-                onClick={addHashTag}
-                >add</Button>
-                {
-                    !tagList ? null :
-                    <div>
-                        { tagList.map((tag, i) => 
-                        <Tag 
-                        key={i}
-                        onClick={() => removeTag(i)}
-                        >{ "# " + tag }</Tag>) }
-                    </div>
-                }
-            </div>
-            <hr></hr>
-            <br></br>
-            <div 
-            style={{ textAlign: 'right' }}
-            >
-                <Button 
-                clicked
-                onClick={handleOnPostSubmit}
-                >submit</Button>
-                <Button 
-                clicked
-                onClick={quitWriting}
-                >back</Button>
-            </div>
-        </Container>
+        <>
+            <HelmetProvider>
+                <Helmet>
+                    <title>{ 'MY BLOG WRITE' }</title>
+                </Helmet>
+            </HelmetProvider>
+            <Container>
+                <Header>
+                    {
+                        writeMatch && !modifyMatch ? 
+                        "Let's write a post and share your story!" :
+                        "Make a modify your post. You may show it more specific. :)"
+                    }
+                </Header>
+                <div>
+                    <p>TITLE:</p>
+                    &ensp;
+                    <TitleInput
+                    required
+                    ref={titleRef}
+                    />
+                </div>
+                <div 
+                style={{ marginTop: '30px' }}
+                >
+                    <div>CONTENT:</div>
+                    &ensp;
+                    <ContentInput
+                    required
+                    ref={contentRef}
+                    />
+                </div>
+                <div
+                style={{ marginTop: '30px' }}
+                >
+                    <div>TAGS:</div>
+                    <TagInput
+                    ref={inputTagRef}
+                    onKeyDown={callAddHashTag}
+                    />
+                    &nbsp;
+                    <Button 
+                    clicked
+                    onClick={addHashTag}
+                    >add</Button>
+                    {
+                        !tagList ? null :
+                        <div>
+                            { tagList.map((tag, i) => 
+                            <Tag 
+                            key={i}
+                            onClick={() => removeTag(i)}
+                            >{ "# " + tag }</Tag>) }
+                        </div>
+                    }
+                </div>
+                <hr></hr>
+                <br></br>
+                <div 
+                style={{ textAlign: 'right' }}
+                >
+                    <Button 
+                    clicked
+                    onClick={handleOnPostSubmit}
+                    >submit</Button>
+                    <Button 
+                    clicked
+                    onClick={quitWriting}
+                    >back</Button>
+                </div>
+            </Container>
+        </>
     )
 };
 

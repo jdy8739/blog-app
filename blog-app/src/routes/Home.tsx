@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useRef } from "react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Span } from "../CommonStyles";
@@ -121,35 +122,42 @@ function Home() {
     }, []);
 
     return (
-        <Box>
-            <HomeTitle>Hello BLOG</HomeTitle>
-            <Form onSubmit={signin}>
-                <label>
-                    <h5>ID</h5>
-                    <input 
-                    ref={idRef}
-                    required
-                    />
-                </label>
-                &emsp;
-                <label>
-                    <h5>PW</h5>
-                    <input 
-                    type="password" 
-                    ref={pwRef}
-                    required
-                    />
-                </label>
-                <Span>
-                    <button 
-                    type="submit"
-                    >sign in</button>
+        <>
+            <HelmetProvider>
+                <Helmet>
+                    <title>{ 'MY BLOG' }</title>
+                </Helmet>
+            </HelmetProvider>
+            <Box>
+                <HomeTitle>Hello BLOG</HomeTitle>
+                <Form onSubmit={signin}>
+                    <label>
+                        <h5>ID</h5>
+                        <input 
+                        ref={idRef}
+                        required
+                        />
+                    </label>
                     &emsp;
-                    <button onClick={toSignupPage}>sign up</button>
-                </Span>
-            </Form>
-            <P onClick={() => nav('/posts')}>No Thanks. I'll use it without login.</P>
-        </Box>
+                    <label>
+                        <h5>PW</h5>
+                        <input 
+                        type="password" 
+                        ref={pwRef}
+                        required
+                        />
+                    </label>
+                    <Span>
+                        <button 
+                        type="submit"
+                        >sign in</button>
+                        &emsp;
+                        <button onClick={toSignupPage}>sign up</button>
+                    </Span>
+                </Form>
+                <P onClick={() => nav('/posts')}>No Thanks. I'll use it without login.</P>
+            </Box>
+        </>
     )
 };
 

@@ -1,5 +1,4 @@
-import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -9,6 +8,7 @@ import { Button, Container, Tag, TitleInput } from "../../Styles/style";
 import BASE_URL from "../../URLS";
 import { getCookie, MY_BLOG_COOKIE_NAME } from "../../util/cookie";
 import { IPostElement, IReply } from "../Posts/Posts";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Title = styled.h1`
     font-size: 31px;
@@ -59,6 +59,8 @@ const formatDate = (date: Date) => {
 
 function PostDetail() {
 
+    const nav = useNavigate();
+
     const postMatch = useMatch('/posts/detail/:id');
 
     const fetchPost = async () => {
@@ -72,14 +74,14 @@ function PostDetail() {
                         "Content-Type": "application/json"
                     }
                 })
-            return await post.json();
-        } else return null;
+            if (post.status !== 200) {
+                nav('/exception');
+            } else return post.json();
+        };
     };
 
     const { isLoading, data: post } = 
         useQuery<IPostElement>(['post', postMatch?.params.id], fetchPost);
-
-    const nav = useNavigate();
 
     const searchPostsByTag = (e: React.MouseEvent<HTMLParagraphElement>) => {
         e.stopPropagation();
@@ -124,7 +126,6 @@ function PostDetail() {
             configAxios.post<IReply[]>(`${BASE_URL}/posts/add_reply`, newReply)
                 .then((res) => {
                     if(post) {
-                        //console.log(res.data ? res.data : 'x');
                         post.replyList = res.data;
                     };
                     if(replyInputRef?.current) 
@@ -185,89 +186,96 @@ function PostDetail() {
     const [isUpdated, setIsUpdated] = useState(false);
 
     return (
-        <Container>
-            {
-                isLoading ? null :
-                <>
-                    <Title>{ post?.title }</Title>
-                    <Info>{ 'saved at - ' + post?.regDate }</Info>
-                    <Info>{ 'writer - ' + post?.writer }</Info>
-                    &emsp;
-                    <Content>{ post?.content }</Content>
-                    <div style={{ height: '300px' }}></div>
-                    <div style={{ textAlign: 'right' }}>
-                        {
-                            post?.hashtags.map(tag => 
-                                <Tag 
-                                key={tag}
-                                onClick={searchPostsByTag}
-                                >{ '# ' + tag }</Tag>)
-                        }
-                    </div>
-                    <div style={{ marginTop: '28px' }}>
-                        <NumberOfLikes>{ post?.numberOfLikes }</NumberOfLikes>
-                    </div>
-                    <div style={{
-                        textAlign: 'center',
-                        marginTop: '28px'
-                    }}
-                    >
-                        {
-                            !post?.liked ? 
-                            <Button
-                            onClick={handleLikesClick}
-                            >like 👍</Button> : 
+        <>
+            <HelmetProvider>
+                <Helmet>
+                    <title>{ 'MY BLOG' + post?.title }</title>
+                </Helmet>
+            </HelmetProvider>
+            <Container>
+                {
+                    isLoading ? null :
+                    <>
+                        <Title>{ post?.title }</Title>
+                        <Info>{ 'saved at - ' + post?.regDate }</Info>
+                        <Info>{ 'writer - ' + post?.writer }</Info>
+                        &emsp;
+                        <Content>{ post?.content }</Content>
+                        <div style={{ height: '300px' }}></div>
+                        <div style={{ textAlign: 'right' }}>
+                            {
+                                post?.hashtags.map(tag => 
+                                    <Tag 
+                                    key={tag}
+                                    onClick={searchPostsByTag}
+                                    >{ '# ' + tag }</Tag>)
+                            }
+                        </div>
+                        <div style={{ marginTop: '28px' }}>
+                            <NumberOfLikes>{ post?.numberOfLikes }</NumberOfLikes>
+                        </div>
+                        <div style={{
+                            textAlign: 'center',
+                            marginTop: '28px'
+                        }}
+                        >
+                            {
+                                !post?.liked ? 
+                                <Button
+                                onClick={handleLikesClick}
+                                >like 👍</Button> : 
+                                <Button 
+                                clicked
+                                onClick={handleLikesCancelClick}
+                                >like 👍</Button>
+                            }
                             <Button 
                             clicked
-                            onClick={handleLikesCancelClick}
-                            >like 👍</Button>
-                        }
-                        <Button 
-                        clicked
-                        onClick={() => nav(-1)}
-                        >back</Button>
+                            onClick={() => nav(-1)}
+                            >back</Button>
+                            {
+                                isMyPost() ?
+                                <>
+                                    <Button
+                                    clicked
+                                    onClick={() => nav('/modify/' + post?.boardNo)}
+                                    >modify</Button>
+                                    <Button
+                                    clicked
+                                    onClick={() => deletePost(post?.boardNo)}
+                                    >delete</Button>
+                                </> : null
+                            } 
+                        </div>
+                        <br></br>
+                        <br></br>
+                        <div>
+                            <form onSubmit={handleOnReplySubmit}>
+                                <span>REPLY:</span>
+                                <Button clicked>add</Button>
+                                &ensp;
+                                <ReplyInput 
+                                required
+                                ref={replyInputRef}
+                                />
+                            </form>
+                        </div>
+                        <br></br>
                         {
-                            isMyPost() ?
-                            <>
-                                <Button
-                                clicked
-                                onClick={() => nav('/modify/' + post?.boardNo)}
-                                >modify</Button>
-                                <Button
-                                clicked
-                                onClick={() => deletePost(post?.boardNo)}
-                                >delete</Button>
-                            </> : null
-                        } 
-                    </div>
-                    <br></br>
-                    <br></br>
-                    <div>
-                        <form onSubmit={handleOnReplySubmit}>
-                            <span>REPLY:</span>
-                            <Button clicked>add</Button>
-                            &ensp;
-                            <ReplyInput 
-                            required
-                            ref={replyInputRef}
-                            />
-                        </form>
-                    </div>
-                    <br></br>
-                    {
-                        post?.replyList?.map((reply, i) => 
-                        <Reply 
-                        key={i} 
-                        reply={reply}
-                        setReply={setReply}
-                        isModified={isModified}
-                        setIsModified={setIsModified}
-                        index={i}
-                        />)
-                    }
-                </>
-            }
-        </Container>
+                            post?.replyList?.map((reply, i) => 
+                            <Reply 
+                            key={i} 
+                            reply={reply}
+                            setReply={setReply}
+                            isModified={isModified}
+                            setIsModified={setIsModified}
+                            index={i}
+                            />)
+                        }
+                    </>
+                }
+            </Container>
+        </>
     )
 };
 

@@ -1,8 +1,8 @@
 import axios from "axios";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { configAxios } from "../../axiosConfig";
 import { Span } from "../../CommonStyles";
 import BASE_URL from "../../URLS";
 
@@ -86,6 +86,11 @@ function Signup() {
 
     return (
         <>
+            <HelmetProvider>
+                <Helmet>
+                    <title>{ 'MY BLOG SIGN UP' }</title>
+                </Helmet>
+            </HelmetProvider>
             <SignupForm onSubmit={handleSubmit(signup)}>
                 <p 
                 style={{ 

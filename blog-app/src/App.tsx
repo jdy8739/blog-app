@@ -36,6 +36,7 @@ function App() {
               <Route path="/posts/detail/:id" element={<PostDetail />} />
               <Route path="/posts/*" element={<Posts />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/exception" element={<Exception />} />
               <Route path="/" element={<Home />} />
               <Route path="/*" element={<Exception />} />
             </Routes>

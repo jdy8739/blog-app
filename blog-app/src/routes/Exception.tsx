@@ -1,7 +1,11 @@
 function Exception() {
     return (
         <>
-            <p>Cannot find the page. :(</p>
+            <p 
+            style={{ 
+                    marginTop: '240px', 
+                    textAlign: 'center' 
+                }}>Cannot find the page. :(</p>
         </>
     )
 };

@@ -1,12 +1,11 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { configAxios } from "../../axiosConfig";
 import Post from "../../components/Post";
 import { Container, Highlight, Button } from "../../Styles/style";
 import BASE_URL from "../../URLS";
-import { getCookie } from "../../util/cookie";
 
 export interface IPostElement {
     boardNo: number;
@@ -136,6 +135,11 @@ function Posts() {
 
     return (
         <>
+            <HelmetProvider>
+                <Helmet>
+                    <title>{ 'MY BLOG POSTS' }</title>
+                </Helmet>
+            </HelmetProvider>
             {
                 isLoading ? <p>Loading... Please wait.</p> :
                 <>
