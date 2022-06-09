@@ -9,7 +9,7 @@ import BASE_URL from "../../URLS";
 
 export interface IPostElement {
     boardNo: number;
-    writer: String; 
+    writer: string; 
     title: string;
     content: string;
     numberOfLikes: number;
@@ -60,24 +60,17 @@ function Posts() {
 
     const location = useLocation();
 
-    let target = location.pathname.split('/')[2];
-
-    let subject: TKeyword = '';
-
-    let keyword = '';
-
-    const catchSubjectAndKeywordName = () => {
-        if(
-            target === 'title' || 
+    const catchSubjectAndKeywordName = () :[TKeyword, string] => {
+        const target = location.pathname.split('/')[2];
+        if(target === 'title' || 
             target === 'writer' || 
             target === 'hashtag' || 
             target === 'favlist') {
-            subject = target;
-            keyword = location.pathname.split('/')[3];
-        };
+            return [target, location.pathname.split('/')[3]];
+        } else return ['', ''];
     };
 
-    catchSubjectAndKeywordName();
+    const [subject, keyword] = catchSubjectAndKeywordName();
 
     const paramsSearcher = new URLSearchParams(location.search);
 
@@ -113,13 +106,16 @@ function Posts() {
 
     const handleOnLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const limit = e.currentTarget.value;
-        nav(`/posts${subject ? '/' + subject : ''}${
-            keyword ? '/' + keyword : ''}/get?offset=0&limit=${limit}`);
+        nav(makeApiString(0, +limit));
     };
 
     const setOffset = (e: React.MouseEvent<HTMLButtonElement>) => {
-        nav(`/posts${subject ? '/' + subject : ''}${
-            keyword ? '/' + keyword : ''}/get?offset=${+e.currentTarget.innerText - 1}&limit=${limit}`);
+        nav(makeApiString(+e.currentTarget.innerText - 1, +limit));
+    };
+
+    const makeApiString = (offset: number, limit: number) :string => {
+        return `/posts${subject ? '/' + subject : ''}${
+            keyword ? '/' + keyword : ''}/get?offset=${offset}&limit=${limit}`;
     };
 
     useEffect(() => {

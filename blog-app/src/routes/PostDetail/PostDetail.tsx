@@ -154,36 +154,17 @@ function PostDetail() {
         const cookie = getCookie(MY_BLOG_COOKIE_NAME);
         if(cookie) {
             const likePromise = 
-                configAxios.post(`${BASE_URL}/member/like/${cookie[0]}/${post?.boardNo}`);
+                configAxios.post(`${BASE_URL}/member/${
+                    !post?.liked ? 'like' : 'cancel_like'}/${cookie[0]}/${post?.boardNo}`);
             const likeResult = await likePromise;
             if(likeResult) {
                 if(post) {
-                    post.numberOfLikes ++;
-                    post.liked = true;
+                    !post?.liked ? post.numberOfLikes ++ : post.numberOfLikes --;
+                    post.liked = !post.liked;
                 };
                 setIsUpdated(!isUpdated);
             };
             likePromise.catch(err => console.log(err));
-        } else {
-            alert('This requires login!');
-        };
-    };
-
-    const handleLikesCancelClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation();
-        const cookie = getCookie(MY_BLOG_COOKIE_NAME);
-        if(cookie) {
-            const likeCancelPromise = 
-                configAxios.post(`${BASE_URL}/member/cancel_like/${cookie[0]}/${post?.boardNo}`);
-            const likeCancelResult = await likeCancelPromise;
-            if(likeCancelResult) {
-                if(post) {
-                    post.numberOfLikes --;
-                    post.liked = false;
-                };
-                setIsUpdated(!isUpdated);
-            };
-            likeCancelPromise.catch(err => console.log(err));
         } else {
             alert('This requires login!');
         };
@@ -226,7 +207,7 @@ function PostDetail() {
                             {
                                 <Button
                                 clicked={ post?.liked }
-                                onClick={ !post?.liked ? handleLikesClick : handleLikesCancelClick }
+                                onClick={ handleLikesClick }
                                 >like 👍</Button>
                             }
                             <Button 
