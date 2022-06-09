@@ -50,14 +50,9 @@ const P = styled.p`
 `;
 
 function Home() {
-
-    const nav = useNavigate();
-
-    const idRef = 
-        useRef<HTMLInputElement>(null);
-
-    const pwRef = 
-        useRef<HTMLInputElement>(null);
+  const nav = useNavigate();
+  const idRef = useRef<HTMLInputElement>(null);
+  const pwRef = useRef<HTMLInputElement>(null);
 
     const toSignupPage = 
         (e: React.MouseEvent<HTMLButtonElement>) => {

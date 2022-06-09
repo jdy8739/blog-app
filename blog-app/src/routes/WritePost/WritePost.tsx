@@ -40,7 +40,7 @@ function WritePost() {
                 title, 
                 content, 
                 hashtags: tagList, 
-                writer, 
+                writer,
                 regDate: post?.regDate
             })
             .then(() => {
@@ -65,7 +65,7 @@ function WritePost() {
 
     const inputTagRef = useRef<HTMLInputElement>(null);
 
-    const [tagList, setTagList] = useState<String[]>([]);
+    const [tagList, setTagList] = useState<string[]>([]);
 
     const addHashTag = () => {
         const newTag = inputTagRef.current?.value;
@@ -74,7 +74,7 @@ function WritePost() {
                 return [...tagList, newTag];
             });
             inputTagRef.current.value = '';
-        };
+        }
     };
 
     const callAddHashTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -107,7 +107,7 @@ function WritePost() {
                 if(err.response.status === 401) {
                     alert('You cannot access this post for modification!');
                     nav(-1);
-                };
+                }
             });
     };
 
@@ -118,16 +118,16 @@ function WritePost() {
         }
         if(modifyMatch) {
             getPostAndCheckValidation();
-        };
+        }
     }, []);
 
     useEffect(() => {
         if(titleRef.current) {
             titleRef.current.value = post?.title || '';
-        };
+        }
         if(contentRef.current) {
             contentRef.current.value = post?.content || '';
-        };
+        }
         setTagList(() => {
             return [...post?.hashtags || []];
         });

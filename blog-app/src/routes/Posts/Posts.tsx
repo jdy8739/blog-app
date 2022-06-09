@@ -17,7 +17,7 @@ export interface IPostElement {
     regDate: string;
     replyList: IReply[];
     liked: boolean;
-};
+}
 
 export interface IReply {
     replyNo?: number;
@@ -25,18 +25,18 @@ export interface IReply {
     replier: string;
     reply: string;
     regDate: string;
-};
+}
 
 interface IBoard {
     [key: string]: IPostElement
-};
+}
 
 interface IPost {
     limit: number;
     offset: number;
     total: number;
     boards: IBoard
-};
+}
 
 const Frame = styled.div`
     border-bottom: 1px solid ${props => props.theme.accentColor};
@@ -96,11 +96,11 @@ function Posts() {
         let lastPageIdx = 0;
         if(posts) {
             lastPageIdx = Math.ceil(posts.total / posts.limit);
-        };
+        }
         const tmpIndexArr = [];
         for(let i=0; i<lastPageIdx; i++) {
             tmpIndexArr.push(i);
-        };
+        }
         setIndexArr([...tmpIndexArr]);
     };
 
@@ -203,6 +203,6 @@ function Posts() {
             }
         </>
     )
-};
+}
 
 export default Posts;
