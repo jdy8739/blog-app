@@ -124,7 +124,6 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
             setUserId('');
             setIsSubMenuShown(false);
             nav('/posts');
-            window.location.reload();
         };
     };
 

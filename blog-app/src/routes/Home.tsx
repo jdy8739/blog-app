@@ -49,8 +49,6 @@ const P = styled.p`
     }
 `;
 
-const loginAxios = axios.create();
-
 function Home() {
 
     const nav = useNavigate();
@@ -66,52 +64,30 @@ function Home() {
         e.preventDefault();
         nav('/signup');
     };
-    
-    loginAxios.interceptors.response.use(
-        async config => {
-            if(config.data) {
-                const token = config.data;
-                const now = new Date();
-                setCookie(
-                    MY_BLOG_COOKIE_NAME,
-                    JSON.stringify([idRef.current?.value, token]),
-                    { 
-                        path: "/", 
-                        expires: new Date(now.setMinutes(now.getMinutes() + 180)),
-                        secure: true,
-                        httpOnly: false
-                    }
-                );  
-            };
-            return config;
-        },
-        ({ config, request, response, ...err }) => {
-            const errMsg = 'Error Message';
-            const isAxiosError = err.isAxiosError;
-            const { status } = response;
-            return Promise.reject({
-                config,
-                message: errMsg,
-                response,
-                isAxiosError,
-                status
-            });
-        }
-    );
 
     const signin = 
-        (e: React.FormEvent<HTMLFormElement>) => {
+        async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        loginAxios.post(`${BASE_URL}/member/signin`, { 
+        const loginResult = axios.post(`${BASE_URL}/member/signin`, { 
             id: idRef.current?.value, 
             password: pwRef.current?.value
-        })
-            .then(res => {
-                if(res.data) {
-                    nav('/posts/all');
-                } else alert('There are no users that match the id and password.');
-            })
-            .catch(err => console.log(err));
+        });
+        const token = (await loginResult).data;
+        if(token) {
+            const now = new Date();
+            setCookie(
+                MY_BLOG_COOKIE_NAME,
+                JSON.stringify([idRef.current?.value, token]),
+                { 
+                    path: "/", 
+                    expires: new Date(now.setMinutes(now.getMinutes() + 180)),
+                    secure: true,
+                    httpOnly: false
+                }
+            );
+            nav('/posts/all');
+        } else alert('There are no users that match the id and password.');
+        loginResult.catch(err => console.log(err));
     };
 
     useEffect(() => {

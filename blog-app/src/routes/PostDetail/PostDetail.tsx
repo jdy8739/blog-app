@@ -59,6 +59,10 @@ const formatDate = (date: Date) => {
 
 function PostDetail() {
 
+    const [isModified, setIsModified] = useState(-1);
+
+    const [isUpdated, setIsUpdated] = useState(false);
+
     const nav = useNavigate();
 
     const postMatch = useMatch('/posts/detail/:id');
@@ -114,7 +118,7 @@ function PostDetail() {
 
     const replyInputRef = useRef<HTMLInputElement>(null);
 
-    const handleOnReplySubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleOnReplySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(getCookie(MY_BLOG_COOKIE_NAME)) {
             const newReply: IReply = {
@@ -123,22 +127,20 @@ function PostDetail() {
                 reply: replyInputRef?.current?.value || '',
                 regDate: formatDate(new Date())
             };
-            configAxios.post<IReply[]>(`${BASE_URL}/posts/add_reply`, newReply)
-                .then((res) => {
-                    if(post) {
-                        post.replyList = res.data;
-                    };
-                    if(replyInputRef?.current) 
-                        replyInputRef.current.value = '';
-                    setIsUpdated(!isUpdated);
-                })
-                .catch(err => console.log(err));
+            const replyPromise = 
+                configAxios.post<IReply[]>(`${BASE_URL}/posts/add_reply`, newReply);
+            const replyResult = await replyPromise;
+            if(replyResult) {
+                if(post) post.replyList = replyResult.data;
+                if(replyInputRef?.current) 
+                    replyInputRef.current.value = '';
+                setIsUpdated(!isUpdated);
+            }
+            replyPromise.catch(err => console.log(err));       
         } else {
             alert('To add a reply, you must login.');
         };
     };
-
-    const [isModified, setIsModified] = useState(-1);
 
     const setReply = (updatedReplies: IReply[]) => {
         if(post) {
@@ -147,43 +149,45 @@ function PostDetail() {
         };
     };
 
-    const handleLikesClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleLikesClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         const cookie = getCookie(MY_BLOG_COOKIE_NAME);
         if(cookie) {
-            configAxios.post(`${BASE_URL}/member/like/${cookie[0]}/${post?.boardNo}`)
-                .then(() => {
-                    if(post) {
-                        post.numberOfLikes ++;
-                        post.liked = true;
-                    };
-                    setIsUpdated(!isUpdated);
-                })
-                .catch(err => console.log(err));
+            const likePromise = 
+                configAxios.post(`${BASE_URL}/member/like/${cookie[0]}/${post?.boardNo}`);
+            const likeResult = await likePromise;
+            if(likeResult) {
+                if(post) {
+                    post.numberOfLikes ++;
+                    post.liked = true;
+                };
+                setIsUpdated(!isUpdated);
+            };
+            likePromise.catch(err => console.log(err));
         } else {
             alert('This requires login!');
         };
     };
 
-    const handleLikesCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleLikesCancelClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         const cookie = getCookie(MY_BLOG_COOKIE_NAME);
         if(cookie) {
-            configAxios.post(`${BASE_URL}/member/cancel_like/${cookie[0]}/${post?.boardNo}`)
-                .then(() => {
-                    if(post) {
-                        post.numberOfLikes --;
-                        post.liked = false;
-                    };
-                    setIsUpdated(!isUpdated);
-                })
-                .catch(err => console.log(err));
+            const likeCancelPromise = 
+                configAxios.post(`${BASE_URL}/member/cancel_like/${cookie[0]}/${post?.boardNo}`);
+            const likeCancelResult = await likeCancelPromise;
+            if(likeCancelResult) {
+                if(post) {
+                    post.numberOfLikes --;
+                    post.liked = false;
+                };
+                setIsUpdated(!isUpdated);
+            };
+            likeCancelPromise.catch(err => console.log(err));
         } else {
             alert('This requires login!');
         };
     };
-
-    const [isUpdated, setIsUpdated] = useState(false);
 
     return (
         <>
@@ -220,13 +224,9 @@ function PostDetail() {
                         }}
                         >
                             {
-                                !post?.liked ? 
                                 <Button
-                                onClick={handleLikesClick}
-                                >like 👍</Button> : 
-                                <Button 
-                                clicked
-                                onClick={handleLikesCancelClick}
+                                clicked={ post?.liked }
+                                onClick={ !post?.liked ? handleLikesClick : handleLikesCancelClick }
                                 >like 👍</Button>
                             }
                             <Button 
