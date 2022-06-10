@@ -89,7 +89,7 @@ function Home() {
         if(getCookie(MY_BLOG_COOKIE_NAME)) {
             alert('You are already loggedin.');
             nav('/posts');
-        };
+        }
     }, []);
 
     return (
@@ -130,6 +130,6 @@ function Home() {
             </Box>
         </>
     )
-};
+}
 
 export default Home;

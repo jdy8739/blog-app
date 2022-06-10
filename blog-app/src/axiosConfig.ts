@@ -9,8 +9,8 @@ configAxios.interceptors.request.use(
             const cookie = getCookie(MY_BLOG_COOKIE_NAME);
             if(cookie) {
                 config.headers['Authorization'] = `Bearer ${cookie[1]}`;
-            };
-        };
+            }
+        }
         return config;
     }
 );
@@ -23,7 +23,7 @@ configModifyAxios.interceptors.request.use(
             config.headers['Authorization'] = 
                 `Bearer ${getCookie(MY_BLOG_COOKIE_NAME)[1]}`;
             config.headers['request'] = "modify";
-        };
+        }
         return config;
     }
 );
@@ -32,7 +32,7 @@ configModifyAxios.interceptors.response.use(
     async config => {
         return config;
     },
-    ({ config, request, response, ...err }) => {
+    ({ config, response, ...err }) => {
         const errMsg = 'Error Message';
         const isAxiosError = err.isAxiosError;
         const { status } = response;

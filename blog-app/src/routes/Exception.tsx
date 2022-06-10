@@ -5,9 +5,10 @@ function Exception() {
             style={{ 
                     marginTop: '240px', 
                     textAlign: 'center' 
-                }}>Cannot find the page. :(</p>
+                }
+            }>Cannot find the page. :(</p>
         </>
-    )
-};
+    );
+}
 
 export default Exception;
