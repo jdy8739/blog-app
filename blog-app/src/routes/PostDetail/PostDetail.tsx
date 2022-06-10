@@ -92,19 +92,20 @@ function PostDetail() {
 		nav(`/posts/hashtag/${tagText}/get?offset=0&limit=5`);
 	};
 
-	const deletePost = (postNo?: number) => {
+	const deletePost = async (postNo?: number) => {
 		if (postNo == 0 || postNo) {
 			const deleteConfirm = window.confirm(
 				'Are you sure to delete this post?',
 			);
 			if (deleteConfirm) {
-				configAxios
-					.delete(`${BASE_URL}/posts/delete_post/${postNo}`)
-					.then(res => {
-						if (res) nav('/posts');
-						else alert('This is an unvalid order.');
-					})
-					.catch(err => console.log(err));
+				const deletePromise = configAxios.delete(
+					`${BASE_URL}/posts/delete_post/${postNo}`,
+				);
+				const deleteResult = await deletePromise;
+				if (deleteResult) {
+					nav('/posts');
+				} else alert('This is an unvalid order.');
+				deletePromise.catch(err => console.log(err));
 			}
 		}
 	};

@@ -93,6 +93,8 @@ const subMenuVariant = {
 export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 	const nav = useNavigate();
 
+	const [isSubMenuShown, setIsSubMenuShown] = useState(false);
+
 	const changeTheme = () => {
 		store.dispatch(changeThemeMode());
 	};
@@ -107,11 +109,8 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 	};
 
 	const [userId, setUserId] = useState<string>(() => {
-		let userInfo = '';
-		if (!userId) {
-			userInfo = getCookie(MY_BLOG_COOKIE_NAME);
-			if (userInfo) return userInfo[0];
-		}
+		const userInfo = getCookie(MY_BLOG_COOKIE_NAME);
+		if (userInfo) return userInfo[0];
 		return '';
 	});
 
@@ -126,8 +125,6 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 			nav('/posts');
 		}
 	};
-
-	const [isSubMenuShown, setIsSubMenuShown] = useState(false);
 
 	const toggleSubMenu = () => setIsSubMenuShown(!isSubMenuShown);
 

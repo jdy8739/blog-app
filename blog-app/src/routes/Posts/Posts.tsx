@@ -79,18 +79,18 @@ function Posts() {
 
 	const offset = paramsSearcher.get('offset') || DEFAULT_OFFSET;
 
-	const fetchPosts = () => {
-		configAxios
-			.get<IPost>(
-				`${BASE_URL}/posts${subject ? '/' + subject : ''}${
-					keyword ? '/' + keyword : ''
-				}/get?offset=${offset}&limit=${limit}`,
-			)
-			.then(res => {
-				setPosts(res.data);
-				setIsLoading(false);
-			})
-			.catch(err => console.log(err));
+	const fetchPosts = async () => {
+		const getPromise = configAxios.get<IPost>(
+			`${BASE_URL}/posts${subject ? '/' + subject : ''}${
+				keyword ? '/' + keyword : ''
+			}/get?offset=${offset}&limit=${limit}`,
+		);
+		const getResult = (await getPromise).data;
+		if (getResult) {
+			setPosts(getResult);
+			setIsLoading(false);
+		}
+		getPromise.catch(err => console.log(err));
 	};
 
 	const makeIndex = () => {

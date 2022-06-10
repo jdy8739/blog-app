@@ -7,7 +7,6 @@ import {
 	Button,
 	PostCard,
 	PostContentPreview,
-	PostLikes,
 	PostTitle,
 	PostWriter,
 	Tag,
@@ -24,49 +23,34 @@ const TagSection = styled.div`
 function Post({ post }: { post: IPostElement }) {
 	const nav = useNavigate();
 
+	const [isUpdated, setIsUpdated] = useState(false);
+
 	const searchPostsByTag = (e: React.MouseEvent<HTMLParagraphElement>) => {
 		e.stopPropagation();
 		const tagText = e.currentTarget.textContent?.split('# ')[1];
 		nav(`/posts/hashtag/${tagText}/get?offset=0&limit=5`);
 	};
 
-	const handleLikesClick = (e: React.MouseEvent<HTMLDivElement>) => {
+	const handleLikesClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.stopPropagation();
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
 		if (cookie) {
-			configAxios
-				.post(`${BASE_URL}/member/like/${cookie[0]}/${post.boardNo}`)
-				.then(() => {
-					post.numberOfLikes++;
-					post.liked = true;
-					setIsUpdated(!isUpdated);
-				})
-				.catch(err => console.log(err));
+			const likePromise = configAxios.post(
+				`${BASE_URL}/member/${!post?.liked ? 'like' : 'cancel_like'}/${
+					cookie[0]
+				}/${post.boardNo}`,
+			);
+			const likeResult = await likePromise;
+			if (likeResult) {
+				!post?.liked ? post.numberOfLikes++ : post.numberOfLikes--;
+				post.liked = !post.liked;
+				setIsUpdated(!isUpdated);
+			}
+			likePromise.catch(err => console.log(err));
 		} else {
 			alert('This requires login!');
 		}
 	};
-
-	const handleLikesCancelClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.stopPropagation();
-		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
-		if (cookie) {
-			configAxios
-				.post(
-					`${BASE_URL}/member/cancel_like/${cookie[0]}/${post.boardNo}`,
-				)
-				.then(() => {
-					post.numberOfLikes--;
-					post.liked = false;
-					setIsUpdated(!isUpdated);
-				})
-				.catch(err => console.log(err));
-		} else {
-			alert('This requires login!');
-		}
-	};
-
-	const [isUpdated, setIsUpdated] = useState(false);
 
 	return (
 		<>
@@ -81,17 +65,11 @@ function Post({ post }: { post: IPostElement }) {
 						? post.content.slice(0, 60) + '...'
 						: post.content}
 				</PostContentPreview>
-				{!post.liked ? (
-					<PostLikes onClick={handleLikesClick}>
-						{'👍 ' + post.numberOfLikes}
-					</PostLikes>
-				) : (
-					<div style={{ textAlign: 'right' }}>
-						<Button clicked onClick={handleLikesCancelClick}>
-							{'👍 ' + post.numberOfLikes}
-						</Button>
-					</div>
-				)}
+				<div style={{ textAlign: 'right' }}>
+					<Button clicked={post?.liked} onClick={handleLikesClick}>
+						👍 {post.numberOfLikes}
+					</Button>
+				</div>
 				<PostWriter>
 					{post.regDate + ' - writer: ' + post.writer}
 				</PostWriter>
