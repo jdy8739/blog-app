@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { configAxios } from '../axiosConfig';
 import { IReply } from '../routes/Posts/Posts';
 import { Button, TitleInput } from '../Styles/style';
-import BASE_URL from '../URLS';
+import { BASE_URL } from '../axiosConfig';
 import { getCookie, MY_BLOG_COOKIE_NAME } from '../util/cookie';
 
 const ReplyStyle = styled.div`

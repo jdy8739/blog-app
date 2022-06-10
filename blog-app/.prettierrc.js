@@ -1,10 +1,10 @@
 module.exports = {
-    singleQuote: false,
+    singleQuote: true,
     // 문자열은 따옴표로 formatting
     semi: true,
-    //코드 마지막에 세미콜른이 있게 formatting
+    // 코드 마지막에 세미콜른이 있게 formatting
     useTabs: true,
-    //탭의 사용을 금하고 스페이스바 사용으로 대체하게 formatting
+    // 탭의 사용을 금하고 스페이스바 사용으로 대체하게 formatting
     tabWidth: 4,
     // 들여쓰기 너비는 4칸
     trailingComma: 'all',
@@ -17,4 +17,4 @@ module.exports = {
 };
 
 /* 위에 설정된 특성대로 format document를 하면 적용은 되는데.. 
-계속 특정 속성을 강요함 */
+계속 특정 속성을 강요함 --> vs 껐다가 키니까 됨. 위에 설정한 속성들이 다 잘 반영됨. */

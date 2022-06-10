@@ -89,7 +89,10 @@ const subMenuVariant = {
 	},
 };
 
+// eslint-disable-next-line prettier/prettier
 export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
+	const nav = useNavigate();
+
 	const changeTheme = () => {
 		store.dispatch(changeThemeMode());
 	};
@@ -103,21 +106,21 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 		nav(`/posts/${selectRef.current?.value}/${inputRef.current?.value}`);
 	};
 
-	const nav = useNavigate();
-
-	const [userId, setUserId] = useState('');
-
-	let userInfo = '';
-
-	if (!userId) {
-		userInfo = getCookie(MY_BLOG_COOKIE_NAME);
-		if (userInfo) setUserId(userInfo[0]);
-	}
+	const [userId, setUserId] = useState<string>(() => {
+		let userInfo = '';
+		if (!userId) {
+			userInfo = getCookie(MY_BLOG_COOKIE_NAME);
+			if (userInfo) return userInfo[0];
+		}
+		return '';
+	});
 
 	const logout = () => {
 		const logoutConfirm = window.confirm('Are you sure to logout?');
 		if (logoutConfirm) {
-			removeCookie(MY_BLOG_COOKIE_NAME, { path: '/' });
+			removeCookie(MY_BLOG_COOKIE_NAME, {
+				path: '/',
+			});
 			setUserId('');
 			setIsSubMenuShown(false);
 			nav('/posts');
@@ -126,20 +129,19 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 
 	const [isSubMenuShown, setIsSubMenuShown] = useState(false);
 
-	const toggleSubMenu = () =>
-		setIsSubMenuShown(isSubMenuShown => !isSubMenuShown);
+	const toggleSubMenu = () => setIsSubMenuShown(!isSubMenuShown);
 
 	const toWritePage = () => {
 		if (getCookie(MY_BLOG_COOKIE_NAME)) nav('/write');
 		else alert('Post Writing requires login!');
 	};
 
-	const fetchMyPosts = () => {
+	const setNavToMyPosts = () => {
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
 		if (cookie) nav(`/posts/writer/${cookie[0]}`);
 	};
 
-	const fetchLikedPosts = () => {
+	const setNavToLikedPosts = () => {
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
 		if (cookie) nav(`/posts/favlist/${cookie[0]}`);
 	};
@@ -157,8 +159,12 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 							exit="exit"
 						>
 							<br></br>
-							<NavElem onClick={fetchMyPosts}>MY POSTS</NavElem>
-							<NavElem onClick={fetchLikedPosts}>LIKED</NavElem>
+							<NavElem onClick={setNavToMyPosts}>
+								MY POSTS
+							</NavElem>
+							<NavElem onClick={setNavToLikedPosts}>
+								LIKED
+							</NavElem>
 						</SubMenu>
 					) : null}
 				</AnimatePresence>
