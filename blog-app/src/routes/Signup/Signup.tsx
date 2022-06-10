@@ -51,6 +51,8 @@ const EMAIL_REGEX =
 const PW_REGEX = /^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹])/;
 
 function Signup() {
+	const nav = useNavigate();
+
 	const {
 		register,
 		handleSubmit,
@@ -59,7 +61,7 @@ function Signup() {
 		setError,
 	} = useForm<ISignupData>();
 
-	const signup = (data: ISignupData) => {
+	const signup = async (data: ISignupData) => {
 		if (data.password !== data.passwordCheck) {
 			setError(
 				'passwordCheck',
@@ -67,26 +69,25 @@ function Signup() {
 				{ shouldFocus: true },
 			);
 		} else {
-			axios
-				.post(`${BASE_URL}/member/signup`, { ...data, auth: 'normal' })
-				.then(res => {
-					const isMemberSaved = res.headers['ismembersaved'];
-					if (!JSON.parse(isMemberSaved)) {
-						setError(
-							'id',
-							{ message: 'This id is duplicate' },
-							{ shouldFocus: true },
-						);
-					} else {
-						alert('Your data has been registered.');
-						nav('/');
-					}
-				})
-				.catch(err => console.log(err));
+			const signupPromise = await axios.post(
+				`${BASE_URL}/member/signup`,
+				{ ...data, auth: 'normal' },
+			);
+			if (signupPromise) {
+				const isMemberSaved = signupPromise.headers['ismembersaved'];
+				if (!JSON.parse(isMemberSaved)) {
+					setError(
+						'id',
+						{ message: 'This id is duplicate' },
+						{ shouldFocus: true },
+					);
+				} else {
+					alert('Your data has been registered.');
+					nav('/');
+				}
+			}
 		}
 	};
-
-	const nav = useNavigate();
 
 	return (
 		<>

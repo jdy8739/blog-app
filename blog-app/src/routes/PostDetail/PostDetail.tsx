@@ -98,14 +98,12 @@ function PostDetail() {
 				'Are you sure to delete this post?',
 			);
 			if (deleteConfirm) {
-				const deletePromise = configAxios.delete(
+				const deletePromise = await configAxios.delete(
 					`${BASE_URL}/posts/delete_post/${postNo}`,
 				);
-				const deleteResult = await deletePromise;
-				if (deleteResult) {
+				if (deletePromise.status === 200) {
 					nav('/posts');
 				} else alert('This is an unvalid order.');
-				deletePromise.catch(err => console.log(err));
 			}
 		}
 	};
@@ -127,17 +125,15 @@ function PostDetail() {
 				reply: replyInputRef?.current?.value || '',
 				regDate: formatDate(new Date()),
 			};
-			const replyPromise = configAxios.post<IReply[]>(
+			const replyPromise = await configAxios.post<IReply[]>(
 				`${BASE_URL}/posts/add_reply`,
 				newReply,
 			);
-			const replyResult = await replyPromise;
-			if (replyResult) {
-				if (post) post.replyList = replyResult.data;
+			if (replyPromise.status === 200) {
+				if (post) post.replyList = replyPromise.data;
 				if (replyInputRef?.current) replyInputRef.current.value = '';
 				setIsUpdated(!isUpdated);
 			}
-			replyPromise.catch(err => console.log(err));
 		} else {
 			alert('To add a reply, you must login.');
 		}
@@ -154,20 +150,18 @@ function PostDetail() {
 		e.stopPropagation();
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
 		if (cookie) {
-			const likePromise = configAxios.post(
+			const likePromise = await configAxios.post(
 				`${BASE_URL}/member/${!post?.liked ? 'like' : 'cancel_like'}/${
 					cookie[0]
 				}/${post?.boardNo}`,
 			);
-			const likeResult = await likePromise;
-			if (likeResult) {
+			if (likePromise.status === 200) {
 				if (post) {
 					!post?.liked ? post.numberOfLikes++ : post.numberOfLikes--;
 					post.liked = !post.liked;
 				}
 				setIsUpdated(!isUpdated);
 			}
-			likePromise.catch(err => console.log(err));
 		} else {
 			alert('This requires login!');
 		}

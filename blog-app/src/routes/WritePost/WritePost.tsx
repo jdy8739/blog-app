@@ -26,39 +26,41 @@ function WritePost() {
 
 	const modifyMatch = useMatch('/modify/:postNo');
 
-	const handleOnPostSubmit = () => {
+	const handleOnPostSubmit = async () => {
 		const title = titleRef?.current?.value || '';
 		const content = contentRef?.current?.value || '';
 		const writer = getCookie(MY_BLOG_COOKIE_NAME)[0];
 
 		if (writeMatch && !modifyMatch) {
-			configAxios
-				.post(`${BASE_URL}/posts/add_post`, {
+			const addPostPromise = await configAxios.post(
+				`${BASE_URL}/posts/add_post`,
+				{
 					title,
 					content,
 					hashtags: tagList,
 					writer,
-				})
-				.then(() => {
-					alert('New Post has registered.');
-					nav('/posts');
-				})
-				.catch(err => console.log(err));
+				},
+			);
+			if (addPostPromise.status == 200) {
+				alert('New Post has registered.');
+				nav('/posts');
+			}
 		} else {
-			configAxios
-				.put(`${BASE_URL}/posts/modify_post`, {
+			const modifyPostPromise = await configAxios.put(
+				`${BASE_URL}/posts/modify_post`,
+				{
 					boardNo: post?.boardNo,
 					title,
 					content,
 					hashtags: tagList,
 					writer,
 					regDate: post?.regDate,
-				})
-				.then(() => {
-					alert('Post has modified.');
-					nav(`/posts/detail/${modifyMatch?.params.postNo}`);
-				})
-				.catch(err => console.log(err));
+				},
+			);
+			if (modifyPostPromise.status == 200) {
+				alert('Post has modified.');
+				nav(`/posts/detail/${modifyMatch?.params.postNo}`);
+			}
 		}
 	};
 

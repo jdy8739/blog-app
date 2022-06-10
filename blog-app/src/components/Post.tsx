@@ -35,18 +35,16 @@ function Post({ post }: { post: IPostElement }) {
 		e.stopPropagation();
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
 		if (cookie) {
-			const likePromise = configAxios.post(
+			const likePromise = await configAxios.post(
 				`${BASE_URL}/member/${!post?.liked ? 'like' : 'cancel_like'}/${
 					cookie[0]
 				}/${post.boardNo}`,
 			);
-			const likeResult = await likePromise;
-			if (likeResult) {
+			if (likePromise.status == 200) {
 				!post?.liked ? post.numberOfLikes++ : post.numberOfLikes--;
 				post.liked = !post.liked;
 				setIsUpdated(!isUpdated);
 			}
-			likePromise.catch(err => console.log(err));
 		} else {
 			alert('This requires login!');
 		}

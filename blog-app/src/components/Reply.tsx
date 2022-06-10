@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { configAxios } from '../axiosConfig';
 import { IReply } from '../routes/Posts/Posts';
@@ -52,12 +52,11 @@ function Reply({
 			'Are you going to delete this reply. This cannot be undone.',
 		);
 		if (deleteConfirm) {
-			const deletePromise = configAxios.delete(
+			const deletePromise = await configAxios.delete(
 				`${BASE_URL}/posts/delete_reply/${reply.boardNo}/${reply.replyNo}`,
 			);
-			const deleteResult = await deletePromise;
-			if (deleteResult) {
-				const isAccessValid = deleteResult.headers['isaccessvalid'];
+			if (deletePromise.status === 200) {
+				const isAccessValid = deletePromise.headers['isaccessvalid'];
 				if (isAccessValid) {
 					if (!JSON.parse(isAccessValid)) {
 						alert(
@@ -65,10 +64,9 @@ function Reply({
 						);
 					}
 				} else {
-					setReply(deleteResult.data);
+					setReply(deletePromise.data);
 				}
 			}
-			deletePromise.catch(err => console.log(err));
 		}
 	};
 
@@ -95,16 +93,15 @@ function Reply({
 	};
 
 	const sendModifiedReply = async () => {
-		const modifyPromise = configAxios.put(
+		const modifyPromise = await configAxios.put(
 			`${BASE_URL}/posts/modify_reply`,
 			{
 				...reply,
 				reply: replyRef.current?.value,
 			},
 		);
-		const modifyResult = await modifyPromise;
-		if (modifyResult) {
-			const isAccessValid = modifyResult.headers['isaccessvalid'];
+		if (modifyPromise.status === 200) {
+			const isAccessValid = modifyPromise.headers['isaccessvalid'];
 			if (isAccessValid) {
 				if (!JSON.parse(isAccessValid)) {
 					alert(
@@ -112,11 +109,10 @@ function Reply({
 					);
 				}
 			} else {
-				setReply(modifyResult.data);
+				setReply(modifyPromise.data);
 				setIsModified(-1);
 			}
 		}
-		modifyPromise.catch(err => console.log(err));
 	};
 
 	useEffect(() => {
