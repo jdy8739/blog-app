@@ -46,29 +46,29 @@ function Reply({
 }: IReplyComponent) {
 	const replyRef = useRef<HTMLInputElement>(null);
 
-	const deleteReply = () => {
+	const deleteReply = async () => {
 		if (!checkIsLoggedIn()) return;
 		const deleteConfirm = window.confirm(
 			'Are you going to delete this reply. This cannot be undone.',
 		);
 		if (deleteConfirm) {
-			configAxios
-				.delete(
-					`${BASE_URL}/posts/delete_reply/${reply.boardNo}/${reply.replyNo}`,
-				)
-				.then(res => {
-					const isAccessValid = res.headers['isaccessvalid'];
-					if (isAccessValid) {
-						if (!JSON.parse(isAccessValid)) {
-							alert(
-								'You cannot delete this reply, since you did not reply this comment!',
-							);
-						}
-					} else {
-						setReply(res.data);
+			const deletePromise = configAxios.delete(
+				`${BASE_URL}/posts/delete_reply/${reply.boardNo}/${reply.replyNo}`,
+			);
+			const deleteResult = await deletePromise;
+			if (deleteResult) {
+				const isAccessValid = deleteResult.headers['isaccessvalid'];
+				if (isAccessValid) {
+					if (!JSON.parse(isAccessValid)) {
+						alert(
+							'You cannot delete this reply, since you did not reply this comment!',
+						);
 					}
-				})
-				.catch(err => console.log(err));
+				} else {
+					setReply(deleteResult.data);
+				}
+			}
+			deletePromise.catch(err => console.log(err));
 		}
 	};
 
@@ -94,26 +94,29 @@ function Reply({
 		sendModifiedReply();
 	};
 
-	const sendModifiedReply = () => {
-		configAxios
-			.put(`${BASE_URL}/posts/modify_reply`, {
+	const sendModifiedReply = async () => {
+		const modifyPromise = configAxios.put(
+			`${BASE_URL}/posts/modify_reply`,
+			{
 				...reply,
 				reply: replyRef.current?.value,
-			})
-			.then(res => {
-				const isAccessValid = res.headers['isaccessvalid'];
-				if (isAccessValid) {
-					if (!JSON.parse(isAccessValid)) {
-						alert(
-							'You cannot modify this reply, since you did not reply this comment!',
-						);
-					}
-				} else {
-					setReply(res.data);
-					setIsModified(-1);
+			},
+		);
+		const modifyResult = await modifyPromise;
+		if (modifyResult) {
+			const isAccessValid = modifyResult.headers['isaccessvalid'];
+			if (isAccessValid) {
+				if (!JSON.parse(isAccessValid)) {
+					alert(
+						'You cannot modify this reply, since you did not reply this comment!',
+					);
 				}
-			})
-			.catch(err => console.log(err));
+			} else {
+				setReply(modifyResult.data);
+				setIsModified(-1);
+			}
+		}
+		modifyPromise.catch(err => console.log(err));
 	};
 
 	useEffect(() => {
