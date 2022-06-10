@@ -111,18 +111,16 @@ function WritePost() {
 
 	const [post, setPost] = useState<IPostElement>();
 
-	const getPostAndCheckValidation = () => {
-		configModifyAxios
-			.get<IPostElement>(
-				`${BASE_URL}/posts/get_detail/${modifyMatch?.params.postNo}`,
-			)
-			.then(res => setPost(res.data))
-			.catch(err => {
-				if (err.response.status === 401) {
-					alert('You cannot access this post for modification!');
-					nav(-1);
-				}
-			});
+	const getPostAndCheckValidation = async () => {
+		const modifyPromise = await configModifyAxios.get<IPostElement>(
+			`${BASE_URL}/posts/get_detail/${modifyMatch?.params.postNo}`,
+		);
+		const status = modifyPromise.status;
+		if (status === 200) setPost(modifyPromise.data);
+		else if (status === 401) {
+			alert('You cannot access this post for modification!');
+			nav(-1);
+		}
 	};
 
 	useEffect(() => {

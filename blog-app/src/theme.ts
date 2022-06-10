@@ -1,15 +1,15 @@
-import { DefaultTheme } from "styled-components";
+import { DefaultTheme } from 'styled-components';
 
 export const lightTheme: DefaultTheme = {
-    fontColor: 'black',
-    backgroundColor: 'whitesmoke',
-    accentColor: 'tomato',
-    inputColor: 'white'
+	fontColor: 'black',
+	backgroundColor: 'whitesmoke',
+	accentColor: 'tomato',
+	inputColor: 'white',
 };
 
 export const darkTheme: DefaultTheme = {
-    fontColor: 'whitesmoke',
-    backgroundColor: 'black',
-    accentColor: 'teal',
-    inputColor: '#191919'
+	fontColor: 'whitesmoke',
+	backgroundColor: 'black',
+	accentColor: 'teal',
+	inputColor: '#191919',
 };
