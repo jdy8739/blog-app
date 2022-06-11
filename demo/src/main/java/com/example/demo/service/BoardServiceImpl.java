@@ -62,7 +62,12 @@ public class BoardServiceImpl implements BoardService {
             String id,
             BoardWrapperDTO boardWrapperDTO) {
         if (id != null) {
-            List<Integer> likesList = memberRepository.getLikedList(id);
+            List<Integer> likesList = null;
+            try {
+                likesList = memberRepository.getLikedList(id);
+            } catch (NullPointerException e) {
+                return boardWrapperDTO;
+            }
             List<BoardDTO> boardList = boardWrapperDTO.getBoards();
             for (BoardDTO boardDTO : boardList) {
                 int targetNum = boardDTO.getBoardNo().intValue();

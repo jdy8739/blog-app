@@ -20,6 +20,12 @@ const TagSection = styled.div`
 	right: 0;
 `;
 
+const NewBadge = styled.p`
+	color: red;
+	position: absolute;
+	top: -12px;
+`;
+
 function Post({ post }: { post: IPostElement }) {
 	const nav = useNavigate();
 
@@ -50,9 +56,16 @@ function Post({ post }: { post: IPostElement }) {
 		}
 	};
 
+	const checkIfPostNew = (): boolean => {
+		if (Date.now() - Number(new Date(post.regDate)) < 600000) return true;
+		// 600000 -> 10 분
+		else return false;
+	};
+
 	return (
 		<>
 			<PostCard>
+				<NewBadge>{checkIfPostNew() ? <p>new</p> : null}</NewBadge>
 				<PostTitle>
 					{post.title.length > 17
 						? post.title.slice(0, 17) + '...'
