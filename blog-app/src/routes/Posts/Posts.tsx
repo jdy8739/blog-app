@@ -174,7 +174,7 @@ function Posts() {
 							</div>
 							{isPostsEmpty(posts.boards) ? (
 								<div style={{ textAlign: 'center' }}>
-									Sorry. No data. :(
+									<p>Sorry. No data. :(</p>
 								</div>
 							) : null}
 							{Object.keys(posts.boards).map(postNo => {
@@ -182,7 +182,8 @@ function Posts() {
 									<Frame
 										key={postNo}
 										onClick={() =>
-											nav(`/posts/detail/${+postNo}`)
+											// eslint-disable-next-line prettier/prettier
+											nav(`/posts/detail/${+posts.boards[postNo].boardNo}`)
 										}
 									>
 										<Post post={posts.boards[postNo]} />

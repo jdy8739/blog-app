@@ -77,28 +77,35 @@ public class BoardRepository {
             Integer offset,
             Integer limit,
             LinkedHashMap map) {
-        HashMap<Integer, BoardDTO> boardMapForClient = new LinkedHashMap<>();
+        List<BoardDTO> boardList = changeMapToList(map);
+        List<BoardDTO> listForClient = new ArrayList<>();
 
         int from = offset * limit;
         int to = offset * limit + limit;
 
-        AtomicInteger i = new AtomicInteger();
-
-        map.forEach((key, value) -> {
-            if(i.intValue() < to && i.intValue() >= from) {
-                BoardDTO boardDTO = (BoardDTO) value;
+        int count = 0;
+        for(BoardDTO boardDTO : boardList) {
+            if(count < to && count >= from) {
                 boardDTO.setLiked(false);
-                boardMapForClient.put((Integer) key, boardDTO);
+                listForClient.add(boardDTO);
+                if(count >= to) break;
             }
-            i.getAndIncrement();
-        });
-        int total = map.size();
-        return new BoardWrapperDTO(total, limit, offset, boardMapForClient);
+            count ++;
+        }
+        int total = boardList.size();
+        return new BoardWrapperDTO(total, limit, offset, listForClient);
+    }
+
+    private List<BoardDTO> changeMapToList(LinkedHashMap<Integer, BoardDTO> map) {
+        List<BoardDTO> listValues
+                = new ArrayList<>(map.values());
+        Collections.reverse(listValues);
+        return listValues;
     }
 
     public BoardWrapperDTO getPosts(Integer offset, Integer limit) {
         return filterByOffsetAndLimit(offset, limit, (LinkedHashMap) boardMap);
-    };
+    }
 
     public BoardDTO getPost(Integer postNo) {
         return (BoardDTO) boardMap.get(postNo);

@@ -63,10 +63,8 @@ public class BoardServiceImpl implements BoardService {
             BoardWrapperDTO boardWrapperDTO) {
         if (id != null) {
             List<Integer> likesList = memberRepository.getLikedList(id);
-            LinkedHashMap<Integer, BoardDTO> boardMap =
-                    (LinkedHashMap) boardWrapperDTO.getBoards();
-            for (Iterator<BoardDTO> map = boardMap.values().iterator(); map.hasNext(); ) {
-                BoardDTO boardDTO = map.next();
+            List<BoardDTO> boardList = boardWrapperDTO.getBoards();
+            for (BoardDTO boardDTO : boardList) {
                 int targetNum = boardDTO.getBoardNo().intValue();
                 for (int i = 0; i < likesList.size(); i++) {
                     if (targetNum == likesList.get(i)) {
