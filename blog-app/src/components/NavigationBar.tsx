@@ -17,6 +17,33 @@ const Nav = styled.nav`
 	position: fixed;
 	top: 0;
 	z-index: 99;
+	@media screen and (max-width: 768px) {
+		height: 104px;
+	}
+`;
+
+const NavOne = styled.div`
+	display: flex;
+	align-items: center;
+	height: 52px;
+	@media screen and (max-width: 768px) {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		justify-content: space-around;
+	}
+`;
+
+const NavTwo = styled.div`
+	display: flex;
+	align-items: center;
+	height: 52px;
+	@media screen and (max-width: 768px) {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		justify-content: space-around;
+	}
 `;
 
 const NavElem = styled.p`
@@ -62,7 +89,7 @@ const SubMenu = styled(motion.div)`
 	height: 110px;
 	background-color: ${props => props.theme.accentColor};
 	position: absolute;
-	top: 50px;
+	top: 44px;
 	left: 0;
 	right: 0;
 	margin: auto;
@@ -126,70 +153,83 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 		}
 	};
 
-	const toggleSubMenu = () => setIsSubMenuShown(!isSubMenuShown);
+	const toggleSubMenu = (e: React.MouseEvent<HTMLParagraphElement>) => {
+		if (e.currentTarget.id === 'user_id') {
+			e.stopPropagation();
+		}
+		setIsSubMenuShown(!isSubMenuShown);
+	};
 
 	const toWritePage = () => {
 		if (getCookie(MY_BLOG_COOKIE_NAME)) nav('/write');
 		else alert('Post Writing requires login!');
 	};
 
-	const setNavToMyPosts = () => {
+	const setNavToSubMenuPage = (route: number) => {
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
-		if (cookie) nav(`/posts/writer/${cookie[0]}`);
+		if (cookie)
+			nav(`/posts/${route === 1 ? 'writer' : 'favlist'}/${cookie[0]}`);
 	};
 
-	const setNavToLikedPosts = () => {
-		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
-		if (cookie) nav(`/posts/favlist/${cookie[0]}`);
-	};
+	const hideSebMenu = () => setIsSubMenuShown(false);
 
 	return (
-		<Nav>
-			<NavElem style={{ position: 'relative' }} onClick={toggleSubMenu}>
-				{userId}
-				<AnimatePresence>
-					{isSubMenuShown ? (
-						<SubMenu
-							variants={subMenuVariant}
-							initial="initial"
-							animate="animate"
-							exit="exit"
-						>
-							<br></br>
-							<NavElem onClick={setNavToMyPosts}>
-								MY POSTS
-							</NavElem>
-							<NavElem onClick={setNavToLikedPosts}>
-								LIKED
-							</NavElem>
-						</SubMenu>
-					) : null}
-				</AnimatePresence>
-			</NavElem>
-			{userId ? <NavElem onClick={logout}>LOGOUT</NavElem> : null}
-			{!userId ? <NavElem onClick={() => nav('/')}>LOGIN</NavElem> : null}
-			<NavElem onClick={() => nav('/posts')}>POSTS</NavElem>
-			<NavElem onClick={toWritePage}>WRITE</NavElem>
+		<Nav onClick={hideSebMenu} onMouseLeave={hideSebMenu}>
+			<NavOne>
+				<NavElem
+					style={{ position: 'relative' }}
+					id="user_id"
+					onClick={toggleSubMenu}
+				>
+					<p>{userId}</p>
+					<AnimatePresence>
+						{isSubMenuShown ? (
+							<SubMenu
+								variants={subMenuVariant}
+								initial="initial"
+								animate="animate"
+								exit="exit"
+							>
+								<br></br>
+								<NavElem onClick={() => setNavToSubMenuPage(1)}>
+									MY POSTS
+								</NavElem>
+								<NavElem onClick={() => setNavToSubMenuPage(2)}>
+									LIKED
+								</NavElem>
+							</SubMenu>
+						) : null}
+					</AnimatePresence>
+				</NavElem>
+				{userId ? <NavElem onClick={logout}>LOGOUT</NavElem> : null}
+				{!userId ? (
+					<NavElem onClick={() => nav('/')}>LOGIN</NavElem>
+				) : null}
+				<NavElem onClick={() => nav('/posts')}>POSTS</NavElem>
+				<NavElem onClick={toWritePage}>WRITE</NavElem>
+			</NavOne>
 			<div style={{ flexGrow: '1' }}></div>
-			<form onSubmit={handleOnSubmit}>
-				<select ref={selectRef}>
-					<option>title</option>
-					<option>writer</option>
-					<option>hashtag</option>
-				</select>
-				&ensp;
-				<SearchIcon src={require('../search.png')} />
-				&ensp;
-				<input ref={inputRef} required />
-			</form>
-			&emsp;
-			<ModeButton onClick={changeTheme}>
-				{isDarkMode ? (
-					<ModeBallDark layoutId={'ball'} />
-				) : (
-					<ModeBallLight layoutId={'ball'} />
-				)}
-			</ModeButton>
+			<NavTwo>
+				<form onSubmit={handleOnSubmit}>
+					<select ref={selectRef}>
+						<option>title</option>
+						<option>writer</option>
+						<option>hashtag</option>
+					</select>
+					&ensp;
+					<SearchIcon src={require('../search.png')} />
+					&ensp;
+					<input ref={inputRef} required />
+				</form>
+				&emsp;
+				<ModeButton onClick={changeTheme}>
+					{isDarkMode ? (
+						<ModeBallDark layoutId={'ball'} />
+					) : (
+						<ModeBallLight layoutId={'ball'} />
+					)}
+				</ModeButton>
+			</NavTwo>
 		</Nav>
 	);
 }

@@ -76,7 +76,7 @@ function Post({ post }: { post: IPostElement }) {
 						? post.content.slice(0, 60) + '...'
 						: post.content}
 				</PostContentPreview>
-				<div style={{ textAlign: 'right' }}>
+				<div style={{ textAlign: 'left' }}>
 					<Button clicked={post?.liked} onClick={handleLikesClick}>
 						👍 {post.numberOfLikes}
 					</Button>

@@ -42,6 +42,15 @@ const Frame = styled.div`
 	border-bottom: 1px solid ${props => props.theme.accentColor};
 `;
 
+const PaginationSelect = styled.div`
+	text-align: right;
+	margin-bottom: 100px;
+	@media screen and (max-width: 768px) {
+		margin-top: 10px;
+		text-align: center;
+	}
+`;
+
 const DEFAULT_OFFSET = 0;
 
 const DEFAULT_LIMIT = 5;
@@ -155,12 +164,7 @@ function Posts() {
 									</>
 								) : null}
 							</div>
-							<div
-								style={{
-									textAlign: 'right',
-									marginBottom: '100px',
-								}}
-							>
+							<PaginationSelect>
 								<span>contents in a page</span>
 								&ensp;
 								<select
@@ -171,7 +175,7 @@ function Posts() {
 									<option>15</option>
 									<option>30</option>
 								</select>
-							</div>
+							</PaginationSelect>
 							{isPostsEmpty(posts.boards) ? (
 								<div style={{ textAlign: 'center' }}>
 									<p>Sorry. No data. :(</p>
