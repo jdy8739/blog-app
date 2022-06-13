@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { configAxios } from '../axiosConfig';
@@ -26,10 +26,23 @@ const NewBadge = styled.p`
 	top: -12px;
 `;
 
+const ButtonBox = styled.div`
+	position: absolute;
+	right: 5px;
+	top: 0;
+	@media screen and (max-width: 768px) {
+		top: 95px;
+	}
+`;
+
 function Post({ post }: { post: IPostElement }) {
 	const nav = useNavigate();
 
 	const [isUpdated, setIsUpdated] = useState(false);
+
+	const [isWindowSmall, setIsWindowSmall] = useState(() => {
+		return window.innerWidth > 768;
+	});
 
 	const searchPostsByTag = (e: React.MouseEvent<HTMLParagraphElement>) => {
 		e.stopPropagation();
@@ -62,6 +75,21 @@ function Post({ post }: { post: IPostElement }) {
 		else return false;
 	};
 
+	const checkToShowTags = () => {
+		if (window.innerWidth > 768) {
+			setIsWindowSmall(true);
+		} else {
+			setIsWindowSmall(false);
+		}
+	};
+
+	useEffect(() => {
+		window.addEventListener('resize', checkToShowTags);
+		return () => {
+			window.removeEventListener('resize', checkToShowTags);
+		};
+	}, []);
+
 	return (
 		<>
 			<PostCard>
@@ -76,21 +104,23 @@ function Post({ post }: { post: IPostElement }) {
 						? post.content.slice(0, 60) + '...'
 						: post.content}
 				</PostContentPreview>
-				<div style={{ textAlign: 'left' }}>
+				<ButtonBox>
 					<Button clicked={post?.liked} onClick={handleLikesClick}>
 						👍 {post.numberOfLikes}
 					</Button>
-				</div>
+				</ButtonBox>
 				<PostWriter>
 					{post.regDate + ' - writer: ' + post.writer}
 				</PostWriter>
-				<TagSection>
-					{post?.hashtags.map(tag => (
-						<Tag key={tag} onClick={searchPostsByTag}>
-							{'# ' + tag}
-						</Tag>
-					))}
-				</TagSection>
+				{isWindowSmall ? (
+					<TagSection>
+						{post?.hashtags.map(tag => (
+							<Tag key={tag} onClick={searchPostsByTag}>
+								{'# ' + tag}
+							</Tag>
+						))}
+					</TagSection>
+				) : null}
 			</PostCard>
 		</>
 	);

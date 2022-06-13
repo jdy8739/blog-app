@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { Span } from '../CommonStyles';
 import { BASE_URL } from '../axiosConfig';
 import { getCookie, MY_BLOG_COOKIE_NAME, setCookie } from '../util/cookie';
+import { useDispatch } from 'react-redux';
+import { changeUserId } from '../store/userIdStore';
 
 const Box = styled.div`
 	width: 370px;
@@ -51,7 +53,11 @@ const P = styled.p`
 
 function Home() {
 	const nav = useNavigate();
+
+	const dispatch = useDispatch();
+
 	const idRef = useRef<HTMLInputElement>(null);
+
 	const pwRef = useRef<HTMLInputElement>(null);
 
 	const toSignupPage = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -61,8 +67,9 @@ function Home() {
 
 	const signin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		const id = idRef.current?.value;
 		const loginResult = axios.post(`${BASE_URL}/member/signin`, {
-			id: idRef.current?.value,
+			id: id,
 			password: pwRef.current?.value,
 		});
 		const token = (await loginResult).data;
@@ -78,9 +85,14 @@ function Home() {
 					httpOnly: false,
 				},
 			);
+			setUserId(id || '');
 			nav('/posts/all');
 		} else alert('There are no users that match the id and password.');
 		loginResult.catch(err => console.log(err));
+	};
+
+	const setUserId = (id: string) => {
+		dispatch(changeUserId(id));
 	};
 
 	useEffect(() => {

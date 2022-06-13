@@ -10,6 +10,9 @@ export const PostTitle = styled.h1`
 export const PostContentPreview = styled.div`
 	word-wrap: break-word;
 	margin-top: 20px;
+	@media screen and (max-width: 768px) {
+		font-size: 14px;
+	}
 `;
 
 export const PostCard = styled.div`
@@ -29,6 +32,7 @@ export const PostCard = styled.div`
 
 export const Container = styled.div`
 	width: 70vw;
+	max-width: 1750px;
 	min-width: 200px;
 	margin: 125px auto;
 	${PostCard}:last-child {
@@ -57,7 +61,7 @@ export const Button = styled.button<{ clicked?: boolean }>`
 	background-color: ${props =>
 		props.clicked ? props.theme.accentColor : props.theme.backgroundColor};
 	color: ${props => props.theme.fontColor};
-	margin-top: 7px;
+	margin: 7px 2px;
 	padding: 4px 12px;
 	font-weight: bold;
 	border-radius: 7px;
@@ -76,9 +80,6 @@ export const Tag = styled.p`
 	box-sizing: border-box;
 	&:hover {
 		background-color: ${props => props.theme.accentColor};
-	}
-	@media screen and (max-width: 768px) {
-		display: none;
 	}
 `;
 

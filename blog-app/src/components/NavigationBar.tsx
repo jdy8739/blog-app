@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { changeThemeMode, store } from '../store/themeStore';
+import { changeThemeMode } from '../store/themeStore';
+import { changeUserId } from '../store/userIdStore';
 import { getCookie, MY_BLOG_COOKIE_NAME, removeCookie } from '../util/cookie';
 
 const Nav = styled.nav`
@@ -120,10 +122,20 @@ const subMenuVariant = {
 export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 	const nav = useNavigate();
 
+	const dispatch = useDispatch();
+
 	const [isSubMenuShown, setIsSubMenuShown] = useState(false);
 
 	const changeTheme = () => {
-		store.dispatch(changeThemeMode());
+		dispatch(changeThemeMode());
+	};
+
+	const userId = useSelector((state: { userIdChanger: { id: string } }) => {
+		return state.userIdChanger.id;
+	});
+
+	const setUserId = (id: string) => {
+		dispatch(changeUserId(id));
 	};
 
 	const selectRef = useRef<HTMLSelectElement>(null);
@@ -134,12 +146,6 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 		e.preventDefault();
 		nav(`/posts/${selectRef.current?.value}/${inputRef.current?.value}`);
 	};
-
-	const [userId, setUserId] = useState<string>(() => {
-		const userInfo = getCookie(MY_BLOG_COOKIE_NAME);
-		if (userInfo) return userInfo[0];
-		return '';
-	});
 
 	const logout = () => {
 		const logoutConfirm = window.confirm('Are you sure to logout?');
@@ -176,31 +182,37 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 	return (
 		<Nav onClick={hideSebMenu} onMouseLeave={hideSebMenu}>
 			<NavOne>
-				<NavElem
-					style={{ position: 'relative' }}
-					id="user_id"
-					onClick={toggleSubMenu}
-				>
-					<p>{userId}</p>
-					<AnimatePresence>
-						{isSubMenuShown ? (
-							<SubMenu
-								variants={subMenuVariant}
-								initial="initial"
-								animate="animate"
-								exit="exit"
-							>
-								<br></br>
-								<NavElem onClick={() => setNavToSubMenuPage(1)}>
-									MY POSTS
-								</NavElem>
-								<NavElem onClick={() => setNavToSubMenuPage(2)}>
-									LIKED
-								</NavElem>
-							</SubMenu>
-						) : null}
-					</AnimatePresence>
-				</NavElem>
+				{userId ? (
+					<NavElem
+						style={{ position: 'relative' }}
+						id="user_id"
+						onClick={toggleSubMenu}
+					>
+						<p>{userId}</p>
+						<AnimatePresence>
+							{isSubMenuShown ? (
+								<SubMenu
+									variants={subMenuVariant}
+									initial="initial"
+									animate="animate"
+									exit="exit"
+								>
+									<br></br>
+									<NavElem
+										onClick={() => setNavToSubMenuPage(1)}
+									>
+										MY POSTS
+									</NavElem>
+									<NavElem
+										onClick={() => setNavToSubMenuPage(2)}
+									>
+										LIKED
+									</NavElem>
+								</SubMenu>
+							) : null}
+						</AnimatePresence>
+					</NavElem>
+				) : null}
 				{userId ? <NavElem onClick={logout}>LOGOUT</NavElem> : null}
 				{!userId ? (
 					<NavElem onClick={() => nav('/')}>LOGIN</NavElem>

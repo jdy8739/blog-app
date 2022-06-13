@@ -8,15 +8,13 @@ import { getCookie, MY_BLOG_COOKIE_NAME } from '../util/cookie';
 
 const ReplyStyle = styled.div`
 	border-bottom: 1px solid ${props => props.theme.accentColor};
-	height: 100px;
+	min-height: 100px;
 	position: relative;
 	padding-top: 9px;
 	box-sizing: border-box;
 `;
 
 const ReplyInfo = styled.div`
-	position: absolute;
-	right: 0;
 	text-align: right;
 `;
 

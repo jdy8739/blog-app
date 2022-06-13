@@ -30,6 +30,4 @@ const counterSlice = createSlice({
 
 export const { changeThemeMode } = counterSlice.actions;
 
-export const store = configureStore({
-	reducer: counterSlice.reducer,
-});
+export default counterSlice.reducer;

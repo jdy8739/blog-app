@@ -13,6 +13,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 const Title = styled.h1`
 	font-size: 31px;
 	border-bottom: 1px solid ${props => props.theme.accentColor};
+	word-wrap: break-word;
 `;
 
 const Info = styled.h5`
@@ -84,6 +85,10 @@ function PostDetail() {
 	const { isLoading, data: post } = useQuery<IPostElement>(
 		['post', postMatch?.params.id],
 		fetchPost,
+		{
+			refetchOnWindowFocus: false,
+			refetchInterval: false,
+		},
 	);
 
 	const searchPostsByTag = (e: React.MouseEvent<HTMLParagraphElement>) => {
