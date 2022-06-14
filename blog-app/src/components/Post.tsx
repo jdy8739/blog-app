@@ -13,6 +13,9 @@ import {
 } from '../Styles/style';
 import { BASE_URL } from '../axiosConfig';
 import { getCookie, MY_BLOG_COOKIE_NAME } from '../util/cookie';
+import { Toast } from 'react-toastify/dist/components';
+import toastConfig from '../util/toast';
+import { toast } from 'react-toastify';
 
 const TagSection = styled.div`
 	position: absolute;
@@ -65,7 +68,7 @@ function Post({ post }: { post: IPostElement }) {
 				setIsUpdated(!isUpdated);
 			}
 		} else {
-			alert('This requires login!');
+			toast.warn('This requires login!', toastConfig);
 		}
 	};
 

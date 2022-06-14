@@ -5,6 +5,9 @@ import { IReply } from '../routes/Posts/Posts';
 import { Button, TitleInput } from '../Styles/style';
 import { BASE_URL } from '../axiosConfig';
 import { getCookie, MY_BLOG_COOKIE_NAME } from '../util/cookie';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import toastConfig from '../util/toast';
 
 const ReplyStyle = styled.div`
 	border-bottom: 1px solid ${props => props.theme.accentColor};
@@ -57,8 +60,12 @@ function Reply({
 				const isAccessValid = deletePromise.headers['isaccessvalid'];
 				if (isAccessValid) {
 					if (!JSON.parse(isAccessValid)) {
-						alert(
+						toast.warn(
 							'You cannot delete this reply, since you did not reply this comment!',
+							{
+								...toastConfig,
+								toastId: 'deleteReplyWarnToast',
+							},
 						);
 					}
 				} else {
@@ -71,7 +78,7 @@ function Reply({
 	const checkIsLoggedIn = () => {
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
 		if (!cookie || cookie[0] !== reply?.replier) {
-			alert('Access denied.');
+			toast.warn('Access denied.', toastConfig);
 			return false;
 		} else return true;
 	};
@@ -102,8 +109,12 @@ function Reply({
 			const isAccessValid = modifyPromise.headers['isaccessvalid'];
 			if (isAccessValid) {
 				if (!JSON.parse(isAccessValid)) {
-					alert(
+					toast.warn(
 						'You cannot modify this reply, since you did not reply this comment!',
+						{
+							...toastConfig,
+							toastId: 'modifyReplyWarnToast',
+						},
 					);
 				}
 			} else {

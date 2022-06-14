@@ -8,6 +8,8 @@ import { BASE_URL } from '../axiosConfig';
 import { getCookie, MY_BLOG_COOKIE_NAME, setCookie } from '../util/cookie';
 import { useDispatch } from 'react-redux';
 import { changeUserId } from '../store/userIdStore';
+import { toast } from 'react-toastify';
+import toastConfig from '../util/toast';
 
 const Box = styled.div`
 	width: 370px;
@@ -87,7 +89,11 @@ function Home() {
 			);
 			setUserId(id || '');
 			nav('/posts/all');
-		} else alert('There are no users that match the id and password.');
+		} else
+			toast.warn('There are no users that match the id and password.', {
+				...toastConfig,
+				toastId: 'loginWarnToast',
+			});
 		loginResult.catch(err => console.log(err));
 	};
 
@@ -97,7 +103,7 @@ function Home() {
 
 	useEffect(() => {
 		if (getCookie(MY_BLOG_COOKIE_NAME)) {
-			alert('You are already loggedin.');
+			toast.warn('You are already loggedin.', toastConfig);
 			nav('/posts');
 		}
 	}, []);

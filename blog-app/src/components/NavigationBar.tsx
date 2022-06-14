@@ -2,10 +2,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { changeThemeMode } from '../store/themeStore';
 import { changeUserId } from '../store/userIdStore';
 import { getCookie, MY_BLOG_COOKIE_NAME, removeCookie } from '../util/cookie';
+import toastConfig from '../util/toast';
 
 const Nav = styled.nav`
 	width: 100vw;
@@ -168,7 +170,10 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 
 	const toWritePage = () => {
 		if (getCookie(MY_BLOG_COOKIE_NAME)) nav('/write');
-		else alert('Post Writing requires login!');
+		else toast.warn('Post Writing requires login!', {
+			...toastConfig,
+			toastId: 'writeWarnToast',
+		});
 	};
 
 	const setNavToSubMenuPage = (route: number) => {

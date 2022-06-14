@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import { ThemeProvider } from 'styled-components';
 import NavigationBar from './components/NavigationBar';
 import { GlobalStyle } from './GlobalStyle';
@@ -41,6 +42,7 @@ function App() {
 							<Route path="/*" element={<Exception />} />
 						</Routes>
 					</BrowserRouter>
+					<ToastContainer />
 				</ThemeProvider>
 			</QueryClientProvider>
 		</div>
