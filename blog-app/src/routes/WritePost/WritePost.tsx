@@ -14,6 +14,8 @@ import {
 import { BASE_URL } from '../../axiosConfig';
 import { getCookie, MY_BLOG_COOKIE_NAME } from '../../util/cookie';
 import { IPostElement } from '../Posts/Posts';
+import { toast } from 'react-toastify';
+import toastConfig from '../../util/toast';
 
 const Header = styled.header`
 	text-align: center;
@@ -42,7 +44,7 @@ function WritePost() {
 				},
 			);
 			if (addPostPromise.status == 200) {
-				alert('New Post has registered.');
+				toast.success('New Post has registered.', toastConfig);
 				nav('/posts');
 			}
 		} else {
@@ -58,7 +60,7 @@ function WritePost() {
 				},
 			);
 			if (modifyPostPromise.status == 200) {
-				alert('Post has modified.');
+				toast.success('Post has modified.', toastConfig);
 				nav(`/posts/detail/${modifyMatch?.params.postNo}`);
 			}
 		}
@@ -112,20 +114,19 @@ function WritePost() {
 	const [post, setPost] = useState<IPostElement>();
 
 	const getPostAndCheckValidation = async () => {
-		const modifyPromise = await configModifyAxios.get<IPostElement>(
-			`${BASE_URL}/posts/get_detail/${modifyMatch?.params.postNo}`,
-		);
-		const status = modifyPromise.status;
-		if (status === 200) setPost(modifyPromise.data);
-		else if (status === 401) {
-			alert('You cannot access this post for modification!');
-			nav(-1);
+		try {
+			const modifyPromise = await configModifyAxios.get<IPostElement>(
+				`${BASE_URL}/posts/get_detail/${modifyMatch?.params.postNo}`,
+			);
+			if (modifyPromise.status === 200) setPost(modifyPromise.data);
+		} catch (e) {
+			nav('/posts');
 		}
 	};
 
 	useEffect(() => {
 		if (!getCookie(MY_BLOG_COOKIE_NAME)) {
-			alert('Post writing requires login!');
+			toast.warn('Post writing requires login!', toastConfig);
 			nav(-1);
 		}
 		if (modifyMatch) {

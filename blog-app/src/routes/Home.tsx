@@ -103,7 +103,10 @@ function Home() {
 
 	useEffect(() => {
 		if (getCookie(MY_BLOG_COOKIE_NAME)) {
-			toast.warn('You are already loggedin.', toastConfig);
+			toast.warn('You are already loggedin.', {
+				...toastConfig,
+				toastId: 'alreadyLoggedInWarnToast',
+			});
 			nav('/posts');
 		}
 	}, []);

@@ -1,5 +1,7 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { getCookie, MY_BLOG_COOKIE_NAME } from './util/cookie';
+import toastConfig from './util/toast';
 
 export const BASE_URL = 'http://localhost:7777';
 
@@ -35,6 +37,12 @@ configModifyAxios.interceptors.response.use(
 		const errMsg = 'Error Message';
 		const isAxiosError = err.isAxiosError;
 		const { status } = response;
+		if (status === 401) {
+			toast.error('You cannot access this post for modification!', {
+				...toastConfig,
+				toastId: 'cannotAccessWarnToast',
+			});
+		}
 		return Promise.reject({
 			config,
 			message: errMsg,

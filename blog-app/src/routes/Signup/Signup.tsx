@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Span } from '../../CommonStyles';
 import { BASE_URL } from '../../axiosConfig';
+import { toast } from 'react-toastify';
+import toastConfig from '../../util/toast';
 
 const Input = styled.input<{ isFocused?: boolean }>`
 	width: 175px;
@@ -82,7 +84,10 @@ function Signup() {
 						{ shouldFocus: true },
 					);
 				} else {
-					alert('Your data has been registered.');
+					toast.success(
+						'Your data has been registered.',
+						toastConfig,
+					);
 					nav('/');
 				}
 			}
