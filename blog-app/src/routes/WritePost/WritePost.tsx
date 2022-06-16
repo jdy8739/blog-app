@@ -44,7 +44,7 @@ function WritePost() {
 				},
 			);
 			if (addPostPromise.status == 200) {
-				toast.success('New Post has registered.', toastConfig);
+				toast.success('New Post has been registered.', toastConfig);
 				nav('/posts');
 			}
 		} else {
@@ -60,7 +60,7 @@ function WritePost() {
 				},
 			);
 			if (modifyPostPromise.status == 200) {
-				toast.success('Post has modified.', toastConfig);
+				toast.success('Post has been modified.', toastConfig);
 				nav(`/posts/detail/${modifyMatch?.params.postNo}`);
 			}
 		}
@@ -174,7 +174,7 @@ function WritePost() {
 					<Button clicked onClick={addHashTag}>
 						add
 					</Button>
-					{!tagList ? null : (
+					{tagList && (
 						<div>
 							{tagList.map((tag, i) => (
 								<Tag key={i} onClick={() => removeTag(i)}>

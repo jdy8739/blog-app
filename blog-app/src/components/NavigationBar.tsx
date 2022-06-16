@@ -170,10 +170,11 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 
 	const toWritePage = () => {
 		if (getCookie(MY_BLOG_COOKIE_NAME)) nav('/write');
-		else toast.warn('Post Writing requires login!', {
-			...toastConfig,
-			toastId: 'writeWarnToast',
-		});
+		else
+			toast.warn('Post Writing requires login!', {
+				...toastConfig,
+				toastId: 'writeWarnToast',
+			});
 	};
 
 	const setNavToSubMenuPage = (route: number) => {
@@ -187,7 +188,7 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 	return (
 		<Nav onClick={hideSebMenu} onMouseLeave={hideSebMenu}>
 			<NavOne>
-				{userId ? (
+				{userId && (
 					<NavElem
 						style={{ position: 'relative' }}
 						id="user_id"
@@ -195,7 +196,7 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 					>
 						<p>{userId}</p>
 						<AnimatePresence>
-							{isSubMenuShown ? (
+							{isSubMenuShown && (
 								<SubMenu
 									variants={subMenuVariant}
 									initial="initial"
@@ -214,14 +215,12 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 										LIKED
 									</NavElem>
 								</SubMenu>
-							) : null}
+							)}
 						</AnimatePresence>
 					</NavElem>
-				) : null}
-				{userId ? <NavElem onClick={logout}>LOGOUT</NavElem> : null}
-				{!userId ? (
-					<NavElem onClick={() => nav('/')}>LOGIN</NavElem>
-				) : null}
+				)}
+				{userId && <NavElem onClick={logout}>LOGOUT</NavElem>}
+				{!userId && <NavElem onClick={() => nav('/')}>LOGIN</NavElem>}
 				<NavElem onClick={() => nav('/posts')}>POSTS</NavElem>
 				<NavElem onClick={toWritePage}>WRITE</NavElem>
 			</NavOne>

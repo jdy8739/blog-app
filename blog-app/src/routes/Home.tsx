@@ -3,13 +3,13 @@ import React, { useEffect, useRef } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Span } from '../CommonStyles';
 import { BASE_URL } from '../axiosConfig';
 import { getCookie, MY_BLOG_COOKIE_NAME, setCookie } from '../util/cookie';
 import { useDispatch } from 'react-redux';
 import { changeUserId } from '../store/userIdStore';
 import { toast } from 'react-toastify';
 import toastConfig from '../util/toast';
+import { Span } from '../Styles/style';
 
 const Box = styled.div`
 	width: 370px;

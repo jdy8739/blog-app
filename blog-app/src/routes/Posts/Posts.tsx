@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { configAxios } from '../../axiosConfig';
 import Post from '../../components/Post';
-import { Container, Highlight, Button } from '../../Styles/style';
+import { Container, Highlight, Button, Blank } from '../../Styles/style';
 import { BASE_URL } from '../../axiosConfig';
 
 export interface IReply {
@@ -151,10 +151,10 @@ function Posts() {
 				<p>Loading... Please wait.</p>
 			) : (
 				<>
-					{posts ? (
+					{posts && (
 						<Container>
 							<div style={{ textAlign: 'center' }}>
-								{subject ? (
+								{subject && (
 									<>
 										{'search for ' + subject}
 										&ensp;
@@ -162,7 +162,7 @@ function Posts() {
 											{window.decodeURI(keyword)}
 										</Highlight>
 									</>
-								) : null}
+								)}
 							</div>
 							<PaginationSelect>
 								<span>contents in a page</span>
@@ -176,11 +176,11 @@ function Posts() {
 									<option>30</option>
 								</select>
 							</PaginationSelect>
-							{isPostsEmpty(posts.boards) ? (
+							{isPostsEmpty(posts.boards) && (
 								<div style={{ textAlign: 'center' }}>
 									<p>Sorry. No data. :(</p>
 								</div>
-							) : null}
+							)}
 							{Object.keys(posts.boards).map(postNo => {
 								return (
 									<Frame
@@ -194,13 +194,8 @@ function Posts() {
 									</Frame>
 								);
 							})}
-							{indexArr ? (
-								<div
-									style={{
-										textAlign: 'center',
-										margin: '50px',
-									}}
-								>
+							{indexArr && (
+								<Blank>
 									{indexArr.map(idx => (
 										<Button
 											key={idx}
@@ -212,10 +207,10 @@ function Posts() {
 											{idx + 1}
 										</Button>
 									))}
-								</div>
-							) : null}
+								</Blank>
+							)}
 						</Container>
-					) : null}
+					)}
 				</>
 			)}
 		</>

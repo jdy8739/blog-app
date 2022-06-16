@@ -13,7 +13,6 @@ import {
 } from '../Styles/style';
 import { BASE_URL } from '../axiosConfig';
 import { getCookie, MY_BLOG_COOKIE_NAME } from '../util/cookie';
-import { Toast } from 'react-toastify/dist/components';
 import toastConfig from '../util/toast';
 import { toast } from 'react-toastify';
 
@@ -96,7 +95,7 @@ function Post({ post }: { post: IPostElement }) {
 	return (
 		<>
 			<PostCard>
-				<NewBadge>{checkIfPostNew() ? <p>new</p> : null}</NewBadge>
+				<NewBadge>{checkIfPostNew() && <p>new</p>}</NewBadge>
 				<PostTitle>
 					{post.title.length > 17
 						? post.title.slice(0, 17) + '...'
@@ -115,7 +114,7 @@ function Post({ post }: { post: IPostElement }) {
 				<PostWriter>
 					{post.regDate + ' - writer: ' + post.writer}
 				</PostWriter>
-				{isWindowSmall ? (
+				{isWindowSmall && (
 					<TagSection>
 						{post?.hashtags.map(tag => (
 							<Tag key={tag} onClick={searchPostsByTag}>
@@ -123,7 +122,7 @@ function Post({ post }: { post: IPostElement }) {
 							</Tag>
 						))}
 					</TagSection>
-				) : null}
+				)}
 			</PostCard>
 		</>
 	);

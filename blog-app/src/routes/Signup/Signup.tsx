@@ -3,10 +3,10 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Span } from '../../CommonStyles';
 import { BASE_URL } from '../../axiosConfig';
 import { toast } from 'react-toastify';
 import toastConfig from '../../util/toast';
+import { Span } from '../../Styles/style';
 
 const Input = styled.input<{ isFocused?: boolean }>`
 	width: 175px;

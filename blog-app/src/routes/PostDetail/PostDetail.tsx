@@ -48,6 +48,11 @@ const NumberOfLikes = styled.div`
 	margin: auto;
 `;
 
+const Div = styled.div`
+	text-align: center;
+	margin-top: 28px;
+`;
+
 type DateFormatType = Date | string | number;
 
 const formatDate = (date: Date) => {
@@ -207,7 +212,7 @@ function PostDetail() {
 				</Helmet>
 			</HelmetProvider>
 			<Container>
-				{isLoading ? null : (
+				{!isLoading && (
 					<>
 						<Title>{post?.title}</Title>
 						<Info>{'saved at - ' + post?.regDate}</Info>
@@ -225,24 +230,17 @@ function PostDetail() {
 						<div style={{ marginTop: '28px' }}>
 							<NumberOfLikes>{post?.numberOfLikes}</NumberOfLikes>
 						</div>
-						<div
-							style={{
-								textAlign: 'center',
-								marginTop: '28px',
-							}}
-						>
-							{
-								<Button
-									clicked={post?.liked}
-									onClick={handleLikesClick}
-								>
-									like 👍
-								</Button>
-							}
+						<Div>
+							<Button
+								clicked={post?.liked}
+								onClick={handleLikesClick}
+							>
+								like 👍
+							</Button>
 							<Button clicked onClick={() => nav(-1)}>
 								back
 							</Button>
-							{userId === post?.writer ? (
+							{userId === post?.writer && (
 								<>
 									<Button
 										clicked
@@ -261,8 +259,8 @@ function PostDetail() {
 										delete
 									</Button>
 								</>
-							) : null}
-						</div>
+							)}
+						</Div>
 						<br></br>
 						<br></br>
 						<div>

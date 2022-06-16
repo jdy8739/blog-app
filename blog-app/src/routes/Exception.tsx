@@ -1,14 +1,14 @@
+import styled from "styled-components";
+
+const P = styled.p`
+	margin-top: 240px;
+	text-align: center;
+`;
+
 function Exception() {
 	return (
 		<>
-			<p
-				style={{
-					marginTop: '240px',
-					textAlign: 'center',
-				}}
-			>
-				Cannot find the page. :(
-			</p>
+			<P>Cannot find the page. :(</P>
 		</>
 	);
 }
