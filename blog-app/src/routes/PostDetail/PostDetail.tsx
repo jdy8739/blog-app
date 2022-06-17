@@ -131,16 +131,10 @@ function PostDetail() {
 				'Are you sure to delete this post?',
 			);
 			if (deleteConfirm) {
-				const deletePromise = await configAxios.delete(
-					`${BASE_URL}/posts/delete_post/${postNo}`,
+				await configAxios.delete(
+					`${BASE_URL}/posts/delete_postpppp/${postNo}`,
 				);
-				if (deletePromise.status === 200) {
-					nav('/posts');
-				} else
-					toast.warn('This is an unvalid order.', {
-						...toastConfig,
-						toastId: 'replyDeleteWarnToast',
-					});
+				nav('/posts');
 			}
 		}
 	};
@@ -184,18 +178,16 @@ function PostDetail() {
 		e.stopPropagation();
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
 		if (cookie) {
-			const likePromise = await configAxios.post(
+			await configAxios.post(
 				`${BASE_URL}/member/${!post?.liked ? 'like' : 'cancel_like'}/${
 					cookie[0]
 				}/${post?.boardNo}`,
 			);
-			if (likePromise.status === 200) {
-				if (post) {
-					!post?.liked ? post.numberOfLikes++ : post.numberOfLikes--;
-					post.liked = !post.liked;
-				}
-				setIsUpdated(!isUpdated);
+			if (post) {
+				!post?.liked ? post.numberOfLikes++ : post.numberOfLikes--;
+				post.liked = !post.liked;
 			}
+			setIsUpdated(!isUpdated);
 		} else {
 			toast.warn('This requires login!', {
 				...toastConfig,

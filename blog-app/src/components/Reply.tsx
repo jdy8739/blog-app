@@ -56,21 +56,19 @@ function Reply({
 			const deletePromise = await configAxios.delete(
 				`${BASE_URL}/posts/delete_reply/${reply.boardNo}/${reply.replyNo}`,
 			);
-			if (deletePromise.status === 200) {
-				const isAccessValid = deletePromise.headers['isaccessvalid'];
-				if (isAccessValid) {
-					if (!JSON.parse(isAccessValid)) {
-						toast.warn(
-							'You cannot delete this reply, since you did not reply this comment!',
-							{
-								...toastConfig,
-								toastId: 'deleteReplyWarnToast',
-							},
-						);
-					}
-				} else {
-					setReply(deletePromise.data);
+			const isAccessValid = deletePromise.headers['isaccessvalid'];
+			if (isAccessValid) {
+				if (!JSON.parse(isAccessValid)) {
+					toast.warn(
+						'You cannot delete this reply, since you did not reply this comment!',
+						{
+							...toastConfig,
+							toastId: 'deleteReplyWarnToast',
+						},
+					);
 				}
+			} else {
+				setReply(deletePromise.data);
 			}
 		}
 	};
@@ -105,22 +103,20 @@ function Reply({
 				reply: replyRef.current?.value,
 			},
 		);
-		if (modifyPromise.status === 200) {
-			const isAccessValid = modifyPromise.headers['isaccessvalid'];
-			if (isAccessValid) {
-				if (!JSON.parse(isAccessValid)) {
-					toast.warn(
-						'You cannot modify this reply, since you did not reply this comment!',
-						{
-							...toastConfig,
-							toastId: 'modifyReplyWarnToast',
-						},
-					);
-				}
-			} else {
-				setReply(modifyPromise.data);
-				setIsModified(-1);
+		const isAccessValid = modifyPromise.headers['isaccessvalid'];
+		if (isAccessValid) {
+			if (!JSON.parse(isAccessValid)) {
+				toast.warn(
+					'You cannot modify this reply, since you did not reply this comment!',
+					{
+						...toastConfig,
+						toastId: 'modifyReplyWarnToast',
+					},
+				);
 			}
+		} else {
+			setReply(modifyPromise.data);
+			setIsModified(-1);
 		}
 	};
 

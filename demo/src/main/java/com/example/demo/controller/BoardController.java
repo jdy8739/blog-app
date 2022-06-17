@@ -27,6 +27,8 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 public class BoardController {
 
+    private final String ID = "id";
+
     @Autowired
     BoardService boardService;
 
@@ -42,7 +44,7 @@ public class BoardController {
         if(authorizationHeader != null) {
             try {
                 Claims claims = jwtUtils.filterInternal(authorizationHeader);
-                id = (String) claims.get("id");
+                id = (String) claims.get(ID);
             } catch (Exception e) {
                 ;
             }
@@ -64,7 +66,7 @@ public class BoardController {
         if(authorizationHeader != null) {
             try {
                 Claims claims = jwtUtils.filterInternal(authorizationHeader);
-                id = (String) claims.get("id");
+                id = (String) claims.get(ID);
                 if(subject.equals("favlist")) {
                     if(!id.equals(keyword)) {
                         throw new Exception();
@@ -92,10 +94,11 @@ public class BoardController {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         String id = null;
         BoardDTO boardDTO = null;
+        log.info("post request: " + postNo);
         try {
             if(!authorizationHeader.equals("Bearer")) {
                 Claims claims = jwtUtils.filterInternal(authorizationHeader);
-                id = (String) claims.get("id");
+                id = (String) claims.get(ID);
                 boardDTO = boardService.getPost(postNo, id);
                 if(requestPurpose != null && requestPurpose.equals("modify")) {
                     if (!id.equals(boardDTO.getWriter())) {
@@ -124,7 +127,7 @@ public class BoardController {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         try {
             Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            if(!claims.get("id").equals(boardDTO.getWriter())) {
+            if(!claims.get(ID).equals(boardDTO.getWriter())) {
                 headers.set("isIdAndTokenMatch", "false");
             } else {
                 boardService.savePost(boardDTO);
@@ -149,7 +152,7 @@ public class BoardController {
         boolean isDeleted = false;
         try {
             Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            String id = (String) claims.get("id");
+            String id = (String) claims.get(ID);
             isDeleted = boardService.deletePost(postNo, id);
         } catch (Exception e) {
             log.info("This token is invalid!");
@@ -172,7 +175,7 @@ public class BoardController {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         try {
             Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            if(!claims.get("id").equals(boardDTO.getWriter())) {
+            if(!claims.get(ID).equals(boardDTO.getWriter())) {
                 headers.set("isIdAndTokenMatch", "false");
             } else {
                 boardService.modifyPost(boardDTO);
@@ -197,7 +200,7 @@ public class BoardController {
         List<ReplyDTO> targetReply = null;
         try {
             Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            if(claims.get("id").equals(replyDTO.getReplier())) {
+            if(claims.get(ID).equals(replyDTO.getReplier())) {
                 targetReply = boardService.saveReply(replyDTO);
             } else {
                 throw new Exception();
@@ -222,7 +225,7 @@ public class BoardController {
         List<ReplyDTO> targetReply = null;
         try {
             Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            String id = (String) claims.get("id");
+            String id = (String) claims.get(ID);
             targetReply = boardService.deleteReply(
                     Integer.parseInt(postNo), Integer.parseInt(replyNo), id);
         } catch (Exception e) {
@@ -249,7 +252,7 @@ public class BoardController {
         List<ReplyDTO> targetReply = null;
         try {
             Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            String id = (String) claims.get("id");
+            String id = (String) claims.get(ID);
             targetReply = boardService.modifyReply(replyDTO, id);
         } catch (Exception e) {
             log.info("This token is invalid!");
