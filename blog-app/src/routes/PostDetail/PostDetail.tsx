@@ -132,7 +132,7 @@ function PostDetail() {
 			);
 			if (deleteConfirm) {
 				await configAxios.delete(
-					`${BASE_URL}/posts/delete_postpppp/${postNo}`,
+					`${BASE_URL}/posts/delete_post/${postNo}`,
 				);
 				nav('/posts');
 			}
@@ -154,11 +154,9 @@ function PostDetail() {
 				`${BASE_URL}/posts/add_reply`,
 				newReply,
 			);
-			if (replyPromise.status === 200) {
-				if (post) post.replyList = replyPromise.data;
-				if (replyInputRef?.current) replyInputRef.current.value = '';
-				setIsUpdated(!isUpdated);
-			}
+			if (post) post.replyList = replyPromise.data;
+			if (replyInputRef?.current) replyInputRef.current.value = '';
+			setIsUpdated(!isUpdated);
 		} else {
 			toast.warn('To add a reply, you must login.', {
 				...toastConfig,

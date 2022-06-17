@@ -43,26 +43,19 @@ function WritePost() {
 					writer,
 				},
 			);
-			if (addPostPromise.status == 200) {
-				toast.success('New Post has been registered.', toastConfig);
-				nav('/posts');
-			}
+			toast.success('New Post has been registered.', toastConfig);
+			nav('/posts');
 		} else {
-			const modifyPostPromise = await configAxios.put(
-				`${BASE_URL}/posts/modify_post`,
-				{
-					boardNo: post?.boardNo,
-					title,
-					content,
-					hashtags: tagList,
-					writer,
-					regDate: post?.regDate,
-				},
-			);
-			if (modifyPostPromise.status == 200) {
-				toast.success('Post has been modified.', toastConfig);
-				nav(`/posts/detail/${modifyMatch?.params.postNo}`);
-			}
+			await configAxios.put(`${BASE_URL}/posts/modify_post`, {
+				boardNo: post?.boardNo,
+				title,
+				content,
+				hashtags: tagList,
+				writer,
+				regDate: post?.regDate,
+			});
+			toast.success('Post has been modified.', toastConfig);
+			nav(`/posts/detail/${modifyMatch?.params.postNo}`);
 		}
 	};
 
@@ -118,7 +111,7 @@ function WritePost() {
 			const modifyPromise = await configModifyAxios.get<IPostElement>(
 				`${BASE_URL}/posts/get_detail/${modifyMatch?.params.postNo}`,
 			);
-			if (modifyPromise.status === 200) setPost(modifyPromise.data);
+			setPost(modifyPromise.data);
 		} catch (e) {
 			nav('/posts');
 		}
