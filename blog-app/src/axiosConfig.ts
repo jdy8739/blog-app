@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import Exception from './routes/Exception';
 import { getCookie, MY_BLOG_COOKIE_NAME } from './util/cookie';
 import toastConfig from './util/toast';
 
@@ -23,10 +22,7 @@ configAxios.interceptors.response.use(
 		return config;
 	},
 	config => {
-		toast.warn('This is an unvalid order.', {
-			...toastConfig,
-			toastId: 'replyDeleteWarnToast',
-		});
+		toast.warn('This is an unvalid order.', toastConfig);
 		return Promise.reject(config);
 	},
 );

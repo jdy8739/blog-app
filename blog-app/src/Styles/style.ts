@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
 export const PostTitle = styled.h1`
@@ -130,4 +131,23 @@ export const Span = styled.span`
 			color: ${props => props.theme.accentColor};
 		}
 	}
+`;
+
+export const ModalBg = styled(motion.div)`
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.7);
+	position: fixed;
+	top: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`;
+
+export const Modal = styled.div<{ width: number }>`
+	width: ${props => props.width + 'px'};
+	height: 160px;
+	background-color: ${props => props.theme.accentColor};
+	border-radius: 12px;
+	text-align: center;
 `;

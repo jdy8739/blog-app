@@ -6,8 +6,10 @@ import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { changeThemeMode } from '../store/themeStore';
 import { changeUserId } from '../store/userIdStore';
+import { Button, Modal, ModalBg } from '../Styles/style';
 import { getCookie, MY_BLOG_COOKIE_NAME, removeCookie } from '../util/cookie';
 import toastConfig from '../util/toast';
+import { modalVariant } from '../util/variants';
 
 const Nav = styled.nav`
 	width: 100vw;
@@ -128,6 +130,8 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 
 	const [isSubMenuShown, setIsSubMenuShown] = useState(false);
 
+	const [isModalShown, setIsModalShown] = useState(false);
+
 	const changeTheme = () => {
 		dispatch(changeThemeMode());
 	};
@@ -150,15 +154,12 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 	};
 
 	const logout = () => {
-		const logoutConfirm = window.confirm('Are you sure to logout?');
-		if (logoutConfirm) {
-			removeCookie(MY_BLOG_COOKIE_NAME, {
-				path: '/',
-			});
-			setUserId('');
-			setIsSubMenuShown(false);
-			nav('/posts');
-		}
+		removeCookie(MY_BLOG_COOKIE_NAME, {
+			path: '/',
+		});
+		setUserId('');
+		setIsModalShown(false);
+		nav('/posts');
 	};
 
 	const toggleSubMenu = (e: React.MouseEvent<HTMLParagraphElement>) => {
@@ -219,7 +220,11 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 						</AnimatePresence>
 					</NavElem>
 				)}
-				{userId && <NavElem onClick={logout}>LOGOUT</NavElem>}
+				{userId && (
+					<NavElem onClick={() => setIsModalShown(true)}>
+						LOGOUT
+					</NavElem>
+				)}
 				{!userId && <NavElem onClick={() => nav('/')}>LOGIN</NavElem>}
 				<NavElem onClick={() => nav('/posts')}>POSTS</NavElem>
 				<NavElem onClick={toWritePage}>WRITE</NavElem>
@@ -246,6 +251,26 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 					)}
 				</ModeButton>
 			</NavTwo>
+			<AnimatePresence>
+				{isModalShown && (
+					<ModalBg
+						variants={modalVariant}
+						initial="initial"
+						animate="animate"
+						exit="exit"
+					>
+						<Modal width={220}>
+							<p style={{ paddingTop: '55px' }}>
+								Are you sure to log out?
+							</p>
+							<Button onClick={logout}>Yes</Button>
+							<Button onClick={() => setIsModalShown(false)}>
+								No
+							</Button>
+						</Modal>
+					</ModalBg>
+				)}
+			</AnimatePresence>
 		</Nav>
 	);
 }

@@ -4,7 +4,14 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { configAxios } from '../../axiosConfig';
 import Reply from '../../components/Reply';
-import { Button, Container, Tag, TitleInput } from '../../Styles/style';
+import {
+	Button,
+	Container,
+	Modal,
+	ModalBg,
+	Tag,
+	TitleInput,
+} from '../../Styles/style';
 import { BASE_URL } from '../../axiosConfig';
 import {
 	getCookie,
@@ -18,6 +25,8 @@ import { changeUserId } from '../../store/userIdStore';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import toastConfig from '../../util/toast';
+import { AnimatePresence } from 'framer-motion';
+import { modalVariant } from '../../util/variants';
 
 const Title = styled.h1`
 	font-size: 31px;
@@ -76,19 +85,15 @@ function PostDetail() {
 
 	const [isUpdated, setIsUpdated] = useState(false);
 
+	const [isModalShown, setIsModalShown] = useState(false);
+
 	const nav = useNavigate();
 
 	const postMatch = useMatch('/posts/detail/:id');
 
-	const dispatch = useDispatch();
-
 	const userId = useSelector((state: { userIdChanger: { id: string } }) => {
 		return state.userIdChanger.id;
 	});
-
-	const setUserId = (id: string) => {
-		dispatch(changeUserId(id));
-	};
 
 	const fetchPost = async () => {
 		if (postMatch) {
@@ -102,10 +107,6 @@ function PostDetail() {
 			});
 			if (post.status === 401) {
 				nav('/exception');
-				removeCookie(MY_BLOG_COOKIE_NAME, {
-					path: '/',
-				});
-				setUserId('');
 			} else return post.json();
 		}
 	};
@@ -125,17 +126,12 @@ function PostDetail() {
 		nav(`/posts/hashtag/${tagText}/get?offset=0&limit=5`);
 	};
 
-	const deletePost = async (postNo?: number) => {
-		if (postNo == 0 || postNo) {
-			const deleteConfirm = window.confirm(
-				'Are you sure to delete this post?',
+	const deletePost = async () => {
+		if (post?.boardNo) {
+			await configAxios.delete(
+				`${BASE_URL}/posts/delete_post/${post?.boardNo}`,
 			);
-			if (deleteConfirm) {
-				await configAxios.delete(
-					`${BASE_URL}/posts/delete_post/${postNo}`,
-				);
-				nav('/posts');
-			}
+			nav('/posts');
 		}
 	};
 
@@ -242,9 +238,7 @@ function PostDetail() {
 									</Button>
 									<Button
 										clicked
-										onClick={() =>
-											deletePost(post?.boardNo)
-										}
+										onClick={() => setIsModalShown(true)}
 									>
 										delete
 									</Button>
@@ -275,6 +269,26 @@ function PostDetail() {
 					</>
 				)}
 			</Container>
+			<AnimatePresence>
+				{isModalShown && (
+					<ModalBg
+						variants={modalVariant}
+						initial="initial"
+						animate="animate"
+						exit="exit"
+					>
+						<Modal width={220}>
+							<p style={{ paddingTop: '55px' }}>
+								Are you sure to delete this post?
+							</p>
+							<Button onClick={deletePost}>Yes</Button>
+							<Button onClick={() => setIsModalShown(false)}>
+								No
+							</Button>
+						</Modal>
+					</ModalBg>
+				)}
+			</AnimatePresence>
 		</>
 	);
 }
