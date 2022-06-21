@@ -139,9 +139,11 @@ export const ModalBg = styled(motion.div)`
 	background-color: rgba(0, 0, 0, 0.7);
 	position: fixed;
 	top: 0;
+	left: 0;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	z-index: 99;
 `;
 
 export const Modal = styled.div<{ width: number }>`

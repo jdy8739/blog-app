@@ -4,29 +4,16 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { configAxios } from '../../axiosConfig';
 import Reply from '../../components/Reply';
-import {
-	Button,
-	Container,
-	Modal,
-	ModalBg,
-	Tag,
-	TitleInput,
-} from '../../Styles/style';
+import { Button, Container, Tag, TitleInput } from '../../Styles/style';
 import { BASE_URL } from '../../axiosConfig';
-import {
-	getCookie,
-	MY_BLOG_COOKIE_NAME,
-	removeCookie,
-} from '../../util/cookie';
+import { getCookie, MY_BLOG_COOKIE_NAME } from '../../util/cookie';
 import { IPostElement, IReply } from '../Posts/Posts';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeUserId } from '../../store/userIdStore';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import toastConfig from '../../util/toast';
-import { AnimatePresence } from 'framer-motion';
-import { modalVariant } from '../../util/variants';
+import ModalComponent from '../../components/ModalComponent';
 
 const Title = styled.h1`
 	font-size: 31px;
@@ -246,7 +233,6 @@ function PostDetail() {
 							)}
 						</Div>
 						<br></br>
-						<br></br>
 						<div>
 							<form onSubmit={handleOnReplySubmit}>
 								<span>REPLY:</span>
@@ -269,26 +255,12 @@ function PostDetail() {
 					</>
 				)}
 			</Container>
-			<AnimatePresence>
-				{isModalShown && (
-					<ModalBg
-						variants={modalVariant}
-						initial="initial"
-						animate="animate"
-						exit="exit"
-					>
-						<Modal width={220}>
-							<p style={{ paddingTop: '55px' }}>
-								Are you sure to delete this post?
-							</p>
-							<Button onClick={deletePost}>Yes</Button>
-							<Button onClick={() => setIsModalShown(false)}>
-								No
-							</Button>
-						</Modal>
-					</ModalBg>
-				)}
-			</AnimatePresence>
+			<ModalComponent
+				isModalShown={isModalShown}
+				setIsModalShown={setIsModalShown}
+				action={deletePost}
+				sentence={'Are you sure to delete this post?'}
+			/>
 		</>
 	);
 }

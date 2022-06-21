@@ -6,10 +6,9 @@ import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { changeThemeMode } from '../store/themeStore';
 import { changeUserId } from '../store/userIdStore';
-import { Button, Modal, ModalBg } from '../Styles/style';
 import { getCookie, MY_BLOG_COOKIE_NAME, removeCookie } from '../util/cookie';
 import toastConfig from '../util/toast';
-import { modalVariant } from '../util/variants';
+import ModalComponent from './ModalComponent';
 
 const Nav = styled.nav`
 	width: 100vw;
@@ -158,7 +157,6 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 			path: '/',
 		});
 		setUserId('');
-		setIsModalShown(false);
 		nav('/posts');
 	};
 
@@ -251,26 +249,12 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 					)}
 				</ModeButton>
 			</NavTwo>
-			<AnimatePresence>
-				{isModalShown && (
-					<ModalBg
-						variants={modalVariant}
-						initial="initial"
-						animate="animate"
-						exit="exit"
-					>
-						<Modal width={220}>
-							<p style={{ paddingTop: '55px' }}>
-								Are you sure to log out?
-							</p>
-							<Button onClick={logout}>Yes</Button>
-							<Button onClick={() => setIsModalShown(false)}>
-								No
-							</Button>
-						</Modal>
-					</ModalBg>
-				)}
-			</AnimatePresence>
+			<ModalComponent
+				isModalShown={isModalShown}
+				setIsModalShown={setIsModalShown}
+				action={logout}
+				sentence={'Are you sure to log out?'}
+			/>
 		</Nav>
 	);
 }

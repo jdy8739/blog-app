@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { configAxios } from '../axiosConfig';
 import { IReply } from '../routes/Posts/Posts';
@@ -8,6 +8,7 @@ import { getCookie, MY_BLOG_COOKIE_NAME } from '../util/cookie';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import toastConfig from '../util/toast';
+import ModalComponent from './ModalComponent';
 
 const ReplyStyle = styled.div`
 	border-bottom: 1px solid ${props => props.theme.accentColor};
@@ -45,31 +46,28 @@ function Reply({
 	setIsModified,
 	index,
 }: IReplyComponent) {
+	const [isModalShown, setIsModalShown] = useState(false);
+
 	const replyRef = useRef<HTMLInputElement>(null);
 
 	const deleteReply = async () => {
 		if (!checkIsLoggedIn()) return;
-		const deleteConfirm = window.confirm(
-			'Are you going to delete this reply. This cannot be undone.',
+		const deletePromise = await configAxios.delete(
+			`${BASE_URL}/posts/delete_reply/${reply.boardNo}/${reply.replyNo}`,
 		);
-		if (deleteConfirm) {
-			const deletePromise = await configAxios.delete(
-				`${BASE_URL}/posts/delete_reply/${reply.boardNo}/${reply.replyNo}`,
-			);
-			const isAccessValid = deletePromise.headers['isaccessvalid'];
-			if (isAccessValid) {
-				if (!JSON.parse(isAccessValid)) {
-					toast.warn(
-						'You cannot delete this reply, since you did not reply this comment!',
-						{
-							...toastConfig,
-							toastId: 'deleteReplyWarnToast',
-						},
-					);
-				}
-			} else {
-				setReply(deletePromise.data);
+		const isAccessValid = deletePromise.headers['isaccessvalid'];
+		if (isAccessValid) {
+			if (!JSON.parse(isAccessValid)) {
+				toast.warn(
+					'You cannot delete this reply, since you did not reply this comment!',
+					{
+						...toastConfig,
+						toastId: 'deleteReplyWarnToast',
+					},
+				);
 			}
+		} else {
+			setReply(deletePromise.data);
 		}
 	};
 
@@ -142,7 +140,7 @@ function Reply({
 					<>
 						<SmallText>{reply.replier}</SmallText>
 						<SmallText>{reply.regDate}</SmallText>
-						<Button clicked onClick={deleteReply}>
+						<Button clicked onClick={() => setIsModalShown(true)}>
 							x
 						</Button>
 					</>
@@ -151,6 +149,14 @@ function Reply({
 					m
 				</Button>
 			</ReplyInfo>
+			<ModalComponent
+				isModalShown={isModalShown}
+				setIsModalShown={setIsModalShown}
+				action={deleteReply}
+				sentence={
+					'Are you going to delete this reply. This cannot be undone.'
+				}
+			/>
 		</ReplyStyle>
 	);
 }
