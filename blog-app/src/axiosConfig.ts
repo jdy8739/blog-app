@@ -19,6 +19,7 @@ configAxios.interceptors.request.use(config => {
 
 configAxios.interceptors.response.use(
 	config => {
+		console.log(config.data);
 		return config;
 	},
 	config => {

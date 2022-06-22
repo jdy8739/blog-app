@@ -96,8 +96,8 @@ function Posts() {
 		);
 		const getResult = (await getPromise).data;
 		if (getResult) {
-			setPosts(getResult);
-			setIsLoading(false);
+			// setPosts(getResult);
+			// setIsLoading(false);
 		}
 		getPromise.catch(err => console.log(err));
 	};
@@ -187,7 +187,11 @@ function Posts() {
 										key={postNo}
 										onClick={() =>
 											// eslint-disable-next-line prettier/prettier
-											nav(`/posts/detail/${+posts.boards[postNo].boardNo}`)
+											nav(
+												`/posts/detail/${+posts.boards[
+													postNo
+												].boardNo}`,
+											)
 										}
 									>
 										<Post post={posts.boards[postNo]} />

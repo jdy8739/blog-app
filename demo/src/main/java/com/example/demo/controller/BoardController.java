@@ -42,12 +42,8 @@ public class BoardController {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         String id = null;
         if(authorizationHeader != null) {
-            try {
-                Claims claims = jwtUtils.filterInternal(authorizationHeader);
-                id = (String) claims.get(ID);
-            } catch (Exception e) {
-                ;
-            }
+            Claims claims = jwtUtils.filterInternal("nn");
+            id = (String) claims.get(ID);
         }
         return new ResponseEntity<BoardWrapperDTO>(
                 boardService.getPosts(offset, limit, id), HttpStatus.OK);
@@ -90,7 +86,6 @@ public class BoardController {
             @PathVariable int postNo,
             HttpServletRequest req) {
         String requestPurpose = req.getHeader("request");
-        HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         String id = null;
         BoardDTO boardDTO = null;
@@ -110,6 +105,7 @@ public class BoardController {
             }
         } catch (Exception e) {
             log.info("This token is invalid!");
+            HttpHeaders headers = new HttpHeaders();
             headers.set("isValidToken", "false");
             return ResponseEntity.status(401)
                     .headers(headers)
