@@ -5,7 +5,9 @@ import com.example.demo.DTO.BoardWrapperDTO;
 import com.example.demo.DTO.ReplyDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.swing.*;
 import java.time.LocalDateTime;
@@ -243,11 +245,11 @@ public class BoardRepository {
         }
         if (targetReplyList.get(targetCnt).getReplier().equals(id)) {
             targetReplyList.remove(targetCnt);
-        } else throw new Exception("AccessDeniedException");
+        } else throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         return targetReplyList;
     }
 
-    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) throws Exception {
+    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) {
         BoardDTO boardDTO = (BoardDTO) boardMap.get(replyDTO.getBoardNo().intValue());
         List<ReplyDTO> targetReplyList = boardDTO.getReplyList();
         Integer replyNo = replyDTO.getReplyNo().intValue();
@@ -260,7 +262,7 @@ public class BoardRepository {
         }
         if (targetReplyList.get(targetCnt).getReplier().equals(id)) {
             targetReplyList.get(targetCnt).setReply(replyDTO.getReply());
-        } else throw new Exception("AccessDeniedException");
+        } else throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         return targetReplyList;
     }
 

@@ -6,6 +6,9 @@ import { configAxios } from '../../axiosConfig';
 import Post from '../../components/Post';
 import { Container, Highlight, Button, Blank } from '../../Styles/style';
 import { BASE_URL } from '../../axiosConfig';
+import { MY_BLOG_COOKIE_NAME, removeCookie } from '../../util/cookie';
+import { useDispatch } from 'react-redux';
+import { changeUserId } from '../../store/userIdStore';
 
 export interface IReply {
 	replyNo?: number;
@@ -88,18 +91,35 @@ function Posts() {
 
 	const offset = paramsSearcher.get('offset') || DEFAULT_OFFSET;
 
+	const dispatch = useDispatch();
+
+	const setUserId = (id: string) => {
+		dispatch(changeUserId(id));
+	};
+
+	const logout = () => {
+		removeCookie(MY_BLOG_COOKIE_NAME, {
+			path: '/',
+		});
+		setUserId('');
+		nav('/');
+	};
+
 	const fetchPosts = async () => {
-		const getPromise = configAxios.get<IPost>(
-			`${BASE_URL}/posts${subject ? '/' + subject : ''}${
-				keyword ? '/' + keyword : ''
-			}/get?offset=${offset}&limit=${limit}`,
-		);
-		const getResult = (await getPromise).data;
-		if (getResult) {
-			// setPosts(getResult);
-			// setIsLoading(false);
+		try {
+			const getPromise = configAxios.get<IPost>(
+				`${BASE_URL}/posts${subject ? '/' + subject : ''}${
+					keyword ? '/' + keyword : ''
+				}/get?offset=${offset}&limit=${limit}`,
+			);
+			const getResult = (await getPromise).data;
+			if (getResult) {
+				setPosts(getResult);
+				setIsLoading(false);
+			}
+		} catch (e) {
+			logout();
 		}
-		getPromise.catch(err => console.log(err));
 	};
 
 	const makeIndex = () => {

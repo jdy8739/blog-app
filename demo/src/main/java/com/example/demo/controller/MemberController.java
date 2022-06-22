@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,6 +30,8 @@ public class MemberController {
     MemberService memberService;
 
     JWTUtils jwtUtils = new JWTUtils();
+
+    private final String ID = "id";
 
     @PostMapping("/signin")
     public ResponseEntity<String> signin(
@@ -63,47 +66,35 @@ public class MemberController {
     public ResponseEntity<Void> likePost(
             @PathVariable("id") String id,
             @PathVariable("postNo") Integer postNo,
-            HttpServletRequest req) {
+            HttpServletRequest req) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        try {
-            Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            if(claims.get("id").equals(id)) {
-                memberService.addLike(id, postNo);
-            } else {
-                throw new Exception();
-            }
-        } catch (Exception e) {
-            log.info("This token is invalid!");
-            headers.set("isValidToken", "false");
-        } finally {
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(null);
+        Claims claims = jwtUtils.filterInternal(authorizationHeader);
+        if(claims.get(ID).equals(id)) {
+            memberService.addLike(id, postNo);
+        } else {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         }
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(null);
     }
 
     @PostMapping("/cancel_like/{id}/{postNo}")
     public ResponseEntity<Void> cancelLikePost(
             @PathVariable("id") String id,
             @PathVariable("postNo") Integer postNo,
-            HttpServletRequest req) {
+            HttpServletRequest req) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        try {
-            Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            if(claims.get("id").equals(id)) {
-                memberService.cancelLike(id, postNo);
-            } else {
-                throw new Exception();
-            }
-        } catch (Exception e) {
-            log.info("This token is invalid!");
-            headers.set("isValidToken", "false");
-        } finally {
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(null);
+        Claims claims = jwtUtils.filterInternal(authorizationHeader);
+        if(claims.get(ID).equals(id)) {
+            memberService.cancelLike(id, postNo);
+        } else {
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         }
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(null);
     }
 }

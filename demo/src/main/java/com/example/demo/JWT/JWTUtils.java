@@ -57,7 +57,7 @@ public class JWTUtils {
 
     public Claims filterInternal(String token
             //FilterChain filterChain
-    ) throws IOException, ServletException {
+    ) {
         Claims claims = parseJwtToken(token);
         //System.out.println(claims);
         return claims;

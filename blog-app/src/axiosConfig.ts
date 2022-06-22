@@ -19,8 +19,15 @@ configAxios.interceptors.request.use(config => {
 
 configAxios.interceptors.response.use(
 	config => {
-		console.log(config.data);
-		return config;
+		if (config.data['code']) {
+			toast.error(config.data['description'], {
+				...toastConfig,
+				toastId: 'errorToast',
+			});
+			throw new Error();
+		} else {
+			return config;
+		}
 	},
 	config => {
 		toast.warn('This is an unvalid order.', toastConfig);
