@@ -106,7 +106,7 @@ public class BoardController {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         Claims claims = jwtUtils.filterInternal(authorizationHeader);
         if(!claims.get(ID).equals(boardDTO.getWriter())) {
-            headers.set("isIdAndTokenMatch", "false");
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         } else {
             boardService.savePost(boardDTO);
             log.info("Post has saved.");
@@ -140,7 +140,7 @@ public class BoardController {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         Claims claims = jwtUtils.filterInternal(authorizationHeader);
         if(!claims.get(ID).equals(boardDTO.getWriter())) {
-            headers.set("isIdAndTokenMatch", "false");
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         } else {
             boardService.modifyPost(boardDTO);
             log.info("Post has modified.");
@@ -163,8 +163,6 @@ public class BoardController {
         } else {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         }
-        log.info("This token is invalid!");
-        headers.set("isValidToken", "false");
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(targetReply);
