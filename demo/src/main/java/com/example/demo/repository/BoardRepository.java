@@ -233,7 +233,7 @@ public class BoardRepository {
     }
 
     public List<ReplyDTO> deleteReply(
-            Integer postNo, Integer replyNo, String id) throws Exception {
+            Integer postNo, Integer replyNo, String id) {
         BoardDTO targetBoard = (BoardDTO) boardMap.get(postNo);
         List<ReplyDTO> targetReplyList = targetBoard.getReplyList();
         int targetCnt = 0;
@@ -245,13 +245,13 @@ public class BoardRepository {
         }
         if (targetReplyList.get(targetCnt).getReplier().equals(id)) {
             targetReplyList.remove(targetCnt);
-        } else throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+        } else throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         return targetReplyList;
     }
 
     public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) {
-        BoardDTO boardDTO = (BoardDTO) boardMap.get(replyDTO.getBoardNo().intValue());
-        List<ReplyDTO> targetReplyList = boardDTO.getReplyList();
+        BoardDTO targetBoard = (BoardDTO) boardMap.get(replyDTO.getBoardNo().intValue());
+        List<ReplyDTO> targetReplyList = targetBoard.getReplyList();
         Integer replyNo = replyDTO.getReplyNo().intValue();
         int targetCnt = 0;
         for (ReplyDTO reply : targetReplyList) {
@@ -262,7 +262,7 @@ public class BoardRepository {
         }
         if (targetReplyList.get(targetCnt).getReplier().equals(id)) {
             targetReplyList.get(targetCnt).setReply(replyDTO.getReply());
-        } else throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+        } else throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         return targetReplyList;
     }
 

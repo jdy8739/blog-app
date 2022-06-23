@@ -6,14 +6,19 @@ import { configAxios } from '../../axiosConfig';
 import Reply from '../../components/Reply';
 import { Button, Container, Tag, TitleInput } from '../../Styles/style';
 import { BASE_URL } from '../../axiosConfig';
-import { getCookie, MY_BLOG_COOKIE_NAME } from '../../util/cookie';
+import {
+	getCookie,
+	MY_BLOG_COOKIE_NAME,
+	removeCookie,
+} from '../../util/cookie';
 import { IPostElement, IReply } from '../Posts/Posts';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import toastConfig from '../../util/toast';
 import ModalComponent from '../../components/ModalComponent';
+import { changeUserId } from '../../store/userIdStore';
 
 const Title = styled.h1`
 	font-size: 31px;
@@ -76,11 +81,24 @@ function PostDetail() {
 
 	const nav = useNavigate();
 
+	const dispatch = useDispatch();
+
 	const postMatch = useMatch('/posts/detail/:id');
 
 	const userId = useSelector((state: { userIdChanger: { id: string } }) => {
 		return state.userIdChanger.id;
 	});
+
+	const setUserId = (id: string) => {
+		dispatch(changeUserId(id));
+	};
+
+	const logout = () => {
+		removeCookie(MY_BLOG_COOKIE_NAME, {
+			path: '/',
+		});
+		setUserId('');
+	};
 
 	const fetchPost = async () => {
 		if (postMatch) {
@@ -92,7 +110,8 @@ function PostDetail() {
 					'Content-Type': 'application/json',
 				},
 			});
-			if (post.status === 401) {
+			if (post.status === 500) {
+				logout();
 				nav('/exception');
 			} else return post.json();
 		}

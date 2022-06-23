@@ -64,7 +64,7 @@ public class BoardController {
             id = (String) claims.get(ID);
             if(subject.equals("favlist")) {
                 if(!id.equals(keyword)) {
-                    throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+                    throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
                 }
             }
         }
@@ -76,7 +76,7 @@ public class BoardController {
     @GetMapping("/get_detail/{postNo}")
     public ResponseEntity<BoardDTO> getPost(
             @PathVariable int postNo,
-            HttpServletRequest req) {
+            HttpServletRequest req) throws Exception {
         String requestPurpose = req.getHeader("request");
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         String id = null;
@@ -88,7 +88,7 @@ public class BoardController {
             boardDTO = boardService.getPost(postNo, id);
             if(requestPurpose != null && requestPurpose.equals("modify")) {
                 if (!id.equals(boardDTO.getWriter())) {
-                    throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+                    throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
                 }
             }
         } else {
@@ -126,7 +126,7 @@ public class BoardController {
         Claims claims = jwtUtils.filterInternal(authorizationHeader);
         String id = (String) claims.get(ID);
         isDeleted = boardService.deletePost(postNo, id);
-        if (!isDeleted) throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+        if (!isDeleted) throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(null);
@@ -140,7 +140,7 @@ public class BoardController {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         Claims claims = jwtUtils.filterInternal(authorizationHeader);
         if(!claims.get(ID).equals(boardDTO.getWriter())) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         } else {
             boardService.modifyPost(boardDTO);
             log.info("Post has modified.");
@@ -172,7 +172,7 @@ public class BoardController {
     public ResponseEntity<List<ReplyDTO>> deleteReply(
             @PathVariable("postNo") String postNo,
             @PathVariable("replyNo") String replyNo,
-            HttpServletRequest req) throws Exception {
+            HttpServletRequest req) {
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         List<ReplyDTO> targetReply = null;
@@ -189,7 +189,7 @@ public class BoardController {
     @PutMapping("/modify_reply")
     public ResponseEntity<List<ReplyDTO>> modifyReply(
             @Validated @RequestBody ReplyDTO replyDTO,
-            HttpServletRequest req) throws Exception {
+            HttpServletRequest req) {
         HttpHeaders headers = new HttpHeaders();
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         List<ReplyDTO> targetReply = null;

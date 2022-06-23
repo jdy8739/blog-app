@@ -109,12 +109,12 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<ReplyDTO> deleteReply(
-            Integer postNo, Integer replyNo, String id) throws Exception {
+            Integer postNo, Integer replyNo, String id) throws HttpClientErrorException {
         return boardRepository.deleteReply(postNo, replyNo, id);
     }
 
     @Override
-    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) throws Exception {
+    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) throws HttpClientErrorException {
         return boardRepository.modifyReply(replyDTO, id);
     }
 }

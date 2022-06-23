@@ -18,12 +18,31 @@ public class Advice {
                 ExceptionInfo.UnavailableCookieInfo.getDescription());
     }
 
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<ExceptionDTO> handleForbiddenException() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("isEligibleUser", "false");
+        return ResponseEntity.status(403)
+                .headers(headers)
+                .body(new ExceptionDTO(ExceptionInfo.CannotAccessUserInfo.getCode(),
+                        ExceptionInfo.CannotAccessUserInfo.getDescription()));
+    }
+
     @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
-    public ResponseEntity<Void> handleHttpClientErrorException() {
+    public ResponseEntity<ExceptionDTO> handleUnauthorizedException() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("isValidToken", "false");
         return ResponseEntity.status(401)
                 .headers(headers)
-                .body(null);
+                .body(new ExceptionDTO(ExceptionInfo.UnauthorizedUserInfo.getCode(),
+                        ExceptionInfo.UnauthorizedUserInfo.getDescription()));
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ExceptionDTO> handleNullPointerException() {
+        return ResponseEntity.status(500)
+                .headers(new HttpHeaders())
+                .body(new ExceptionDTO(ExceptionInfo.NotFoundInfo.getCode(),
+                        ExceptionInfo.NotFoundInfo.getDescription()));
     }
 }

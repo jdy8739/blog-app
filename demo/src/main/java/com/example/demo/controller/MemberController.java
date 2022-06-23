@@ -73,7 +73,7 @@ public class MemberController {
         if(claims.get(ID).equals(id)) {
             memberService.addLike(id, postNo);
         } else {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         }
         return ResponseEntity.ok()
                 .headers(headers)
@@ -91,7 +91,7 @@ public class MemberController {
         if(claims.get(ID).equals(id)) {
             memberService.cancelLike(id, postNo);
         } else {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         }
         return ResponseEntity.ok()
                 .headers(headers)

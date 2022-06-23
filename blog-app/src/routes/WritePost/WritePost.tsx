@@ -16,6 +16,7 @@ import { getCookie, MY_BLOG_COOKIE_NAME } from '../../util/cookie';
 import { IPostElement } from '../Posts/Posts';
 import { toast } from 'react-toastify';
 import toastConfig from '../../util/toast';
+import ModalComponent from '../../components/ModalComponent';
 
 const Header = styled.header`
 	text-align: center;
@@ -28,21 +29,32 @@ function WritePost() {
 
 	const modifyMatch = useMatch('/modify/:postNo');
 
+	const nav = useNavigate();
+
+	const [post, setPost] = useState<IPostElement>();
+
+	const [tagList, setTagList] = useState<string[]>([]);
+
+	const [isModalShown, setIsModalShown] = useState(false);
+
+	const titleRef = useRef<HTMLInputElement>(null);
+
+	const contentRef = useRef<HTMLTextAreaElement>(null);
+
+	const inputTagRef = useRef<HTMLInputElement>(null);
+
 	const handleOnPostSubmit = async () => {
 		const title = titleRef?.current?.value || '';
 		const content = contentRef?.current?.value || '';
 		const writer = getCookie(MY_BLOG_COOKIE_NAME)[0];
 
 		if (writeMatch && !modifyMatch) {
-			const addPostPromise = await configAxios.post(
-				`${BASE_URL}/posts/add_post`,
-				{
-					title,
-					content,
-					hashtags: tagList,
-					writer,
-				},
-			);
+			await configAxios.post(`${BASE_URL}/posts/add_post`, {
+				title,
+				content,
+				hashtags: tagList,
+				writer,
+			});
 			toast.success('New Post has been registered.', toastConfig);
 			nav('/posts');
 		} else {
@@ -59,22 +71,7 @@ function WritePost() {
 		}
 	};
 
-	const nav = useNavigate();
-
-	const quitWriting = () => {
-		const confirm = window.confirm(
-			'Are you sure to quit writing this post?',
-		);
-		if (confirm) nav(-1);
-	};
-
-	const titleRef = useRef<HTMLInputElement>(null);
-
-	const contentRef = useRef<HTMLTextAreaElement>(null);
-
-	const inputTagRef = useRef<HTMLInputElement>(null);
-
-	const [tagList, setTagList] = useState<string[]>([]);
+	const quitWriting = () => nav(-1);
 
 	const addHashTag = () => {
 		const newTag = inputTagRef.current?.value;
@@ -104,8 +101,6 @@ function WritePost() {
 		});
 	};
 
-	const [post, setPost] = useState<IPostElement>();
-
 	const getPostAndCheckValidation = async () => {
 		try {
 			const modifyPromise = await configModifyAxios.get<IPostElement>(
@@ -119,8 +114,8 @@ function WritePost() {
 
 	useEffect(() => {
 		if (!getCookie(MY_BLOG_COOKIE_NAME)) {
-			toast.warn('Post writing requires login!', toastConfig);
 			nav(-1);
+			return;
 		}
 		if (modifyMatch) {
 			getPostAndCheckValidation();
@@ -183,11 +178,17 @@ function WritePost() {
 					<Button clicked onClick={handleOnPostSubmit}>
 						submit
 					</Button>
-					<Button clicked onClick={quitWriting}>
+					<Button clicked onClick={() => setIsModalShown(true)}>
 						back
 					</Button>
 				</div>
 			</Container>
+			<ModalComponent
+				isModalShown={isModalShown}
+				setIsModalShown={setIsModalShown}
+				action={quitWriting}
+				sentence={'Are you sure to quit writing this post?'}
+			/>
 		</>
 	);
 }
