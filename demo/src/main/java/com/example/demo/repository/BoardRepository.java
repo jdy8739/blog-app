@@ -232,24 +232,7 @@ public class BoardRepository {
         return replyList;
     }
 
-    public List<ReplyDTO> deleteReply(
-            Integer postNo, Integer replyNo, String id) {
-        BoardDTO targetBoard = (BoardDTO) boardMap.get(postNo);
-        List<ReplyDTO> targetReplyList = targetBoard.getReplyList();
-        int targetCnt = 0;
-        for (ReplyDTO replyDTO : targetReplyList) {
-            if (replyDTO.getReplyNo().intValue() == replyNo) {
-                break;
-            }
-            targetCnt ++;
-        }
-        if (targetReplyList.get(targetCnt).getReplier().equals(id)) {
-            targetReplyList.remove(targetCnt);
-        } else throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
-        return targetReplyList;
-    }
-
-    public List<ReplyDTO> modifyReply(ReplyDTO replyDTO, String id) {
+    public List<ReplyDTO> manipulateReply(ReplyDTO replyDTO, String id) {
         BoardDTO targetBoard = (BoardDTO) boardMap.get(replyDTO.getBoardNo().intValue());
         List<ReplyDTO> targetReplyList = targetBoard.getReplyList();
         Integer replyNo = replyDTO.getReplyNo().intValue();
@@ -261,19 +244,16 @@ public class BoardRepository {
             targetCnt ++;
         }
         if (targetReplyList.get(targetCnt).getReplier().equals(id)) {
-            targetReplyList.get(targetCnt).setReply(replyDTO.getReply());
+            if (replyDTO.getReply() == null) targetReplyList.remove(targetCnt);
+            else targetReplyList.get(targetCnt).setReply(replyDTO.getReply());
         } else throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         return targetReplyList;
     }
 
-    public void plusLikesCount(Integer postNo) {
+    public void manipulateLikesCount(Integer postNo, boolean isPlus) {
         BoardDTO boardDTO = (BoardDTO) boardMap.get(postNo);
-        boardDTO.setNumberOfLikes(boardDTO.getNumberOfLikes() + 1);
-    }
-
-    public void minusLikesCount(Integer postNo) {
-        BoardDTO boardDTO = (BoardDTO) boardMap.get(postNo);
-        boardDTO.setNumberOfLikes(boardDTO.getNumberOfLikes() - 1);
+        boardDTO.setNumberOfLikes(
+                isPlus ? boardDTO.getNumberOfLikes() + 1 : boardDTO.getNumberOfLikes() - 1);
     }
 }
 

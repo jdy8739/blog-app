@@ -66,24 +66,24 @@ public class MemberRepository {
         }
     }
 
-    public void addLike(String id, Integer postNo) throws Exception {
-        MemberDTO memberDTO = memberMap.get(id);
-        if(memberDTO == null) {
-            throw new Exception("IdNotFoundException");
-        } else {
-            memberDTO.getLikedPostList().add(postNo);
-        }
-    }
-
     public List<Integer> getLikedList(String id) {
         MemberDTO memberDTO = memberMap.get(id);
         return memberDTO.getLikedPostList();
     }
 
-    public void cancelLike(String id, Integer postNo) throws Exception {
+    public void addLike(String id, Integer postNo) {
         MemberDTO memberDTO = memberMap.get(id);
         if(memberDTO == null) {
-            throw new Exception("IdNotFoundException");
+            throw new NullPointerException();
+        } else {
+            memberDTO.getLikedPostList().add(postNo);
+        }
+    }
+
+    public void cancelLike(String id, Integer postNo) {
+        MemberDTO memberDTO = memberMap.get(id);
+        if(memberDTO == null) {
+            throw new NullPointerException();
         } else {
             memberDTO.getLikedPostList().remove(postNo);
         }

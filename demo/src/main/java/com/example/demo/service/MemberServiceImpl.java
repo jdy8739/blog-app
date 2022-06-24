@@ -26,14 +26,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void addLike(String id, Integer postNo) throws Exception {
+    public void addLike(String id, Integer postNo) throws NullPointerException {
         memberRepository.addLike(id, postNo);
-        boardRepository.plusLikesCount(postNo);
+        boardRepository.manipulateLikesCount(postNo, true);
     }
 
     @Override
-    public void cancelLike(String id, Integer postNo) throws Exception {
+    public void cancelLike(String id, Integer postNo) throws NullPointerException {
         memberRepository.cancelLike(id, postNo);
-        boardRepository.minusLikesCount(postNo);
+        boardRepository.manipulateLikesCount(postNo, false);
     }
 }

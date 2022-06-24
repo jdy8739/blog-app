@@ -8,7 +8,7 @@ public interface MemberService {
 
     public MemberDTO login(MemberDTO memberDTO);
 
-    public void addLike(String id, Integer postNo) throws Exception;
+    public void addLike(String id, Integer postNo);
 
-    public void cancelLike(String id, Integer postNo) throws Exception;
+    public void cancelLike(String id, Integer postNo);
 }

@@ -7,14 +7,20 @@ export const BASE_URL = 'http://localhost:7777';
 
 const MODIFY = 'modify';
 
-export const configAxios = axios.create();
+const defineAuthorization = (config: AxiosRequestConfig<unknown>) => {
+	if (config?.headers) {
+		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
+		if (cookie) {
+			config.headers['Authorization'] = `Bearer ${cookie[1]}`;
+		}
+	}
+};
 
 const handleAxiosError = ({ config, response, ...err }: any) => {
 	const errMsg = 'Error Message';
 	const isAxiosError = err.isAxiosError;
 	const { status } = response;
-	const desc = response.data.description;
-	console.log(response);
+	const desc: string = response.data.description;
 	if (status === 403) {
 		toast.error(desc, {
 			...toastConfig,
@@ -40,14 +46,7 @@ const handleAxiosError = ({ config, response, ...err }: any) => {
 	});
 };
 
-const defineAuthorization = (config: AxiosRequestConfig<unknown>) => {
-	if (config?.headers) {
-		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
-		if (cookie) {
-			config.headers['Authorization'] = `Bearer ${cookie[1]}`;
-		}
-	}
-};
+export const configAxios = axios.create();
 
 configAxios.interceptors.request.use(config => {
 	defineAuthorization(config);

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -62,34 +63,18 @@ public class MemberController {
         return new ResponseEntity<String>(null, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/like/{id}/{postNo}")
-    public ResponseEntity<Void> likePost(
-            @PathVariable("id") String id,
-            @PathVariable("postNo") Integer postNo,
-            HttpServletRequest req) throws Exception {
+    @PutMapping("/handleLikesCount")
+    public ResponseEntity<Void> handleLikesCount(@RequestBody Map<String, String> map,
+            HttpServletRequest req) {
         HttpHeaders headers = new HttpHeaders();
+        String id = map.get("id");
+        Integer postNo = Integer.parseInt(map.get("postNo"));
+        boolean isLiked = Boolean.parseBoolean(map.get("isLiked"));
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         Claims claims = jwtUtils.filterInternal(authorizationHeader);
         if(claims.get(ID).equals(id)) {
-            memberService.addLike(id, postNo);
-        } else {
-            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
-        }
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(null);
-    }
-
-    @PostMapping("/cancel_like/{id}/{postNo}")
-    public ResponseEntity<Void> cancelLikePost(
-            @PathVariable("id") String id,
-            @PathVariable("postNo") Integer postNo,
-            HttpServletRequest req) throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        Claims claims = jwtUtils.filterInternal(authorizationHeader);
-        if(claims.get(ID).equals(id)) {
-            memberService.cancelLike(id, postNo);
+            if (isLiked) memberService.cancelLike(id, postNo);
+            else memberService.addLike(id, postNo);
         } else {
             throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         }

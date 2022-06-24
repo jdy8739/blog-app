@@ -51,7 +51,7 @@ const NavTwo = styled.div`
 	}
 `;
 
-const NavElem = styled.p`
+const NavElem = styled.div`
 	padding: 12px;
 	font-size: 13px;
 	cursor: pointer;

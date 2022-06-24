@@ -157,8 +157,7 @@ function Posts() {
 		makeIndex();
 	}, [posts]);
 
-	const isPostsEmpty = (param: IBoard) =>
-		Object.keys(param).length === 0 && param.constructor === Object;
+	const isPostsEmpty = (param: IBoard) => Object.keys(param).length === 0;
 
 	return (
 		<>

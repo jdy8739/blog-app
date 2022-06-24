@@ -56,16 +56,21 @@ function Post({ post }: { post: IPostElement }) {
 		e.stopPropagation();
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
 		if (cookie) {
-			await configAxios.post(
-				`${BASE_URL}/member/${!post?.liked ? 'like' : 'cancel_like'}/${
-					cookie[0]
-				}/${post.boardNo}`,
-			);
-			!post?.liked ? post.numberOfLikes++ : post.numberOfLikes--;
-			post.liked = !post.liked;
+			await configAxios.put(`${BASE_URL}/member/handleLikesCount`, {
+				id: cookie[0],
+				postNo: String(post?.boardNo),
+				isLiked: String(post?.liked ? true : false),
+			});
+			if (post) {
+				!post?.liked ? post.numberOfLikes++ : post.numberOfLikes--;
+				post.liked = !post.liked;
+			}
 			setIsUpdated(!isUpdated);
 		} else {
-			toast.warn('This requires login!', toastConfig);
+			toast.warn('This requires login!', {
+				...toastConfig,
+				toastId: 'likeWarnToast',
+			});
 		}
 	};
 

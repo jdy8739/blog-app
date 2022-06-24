@@ -6,19 +6,14 @@ import { configAxios } from '../../axiosConfig';
 import Reply from '../../components/Reply';
 import { Button, Container, Tag, TitleInput } from '../../Styles/style';
 import { BASE_URL } from '../../axiosConfig';
-import {
-	getCookie,
-	MY_BLOG_COOKIE_NAME,
-	removeCookie,
-} from '../../util/cookie';
+import { getCookie, MY_BLOG_COOKIE_NAME } from '../../util/cookie';
 import { IPostElement, IReply } from '../Posts/Posts';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import toastConfig from '../../util/toast';
 import ModalComponent from '../../components/ModalComponent';
-import { changeUserId } from '../../store/userIdStore';
+import { useSelector } from 'react-redux';
 
 const Title = styled.h1`
 	font-size: 31px;
@@ -81,24 +76,11 @@ function PostDetail() {
 
 	const nav = useNavigate();
 
-	const dispatch = useDispatch();
-
 	const postMatch = useMatch('/posts/detail/:id');
 
 	const userId = useSelector((state: { userIdChanger: { id: string } }) => {
 		return state.userIdChanger.id;
 	});
-
-	const setUserId = (id: string) => {
-		dispatch(changeUserId(id));
-	};
-
-	const logout = () => {
-		removeCookie(MY_BLOG_COOKIE_NAME, {
-			path: '/',
-		});
-		setUserId('');
-	};
 
 	const fetchPost = async () => {
 		if (postMatch) {
@@ -111,7 +93,6 @@ function PostDetail() {
 				},
 			});
 			if (post.status === 500) {
-				logout();
 				nav('/exception');
 			} else return post.json();
 		}
@@ -178,11 +159,11 @@ function PostDetail() {
 		e.stopPropagation();
 		const cookie = getCookie(MY_BLOG_COOKIE_NAME);
 		if (cookie) {
-			await configAxios.post(
-				`${BASE_URL}/member/${!post?.liked ? 'like' : 'cancel_like'}/${
-					cookie[0]
-				}/${post?.boardNo}`,
-			);
+			await configAxios.put(`${BASE_URL}/member/handleLikesCount`, {
+				id: cookie[0],
+				postNo: String(post?.boardNo),
+				isLiked: String(post?.liked ? true : false),
+			});
 			if (post) {
 				!post?.liked ? post.numberOfLikes++ : post.numberOfLikes--;
 				post.liked = !post.liked;
