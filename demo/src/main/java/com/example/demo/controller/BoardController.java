@@ -106,7 +106,7 @@ public class BoardController {
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
         Claims claims = jwtUtils.filterInternal(authorizationHeader);
         if(!claims.get(ID).equals(boardDTO.getWriter())) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+            throw new IllegalArgumentException();
         } else {
             boardService.savePost(boardDTO);
             log.info("Post has saved.");
@@ -161,7 +161,7 @@ public class BoardController {
         if(claims.get(ID).equals(replyDTO.getReplier())) {
             targetReply = boardService.saveReply(replyDTO);
         } else {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+            throw new IllegalArgumentException();
         }
         return ResponseEntity.ok()
                 .headers(headers)

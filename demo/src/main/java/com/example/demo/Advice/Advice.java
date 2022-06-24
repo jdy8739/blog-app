@@ -12,10 +12,13 @@ import org.springframework.web.client.HttpClientErrorException;
 public class Advice {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ExceptionDTO handleIllegalArgumentException() {
-        return new ExceptionDTO(
-                ExceptionInfo.UnavailableCookieInfo.getCode(),
-                ExceptionInfo.UnavailableCookieInfo.getDescription());
+    public ResponseEntity<ExceptionDTO> handleIllegalArgumentException() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("isValidToken", "false");
+        return ResponseEntity.status(401)
+                .headers(headers)
+                .body(new ExceptionDTO(ExceptionInfo.UnauthorizedUserInfo.getCode(),
+                        ExceptionInfo.UnauthorizedUserInfo.getDescription()));
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
@@ -26,16 +29,6 @@ public class Advice {
                 .headers(headers)
                 .body(new ExceptionDTO(ExceptionInfo.CannotAccessUserInfo.getCode(),
                         ExceptionInfo.CannotAccessUserInfo.getDescription()));
-    }
-
-    @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
-    public ResponseEntity<ExceptionDTO> handleUnauthorizedException() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("isValidToken", "false");
-        return ResponseEntity.status(401)
-                .headers(headers)
-                .body(new ExceptionDTO(ExceptionInfo.UnauthorizedUserInfo.getCode(),
-                        ExceptionInfo.UnauthorizedUserInfo.getDescription()));
     }
 
     @ExceptionHandler(NullPointerException.class)
