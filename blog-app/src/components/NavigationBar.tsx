@@ -236,7 +236,7 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 							<option>hashtag</option>
 						</select>
 						&ensp;
-						<SearchIcon src={require('../search.png')} />
+						<SearchIcon src={process.env.PUBLIC_URL + '/search.png'} />
 						&ensp;
 						<input ref={inputRef} required />
 					</form>
