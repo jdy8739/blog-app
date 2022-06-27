@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { getCookie, MY_BLOG_COOKIE_NAME } from './util/cookie';
 import toastConfig from './util/toast';
 
-export const BASE_URL = '';
+export const BASE_URL = 'http://43.200.84.185';
 
 const MODIFY = 'modify';
 

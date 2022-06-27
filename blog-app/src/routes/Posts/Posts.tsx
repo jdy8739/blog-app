@@ -200,7 +200,7 @@ function Posts() {
 									<p>Sorry. No data. :(</p>
 								</div>
 							)}
-							{Object.keys(posts.boards).map(postNo => {
+							{Object.keys(posts.boards).map((postNo, index) => {
 								return (
 									<Frame
 										key={postNo}
@@ -213,7 +213,9 @@ function Posts() {
 											)
 										}
 									>
-										<Post post={posts.boards[postNo]} />
+										<Post
+										index={index}
+										post={posts.boards[postNo]} />
 									</Frame>
 								);
 							})}

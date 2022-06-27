@@ -37,7 +37,7 @@ const ButtonBox = styled.div`
 	}
 `;
 
-function Post({ post }: { post: IPostElement }) {
+function Post({ post, index }: { post: IPostElement, index: number }) {
 	const nav = useNavigate();
 
 	const [isUpdated, setIsUpdated] = useState(false);
@@ -95,9 +95,32 @@ function Post({ post }: { post: IPostElement }) {
 		};
 	}, []);
 
+	const postVariant = {
+		initial: {
+			x: -20,
+			opacity: 0
+		},
+		animate: {
+			x: 0,
+			opacity: 1,
+			transition: {
+				duration: 1 + 1 * index
+			}
+		},
+		exit: {
+			x: 20,
+			opacity: 0
+		},
+	};
+
 	return (
 		<>
-			<PostCard>
+			<PostCard
+				variants={postVariant}
+				initial="initial"
+				animate="animate"
+				exit="exit"
+			>
 				<NewBadge>{checkIfPostNew() && <p>new</p>}</NewBadge>
 				<PostTitle>
 					{post.title.length > 17

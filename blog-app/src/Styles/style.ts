@@ -16,7 +16,7 @@ export const PostContentPreview = styled.div`
 	}
 `;
 
-export const PostCard = styled.div`
+export const PostCard = styled(motion.div)`
 	width: 100%;
 	height: 180px;
 	padding: 12px;
