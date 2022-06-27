@@ -1,6 +1,0 @@
-
-server:
-  port: 7777
-  servlet:
-    session:
-      timeout: 3600s

@@ -72,21 +72,14 @@ const ModeButton = styled.div`
 	position: relative;
 `;
 
-const ModeBallDark = styled(motion.div)`
+const ModeBall = styled.div<{ isDarkMode: boolean }>`
 	width: 12px;
 	height: 12px;
 	background-color: ${props => props.theme.fontColor};
 	border-radius: 50%;
 	position: absolute;
-`;
-
-const ModeBallLight = styled(motion.div)`
-	width: 12px;
-	height: 12px;
-	background-color: ${props => props.theme.fontColor};
-	border-radius: 50%;
-	position: absolute;
-	right: 3px;
+	transition: transform 1s;
+	transform: translateX(${props => (props.isDarkMode ? '0px' : '18px')});
 `;
 
 const SubMenu = styled(motion.div)`
@@ -242,11 +235,7 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 				</form>
 				&emsp;
 				<ModeButton onClick={changeTheme}>
-					{isDarkMode ? (
-						<ModeBallDark layoutId={'ball'} />
-					) : (
-						<ModeBallLight layoutId={'ball'} />
-					)}
+					<ModeBall isDarkMode={isDarkMode} />
 				</ModeButton>
 			</NavTwo>
 			<ModalComponent
