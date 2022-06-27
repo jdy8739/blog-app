@@ -10,15 +10,10 @@ import { getCookie, MY_BLOG_COOKIE_NAME, removeCookie } from '../util/cookie';
 import toastConfig from '../util/toast';
 import ModalComponent from './ModalComponent';
 
-const Nav = styled.nav`
+const Bar = styled.div`
 	width: 100vw;
-	height: 52px;
+	height: 57px;
 	background-color: ${props => props.theme.accentColor};
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: 12px 42px;
-	box-sizing: border-box;
 	position: fixed;
 	top: 0;
 	z-index: 99;
@@ -27,13 +22,25 @@ const Nav = styled.nav`
 	}
 `;
 
+const Nav = styled.nav`
+	display: block;
+	margin: auto;
+	width: 100%;
+	max-width: 2000px;
+	min-width: 340px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 12px 42px;
+	box-sizing: border-box;
+`;
+
 const NavOne = styled.div`
 	display: flex;
 	align-items: center;
-	height: 52px;
 	@media screen and (max-width: 768px) {
 		position: absolute;
-		bottom: 0;
+		top: 65px;
 		width: 100%;
 		justify-content: space-around;
 	}
@@ -42,10 +49,9 @@ const NavOne = styled.div`
 const NavTwo = styled.div`
 	display: flex;
 	align-items: center;
-	height: 52px;
 	@media screen and (max-width: 768px) {
 		position: absolute;
-		top: 0;
+		top: 15px;
 		width: 100%;
 		justify-content: space-around;
 	}
@@ -178,72 +184,74 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 	const hideSebMenu = () => setIsSubMenuShown(false);
 
 	return (
-		<Nav onClick={hideSebMenu} onMouseLeave={hideSebMenu}>
-			<NavOne>
-				{userId && (
-					<NavElem
-						style={{ position: 'relative' }}
-						id="user_id"
-						onClick={toggleSubMenu}
-					>
-						<p>{userId}</p>
-						<AnimatePresence>
-							{isSubMenuShown && (
-								<SubMenu
-									variants={subMenuVariant}
-									initial="initial"
-									animate="animate"
-									exit="exit"
-								>
-									<br></br>
-									<NavElem
-										onClick={() => setNavToSubMenuPage(1)}
+		<Bar>
+			<Nav onClick={hideSebMenu} onMouseLeave={hideSebMenu}>
+				<NavOne>
+					{userId && (
+						<NavElem
+							style={{ position: 'relative' }}
+							id="user_id"
+							onClick={toggleSubMenu}
+						>
+							<p>{userId}</p>
+							<AnimatePresence>
+								{isSubMenuShown && (
+									<SubMenu
+										variants={subMenuVariant}
+										initial="initial"
+										animate="animate"
+										exit="exit"
 									>
-										MY POSTS
-									</NavElem>
-									<NavElem
-										onClick={() => setNavToSubMenuPage(2)}
-									>
-										LIKED
-									</NavElem>
-								</SubMenu>
-							)}
-						</AnimatePresence>
-					</NavElem>
-				)}
-				{userId && (
-					<NavElem onClick={() => setIsModalShown(true)}>
-						LOGOUT
-					</NavElem>
-				)}
-				{!userId && <NavElem onClick={() => nav('/')}>LOGIN</NavElem>}
-				<NavElem onClick={() => nav('/posts')}>POSTS</NavElem>
-				<NavElem onClick={toWritePage}>WRITE</NavElem>
-			</NavOne>
-			<div style={{ flexGrow: '1' }}></div>
-			<NavTwo>
-				<form onSubmit={handleOnSubmit}>
-					<select ref={selectRef}>
-						<option>title</option>
-						<option>writer</option>
-						<option>hashtag</option>
-					</select>
-					&ensp;
-					<SearchIcon src={require('../search.png')} />
-					&ensp;
-					<input ref={inputRef} required />
-				</form>
-				&emsp;
-				<ModeButton onClick={changeTheme}>
-					<ModeBall isDarkMode={isDarkMode} />
-				</ModeButton>
-			</NavTwo>
-			<ModalComponent
-				isModalShown={isModalShown}
-				setIsModalShown={setIsModalShown}
-				action={logout}
-				sentence={'Are you sure to log out?'}
-			/>
-		</Nav>
+										<br></br>
+										<NavElem
+											onClick={() => setNavToSubMenuPage(1)}
+										>
+											MY POSTS
+										</NavElem>
+										<NavElem
+											onClick={() => setNavToSubMenuPage(2)}
+										>
+											LIKED
+										</NavElem>
+									</SubMenu>
+								)}
+							</AnimatePresence>
+						</NavElem>
+					)}
+					{userId && (
+						<NavElem onClick={() => setIsModalShown(true)}>
+							LOGOUT
+						</NavElem>
+					)}
+					{!userId && <NavElem onClick={() => nav('/')}>LOGIN</NavElem>}
+					<NavElem onClick={() => nav('/posts')}>POSTS</NavElem>
+					<NavElem onClick={toWritePage}>WRITE</NavElem>
+				</NavOne>
+				<div style={{ flexGrow: '1' }}></div>
+				<NavTwo>
+					<form onSubmit={handleOnSubmit}>
+						<select ref={selectRef}>
+							<option>title</option>
+							<option>writer</option>
+							<option>hashtag</option>
+						</select>
+						&ensp;
+						<SearchIcon src={require('../search.png')} />
+						&ensp;
+						<input ref={inputRef} required />
+					</form>
+					&emsp;
+					<ModeButton onClick={changeTheme}>
+						<ModeBall isDarkMode={isDarkMode} />
+					</ModeButton>
+				</NavTwo>
+				<ModalComponent
+					isModalShown={isModalShown}
+					setIsModalShown={setIsModalShown}
+					action={logout}
+					sentence={'Are you sure to log out?'}
+				/>
+			</Nav>
+		</Bar>
 	);
 }
