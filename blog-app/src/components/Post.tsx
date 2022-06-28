@@ -37,7 +37,7 @@ const ButtonBox = styled.div`
 	}
 `;
 
-function Post({ post, index }: { post: IPostElement, index: number }) {
+function Post({ post, index }: { post: IPostElement; index: number }) {
 	const nav = useNavigate();
 
 	const [isUpdated, setIsUpdated] = useState(false);
@@ -98,18 +98,18 @@ function Post({ post, index }: { post: IPostElement, index: number }) {
 	const postVariant = {
 		initial: {
 			x: -20,
-			opacity: 0
+			opacity: 0,
 		},
 		animate: {
 			x: 0,
 			opacity: 1,
 			transition: {
-				duration: 1 + 1 * index
-			}
+				duration: 1 + 0.1 * index,
+			},
 		},
 		exit: {
 			x: 20,
-			opacity: 0
+			opacity: 0,
 		},
 	};
 
@@ -120,6 +120,7 @@ function Post({ post, index }: { post: IPostElement, index: number }) {
 				initial="initial"
 				animate="animate"
 				exit="exit"
+				key={post.boardNo}
 			>
 				<NewBadge>{checkIfPostNew() && <p>new</p>}</NewBadge>
 				<PostTitle>
