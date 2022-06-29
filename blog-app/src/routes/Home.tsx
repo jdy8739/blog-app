@@ -70,10 +70,14 @@ function Home() {
 	const signin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const id = idRef.current?.value;
-		const loginResult = axios.post(`${BASE_URL}/member/signin`, {
-			id: id,
-			password: pwRef.current?.value,
-		});
+		const loginResult = axios.post(
+			`${BASE_URL}/member/signin`,
+			{
+				id: id,
+				password: pwRef.current?.value,
+			},
+			{ withCredentials: true },
+		);
 		const token = (await loginResult).data;
 		if (token) {
 			const now = new Date();

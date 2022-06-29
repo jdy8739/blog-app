@@ -93,7 +93,7 @@ const SubMenu = styled(motion.div)`
 	height: 110px;
 	background-color: ${props => props.theme.accentColor};
 	position: absolute;
-	top: 44px;
+	top: 38px;
 	left: 0;
 	right: 0;
 	margin: auto;

@@ -24,7 +24,10 @@ import java.util.Map;
 @Slf4j
 @Controller
 @RequestMapping("/member")
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
+@CrossOrigin(
+        origins = "http://my-blog-app-bucket.s3-website.ap-northeast-2.amazonaws.com/",
+        allowedHeaders = "*",
+        allowCredentials = "true")
 public class MemberController {
 
     @Autowired
@@ -41,10 +44,10 @@ public class MemberController {
         MemberDTO loggedInMember = memberService.login(memberDTO);
         if(loggedInMember == null)
             return new ResponseEntity<String>(HttpStatus.OK);
+        headers.set("Access-Control-Expose-Headers", "*");
+        headers.set("Set-Cookie", "key=value; HttpOnly; SameSite=None");
         String jwt = jwtUtils.makeJWT(
                 loggedInMember.getId(), loggedInMember.getAuth());
-        //headers.set("Authorization", auth);
-        headers.set("Access-Control-Expose-Headers", "*, Authorization, Set-Cookie");
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(jwt);
@@ -67,7 +70,7 @@ public class MemberController {
     public ResponseEntity<Void> handleLikesCount(@RequestBody Map<String, String> map,
             HttpServletRequest req) {
         HttpHeaders headers = new HttpHeaders();
-        String id = map.get("id");
+        String id = map.get(ID);
         Integer postNo = Integer.parseInt(map.get("postNo"));
         boolean isLiked = Boolean.parseBoolean(map.get("isLiked"));
         String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);

@@ -15,9 +15,11 @@ import WritePost from './routes/WritePost/WritePost';
 import { darkTheme, lightTheme } from './theme';
 
 function App() {
-	const isDarkMode = useSelector((state: { modeChanger: { value: boolean } }) => {
-		return state.modeChanger.value;
-	});
+	const isDarkMode = useSelector(
+		(state: { modeChanger: { value: boolean } }) => {
+			return state.modeChanger.value;
+		},
+	);
 
 	const queryClient = new QueryClient();
 
