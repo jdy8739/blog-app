@@ -74,11 +74,8 @@ function Post({ post, index }: { post: IPostElement; index: number }) {
 		}
 	};
 
-	const checkIfPostNew = (): boolean => {
-		if (Date.now() - Number(new Date(post.regDate)) < 600000) return true;
-		// 600000 -> 10 분
-		else return false;
-	};
+	const checkIfPostNew = (): boolean =>
+		Date.now() - Number(new Date(post.regDate)) < 34000000;
 
 	const checkToShowTags = () => {
 		if (window.innerWidth > 768) {
