@@ -87,7 +87,7 @@ function Home() {
 				{
 					path: '/',
 					expires: new Date(now.setMinutes(now.getMinutes() + 180)),
-					secure: true,
+					secure: false,
 					httpOnly: false,
 				},
 			);
