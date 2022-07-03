@@ -27,7 +27,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/posts")
 @CrossOrigin(
-        origins = "http://my-blog-app-bucket.s3-website.ap-northeast-2.amazonaws.com/",
+        origins = "",
         allowedHeaders = "*")
 public class BoardController {
 

@@ -25,7 +25,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/member")
 @CrossOrigin(
-        origins = "http://my-blog-app-bucket.s3-website.ap-northeast-2.amazonaws.com/",
+        origins = "",
         allowedHeaders = "*",
         allowCredentials = "true")
 public class MemberController {

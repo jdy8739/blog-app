@@ -123,7 +123,7 @@ function Home() {
 				</Helmet>
 			</HelmetProvider>
 			<Box>
-				<HomeTitle>Hello BLOG</HomeTitle>
+				<HomeTitle>Hello BLOG ;)</HomeTitle>
 				<Form onSubmit={signin}>
 					<label>
 						<h5>ID</h5>
