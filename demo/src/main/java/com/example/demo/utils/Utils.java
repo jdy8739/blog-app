@@ -12,7 +12,7 @@ public class Utils {
     private final String ID = "id";
 
     public String getUserId(String authHeader) throws IllegalArgumentException {
-        if (authHeader == null) return null;
+        if (authHeader == null || authHeader.equals("Bearer")) return null;
         else return (String) jwtUtils.filterInternal(authHeader).get(ID);
     }
 }
