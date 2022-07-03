@@ -130,21 +130,21 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 
 	const [isModalShown, setIsModalShown] = useState(false);
 
-	const changeTheme = () => {
-		dispatch(changeThemeMode());
-	};
+	const selectRef = useRef<HTMLSelectElement>(null);
+
+	const inputRef = useRef<HTMLInputElement>(null);
 
 	const userId = useSelector((state: { userIdChanger: { id: string } }) => {
 		return state.userIdChanger.id;
 	});
 
+	const changeTheme = () => {
+		dispatch(changeThemeMode());
+	};
+
 	const setUserId = (id: string) => {
 		dispatch(changeUserId(id));
 	};
-
-	const selectRef = useRef<HTMLSelectElement>(null);
-
-	const inputRef = useRef<HTMLInputElement>(null);
 
 	const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

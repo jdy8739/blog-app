@@ -6,6 +6,7 @@ import com.example.demo.DTO.ReplyDTO;
 import com.example.demo.JWT.JWTUtils;
 import com.example.demo.service.BoardService;
 
+import com.example.demo.utils.Utils;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -36,19 +37,15 @@ public class BoardController {
     @Autowired
     BoardService boardService;
 
-    JWTUtils jwtUtils = new JWTUtils();
+    @Autowired
+    Utils utils;
 
     @GetMapping("/get")
     public ResponseEntity<BoardWrapperDTO> getPosts(
             @RequestParam Integer offset,
             @RequestParam Integer limit,
             HttpServletRequest req) {
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        String id = null;
-        if(authorizationHeader != null) {
-            Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            id = (String) claims.get(ID);
-        }
+        String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
         return new ResponseEntity<BoardWrapperDTO>(
                 boardService.getPosts(offset, limit, id), HttpStatus.OK);
     }
@@ -60,17 +57,11 @@ public class BoardController {
             @RequestParam Integer offset,
             @RequestParam Integer limit,
             HttpServletRequest req) {
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        String id = null;
-        if(authorizationHeader != null) {
-            Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            id = (String) claims.get(ID);
-            if(subject.equals("favlist")) {
-                if(!id.equals(keyword)) {
-                    throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
-                }
-            }
-        } else throw new IllegalArgumentException();
+        String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
+        if(subject.equals("favlist")) {
+            if (id == null) throw new IllegalArgumentException();
+            else if (!id.equals(keyword)) throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
+        }
         return ResponseEntity.ok()
                 .body(boardService.getPostsByKeyword(
                         subject, keyword, offset, limit, id));
@@ -81,21 +72,13 @@ public class BoardController {
             @PathVariable int postNo,
             HttpServletRequest req) throws Exception {
         String requestPurpose = req.getHeader("request");
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        String id = null;
-        BoardDTO boardDTO = null;
+        String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
         log.info("post request: " + postNo);
-        if(!authorizationHeader.equals("Bearer")) {
-            Claims claims = jwtUtils.filterInternal(authorizationHeader);
-            id = (String) claims.get(ID);
-            boardDTO = boardService.getPost(postNo, id);
-            if(requestPurpose != null && requestPurpose.equals("modify")) {
-                if (!id.equals(boardDTO.getWriter())) {
-                    throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
-                }
+        BoardDTO boardDTO = boardService.getPost(postNo, id);
+        if(requestPurpose != null && requestPurpose.equals("modify")) {
+            if (!id.equals(boardDTO.getWriter())) {
+                throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
             }
-        } else {
-            boardDTO = boardService.getPost(postNo, id);
         }
         return ResponseEntity.ok()
                 .body(boardDTO);
@@ -105,17 +88,15 @@ public class BoardController {
     public ResponseEntity<Void> addPost(
             @Validated @RequestBody BoardDTO boardDTO,
             HttpServletRequest req) {
-        HttpHeaders headers = new HttpHeaders();
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        Claims claims = jwtUtils.filterInternal(authorizationHeader);
-        if(!claims.get(ID).equals(boardDTO.getWriter())) {
+        String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
+        if(!id.equals(boardDTO.getWriter())) {
             throw new IllegalArgumentException();
         } else {
             boardService.savePost(boardDTO);
             log.info("Post has saved.");
         }
         return ResponseEntity.ok()
-                .headers(headers)
+                .headers(new HttpHeaders())
                 .body(null);
     }
 
@@ -123,15 +104,12 @@ public class BoardController {
     public ResponseEntity<Void> deletePost(
             @PathVariable("postNo") int postNo,
             HttpServletRequest req) {
-        HttpHeaders headers = new HttpHeaders();
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
         boolean isDeleted = false;
-        Claims claims = jwtUtils.filterInternal(authorizationHeader);
-        String id = (String) claims.get(ID);
         isDeleted = boardService.deletePost(postNo, id);
         if (!isDeleted) throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         return ResponseEntity.ok()
-                .headers(headers)
+                .headers(new HttpHeaders())
                 .body(null);
     }
 
@@ -139,17 +117,15 @@ public class BoardController {
     ResponseEntity<Void> modifyPost(
             @Validated @RequestBody BoardDTO boardDTO,
             HttpServletRequest req) {
-        HttpHeaders headers = new HttpHeaders();
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
-        Claims claims = jwtUtils.filterInternal(authorizationHeader);
-        if(!claims.get(ID).equals(boardDTO.getWriter())) {
+        String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
+        if(!id.equals(boardDTO.getWriter())) {
             throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         } else {
             boardService.modifyPost(boardDTO);
             log.info("Post has modified.");
         }
         return ResponseEntity.ok()
-                .headers(headers)
+                .headers(new HttpHeaders())
                 .body(null);
     }
 
@@ -157,17 +133,15 @@ public class BoardController {
     public ResponseEntity<List<ReplyDTO>> addReply(
             @Validated @RequestBody ReplyDTO replyDTO,
             HttpServletRequest req) {
-        HttpHeaders headers = new HttpHeaders();
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
         List<ReplyDTO> targetReply = null;
-        Claims claims = jwtUtils.filterInternal(authorizationHeader);
-        if(claims.get(ID).equals(replyDTO.getReplier())) {
+        if(id.equals(replyDTO.getReplier())) {
             targetReply = boardService.saveReply(replyDTO);
         } else {
             throw new IllegalArgumentException();
         }
         return ResponseEntity.ok()
-                .headers(headers)
+                .headers(new HttpHeaders())
                 .body(targetReply);
     }
 
@@ -177,10 +151,8 @@ public class BoardController {
             @PathVariable("replyNo") String replyNo,
             HttpServletRequest req) {
         HttpHeaders headers = new HttpHeaders();
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
         List<ReplyDTO> targetReply = null;
-        Claims claims = jwtUtils.filterInternal(authorizationHeader);
-        String id = (String) claims.get(ID);
         targetReply = boardService.deleteReply(
                 Integer.parseInt(postNo), Integer.parseInt(replyNo), id);
         headers.set("Access-Control-Expose-Headers", "*");
@@ -193,14 +165,11 @@ public class BoardController {
     public ResponseEntity<List<ReplyDTO>> modifyReply(
             @Validated @RequestBody ReplyDTO replyDTO,
             HttpServletRequest req) {
-        HttpHeaders headers = new HttpHeaders();
-        String authorizationHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
         List<ReplyDTO> targetReply = null;
-        Claims claims = jwtUtils.filterInternal(authorizationHeader);
-        String id = (String) claims.get(ID);
         targetReply = boardService.modifyReply(replyDTO, id);
         return ResponseEntity.ok()
-                .headers(headers)
+                .headers(new HttpHeaders())
                 .body(targetReply);
     }
 }
