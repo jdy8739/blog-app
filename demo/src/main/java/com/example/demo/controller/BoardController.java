@@ -70,7 +70,7 @@ public class BoardController {
                     throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
                 }
             }
-        }
+        } else throw new IllegalArgumentException();
         return ResponseEntity.ok()
                 .body(boardService.getPostsByKeyword(
                         subject, keyword, offset, limit, id));
