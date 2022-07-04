@@ -10,17 +10,17 @@
 
 프론트작업을 수행하기위해 사용한 주요 라이브러리로는 
 
-*axios
+* axios
 
-*redux-toolkit
+* redux-toolkit
 
-*react-hook-form
+* react-hook-form
 
-*react-helmet
+* react-helmet
 
-*react-cookie
+* react-cookie
 
-*react-toastify
+* react-toastify
 
 
 
