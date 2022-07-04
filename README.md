@@ -8,6 +8,20 @@
 
 해당 프로젝트를 구현하기위한 프레임워크로 프론트는 cra typescript를 사용하였으며 백은 Java Springboot를 활용하였습니다.
 
+프론트작업을 수행하기위해 사용한 주요 라이브러리로는 
+
+*axios
+
+*redux-toolkit
+
+*react-hook-form
+
+*react-helmet
+
+*react-cookie
+
+*react-toastify
+
 
 
 
