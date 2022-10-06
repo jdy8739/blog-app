@@ -52,6 +52,15 @@ const PaginationSelect = styled.div`
 		margin-top: 10px;
 		text-align: center;
 	}
+	select {
+		padding: 4px;
+		border-radius: 8px;
+		border: none;
+		background-color: ${props => props.theme.accentColor};
+		color: white;
+		border: 1.5px solid ${props => props.theme.fontColor};
+		outline: none;
+	}
 `;
 
 const DEFAULT_OFFSET = 0;
