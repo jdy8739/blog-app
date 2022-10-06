@@ -27,9 +27,6 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequestMapping("/posts")
-@CrossOrigin(
-        origins = "",
-        allowedHeaders = "*")
 public class BoardController {
 
     private final String ID = "id";
@@ -70,15 +67,14 @@ public class BoardController {
     @GetMapping("/get_detail/{postNo}")
     public ResponseEntity<BoardDTO> getPost(
             @PathVariable int postNo,
-            HttpServletRequest req) throws Exception {
+            HttpServletRequest req) {
         String requestPurpose = req.getHeader("request");
         String id = utils.getUserId(req.getHeader(HttpHeaders.AUTHORIZATION));
         log.info("post request: " + postNo);
         BoardDTO boardDTO = boardService.getPost(postNo, id);
         if(requestPurpose != null && requestPurpose.equals("modify")) {
-            if (!id.equals(boardDTO.getWriter())) {
+            if (!id.equals(boardDTO.getWriter()))
                 throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
-            }
         }
         return ResponseEntity.ok()
                 .body(boardDTO);

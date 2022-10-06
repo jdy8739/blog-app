@@ -25,10 +25,6 @@ import java.util.Map;
 @Slf4j
 @Controller
 @RequestMapping("/member")
-@CrossOrigin(
-        origins = "",
-        allowedHeaders = "*",
-        allowCredentials = "true")
 public class MemberController {
 
     @Autowired

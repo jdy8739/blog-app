@@ -100,6 +100,18 @@ const SubMenu = styled(motion.div)`
 	text-align: center;
 `;
 
+const SearchElement = styled.div`
+	padding: 4px;
+	border-radius: 8px;
+	border: none;
+	background-color: ${props => props.theme.backgroundColor};
+	color: ${props => props.theme.fontColor};
+	&:focus {
+		border: 1.5px solid ${props => props.theme.fontColor};
+		outline: none;
+	}
+`;
+
 const SearchIcon = styled.img`
 	width: 18px;
 	height: 18px;
@@ -230,15 +242,15 @@ export default function NavigationBar({ isDarkMode }: { isDarkMode: boolean }) {
 				<div style={{ flexGrow: '1' }}></div>
 				<NavTwo>
 					<form onSubmit={handleOnSubmit}>
-						<select ref={selectRef}>
+						<SearchElement ref={selectRef} as="select">
 							<option>title</option>
 							<option>writer</option>
 							<option>hashtag</option>
-						</select>
+						</SearchElement>
 						&ensp;
 						<SearchIcon src={process.env.PUBLIC_URL + '/search.png'} />
 						&ensp;
-						<input ref={inputRef} required />
+						<SearchElement ref={inputRef} as="input" required />
 					</form>
 					&emsp;
 					<ModeButton onClick={changeTheme}>

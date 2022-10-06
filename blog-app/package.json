@@ -32,10 +32,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "build": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "aws s3 sync ./build s3://my-blog-app-dev-bucket --profile=my-blog-app-dev",
+    "deploy": "aws s3 sync ./build s3://my-blog-app-dev-bucket --profile=my-blog-bucket-dev",
     "invalidate": "aws cloudfront create-invalidation --profil=my-blog-app-dev --distribution-id EN79GGD4GYG81 --paths /*",
     "lint": "eslint './src/**/*.{ts,tsx,js,jsx}'",
     "lint:fix": "eslint --fix './src/**/*.{ts,tsx,js,jsx}'",
@@ -69,5 +69,6 @@
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",
     "prettier": "2.6.2"
-  }
+  },
+  "proxy": "http://localhost:5000"
 }
